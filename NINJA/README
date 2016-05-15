@@ -1,5 +1,8 @@
 Quick NINJA README pre-release (05/14)
 
+Compilation:
+    Tested only on linux using g++, with the "make all" command.
+
 Arguments:
 
 --in (or -i) filename 
@@ -57,5 +60,5 @@ Example:
 
 Notes:
 
-It currently do not support stockholm files and external memory. The behaviour for stockholm files is unpredictable, only fasta format works. The use of the extmem argument will make the program abort, and if the input is too large to fit in memory and you use the inmem argument, the behaviour is unpredictable.
+It currently does not support stockholm files and external memory. The behaviour for stockholm files is unpredictable, only fasta format works. The use of the extmem argument will make the program abort, and if the input is too large to fit in memory and you use the inmem argument, the behaviour is unpredictable.
 
