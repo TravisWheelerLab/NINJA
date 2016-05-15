@@ -10,5 +10,5 @@ We use a "git flow" workflow. We have two active branches:
 To contribute to NINJA development, you want to be on the
 **develop** branch, which is where we are currently integrating
 feature branches. For more information, see the
-[HMMER wiki](https://github.com/TravisWheelerLab/NINJA/wiki).
+[NINJA wiki](https://github.com/TravisWheelerLab/NINJA/wiki).
 
