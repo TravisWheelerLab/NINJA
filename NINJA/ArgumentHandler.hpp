@@ -1,0 +1,45 @@
+#ifndef ARGUMENTHANDLER_HPP
+#define ARGUMENTHANDLER_HPP
+
+#include "ExceptionHandler.hpp"
+#include <stdlib.h>
+#include <stdio.h>
+#include "TreeBuilder.hpp"
+
+class ArgumentHandler{
+	public:
+		enum InputType {alignment, distance};
+		enum OutputType {dist, tree};
+		enum AlphabetType {dna, amino, null};
+		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/};
+
+		std::string method; // default should be "bin" for small, "cand" for large.
+		std::string njTmpDir;
+		std::string inFile; //works?
+		InputType inType;
+		OutputType outType;
+		AlphabetType alphType;
+		CorrectionType corrType;
+		FILE* outFile;
+
+		bool abort;
+
+		ArgumentHandler (char* argv[],int argc);
+		std::string getMethod();
+		std::string getInFile();
+		std::string getNJTmpDir();
+		InputType getInputType();
+		OutputType getOutputType();
+
+		AlphabetType getAlphabetType();
+
+		CorrectionType getCorrectionType ();
+
+		bool argumentTest();
+};
+
+#endif
+
+
+
+

@@ -1,0 +1,61 @@
+Quick NINJA README pre-release (05/14)
+
+Arguments:
+
+--in (or -i) filename 
+    Specify file (fasta format) containing precomputed pairwise distances.
+    (default is to read the filename from the first argument not associated
+    with a -- flag, as shown above) 
+
+--out (or -o) filename 
+    Specify file to which the tree will be written (default = stdout)
+
+--method (or -m) meth  [default | inmem]
+    'inmem' method uses in-memory algorithm, which is roughly 3x faster, but 
+         will fail for large inputs. For example, with -Xmx2G (the default
+         in the ninja shell script), inmem will work for up to around 7,000 
+         sequences.      
+    'default' inmem.
+
+--in_type type [a | d]
+    Type of input, alignment or distance matrix
+    'a' type causes NINJA to accept an alignment in fasta format
+    'd' type causes NINJA to accept a (phylip format) file containing 
+    precomputed pairwise distances.
+    Default = a
+    
+--out_type type [t]   
+    Type of output, tree or distance matrix
+    't' type computes the tree from the input file (whether an alignment
+         or a distance matrix), and writes a tree to the file specified with
+         the --out flag
+    Default = t           
+         
+--alph_type type [a | d]
+    'a' if input consists of amino acid sequence
+    'd' if input consists of dna sequence
+    Default = amino. 
+    
+--corr_type type [n | j | k | s]
+    Correction for multiple same-site substitutions.
+    'n' no correction
+    'j' jukes-cantor correction  { dist = -3/4 * ln (1 - 4/3 * dist ) }
+    'k' kimura 2-parameter correction { dist = -1/2 * ln ( (1-2p-q)*sqrt(1-2q) ) }    
+    's' FastTree's scoredist-like correction { dist = -1.3 * ln (1.0 - dist) }
+    Default: 'k' for DNA, 's' for amino acid
+
+--rebuild_step_ratio (or -r)  
+    See paper for details.  Default = 0.5.
+
+Execution:
+
+./NINJA [arguments]
+
+Example:
+
+./NINJA -m inmem --in_type a --out_type t -i e_coli_1000.fa -o out.txt
+
+Notes:
+
+It currently do not support stockholm files and external memory. The behaviour for stockholm files is unpredictable, only fasta format works. The use of the extmem argument will make the program abort, and if the input is too large to fit in memory and you use the inmem argument, the behaviour is unpredictable.
+
