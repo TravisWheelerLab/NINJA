@@ -44,6 +44,8 @@ std::string TreeBuilderManager::doJob(){
 	int rowLength = 0;
 	int firstMemCol = -1;
 
+	int numCols = 0;
+
 
 	//Runtime runtime = Runtime.getRuntime();
 	long maxMemory = -1; //revisit, priority
@@ -64,16 +66,17 @@ std::string TreeBuilderManager::doJob(){
 	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES); //working, should I use all of this, or reduce it? How does the SO handles if I use it all and it does not have all of that anymore?
 	#endif
 
-
+	//TODO: check if I close all the files
 
 	SequenceFileReader* seqReader = NULL;
 	if (!this->method.compare("extmem")){ //The external memory if currently in debugging, therefore it is unabled.
-		fprintf(stderr,"External memory not allowed yet.\n");
-		Exception::critical();
+/*		fprintf(stderr,"External memory not allowed yet.\n");
+		Exception::critical();*/
 		if (maxMemory < 1900000000) {
-			fprintf(stderr,"\nWarning: using an external-memory variant of NINJA with less than 2GB allocated RAM.");
-			fprintf(stderr,"The data structures of NINJA may not work well if given less than 2GB.");
+			fprintf(stderr,"Warning: using an external-memory variant of NINJA with less than 2GB allocated RAM.\n");
+			fprintf(stderr,"The data structures of NINJA may not work well if given less than 2GB.\n");
 		}
+		fprintf(stderr,"Using External Memory...\n");
 		FILE* tempFile;
 		njTmpDir += "treeBuilderManager";
 
@@ -81,7 +84,7 @@ std::string TreeBuilderManager::doJob(){
 		tempFile = fopen(njTmpDir.c_str(), "w+");
 		if(tempFile == NULL) Exception::criticalErrno(njTmpDir.c_str());
 
-		fprintf(stderr,"created temporary directory for this run of NINJA : %s", njTmpDir.c_str());
+		fprintf(stderr,"created temporary directory for this run of NINJA : %s\n", njTmpDir.c_str());
 
 
 		DistanceReaderExtMem* reader = NULL;
@@ -96,7 +99,9 @@ std::string TreeBuilderManager::doJob(){
 			K = seqReader->seqSize;
 			reader = new DistanceReaderExtMem(distCalc, K);
 		}	else {
-			reader = new DistanceReaderExtMem(this->inFile);
+			fprintf(stderr,"External memory with distances as input not allowed yet.\n"); //TODO: implement
+			Exception::critical();
+			//reader = new DistanceReaderExtMem(this->inFile);
 			K = reader->K;
 			this->names = new std::string*[K];
 			for (int i = 0;i<K;i++)
@@ -105,41 +110,35 @@ std::string TreeBuilderManager::doJob(){
 
 
 
-		R = new float[K];
+		R = new float[K]();
 		rowLength = (K + K-2); //that's a K*K table for the initial values, plus another K*(K-2) columns for new nodes
 
 		long maxSize; // max amount of D stored in memory
 		if (TreeBuilderExtMem::useBinPairHeaps) {
-			//maxSize = 200 * (int)Math.pow(2, 20); //200MB
 			maxSize = maxMemory / 10;
 		} else {
-//					maxSize = 750 * (int)Math.pow(2, 20); //750MB
 			maxSize = maxMemory / 3;
 		}
 
-		int numCols = (int)(maxSize / (4 * K));
-		// needs to be a multiple of pageBlockSize
+		numCols = (int)(maxSize / (4 * K));
 		int numBlocks = numCols/pageBlockSize; // chops off fractional part
 		if (numBlocks == 0) numBlocks  = 1;  //for huge inputs, this could result in memD larger than 400MB
 		numCols = numBlocks * pageBlockSize;
 
 
-/*		if (numCols >= 2*K-2) {
+		if (numCols >= 2*K-2) {
 			numCols = 2*K-2;
 		} else {
-			File tmpFile = File.createTempFile("ninja", "diskD", njTmpDir);
-			diskD = new RandomAccessFile(tmpFile,"rw");
-
-			long fileSize = (long)K * rowLength * floatSize;
-			diskD.setLength(fileSize) ;  // that's a K*K table for the initial values, plus another K*(K-3) columns for new nodes, at 4 bytes per float
-			//LogWriter.stdErrLogln("created file of size " + fileSize + " for the distance matrix");
-		}*/
+			std::string newDir = njTmpDir + "ninja_diskD_tmp";
+			FILE* tmpFile = fopen(newDir.c_str(),"w+");
+			diskD = tmpFile;
+		}
 
 		memD = new float*[K];
 		for(int i=0;i<K;i++){
 			memD[i] = new float[numCols];
 		}
-		firstMemCol = reader->read( names, R, diskD, memD, rowLength, pageBlockSize);
+		firstMemCol = reader->read( names, R, diskD, memD, numCols, rowLength, pageBlockSize);
 
 	}else{
 		DistanceReader* reader = NULL;
@@ -184,9 +183,10 @@ std::string TreeBuilderManager::doJob(){
 		nodes = tb->build();
 		nodesSize = (tb->K*2)-1;
 
-	} else if (method.compare("extmem") ) {
-		tb_extmem = new TreeBuilderExtMem(names, K,  R, njTmpDir, diskD, memD ,0, firstMemCol, rowLength, maxMemory); //temporary, revisit memDSize,priority
+	} else if (!method.compare("extmem") ) {
+		tb_extmem = new TreeBuilderExtMem(names, K,  R, njTmpDir, diskD, memD , numCols, firstMemCol, rowLength, maxMemory);
 		nodes = tb_extmem->build();
+		nodesSize = (tb_extmem->K*2)-1;
 	}
 	std::string *sb;
 	if (ok && treeString.empty()) {
