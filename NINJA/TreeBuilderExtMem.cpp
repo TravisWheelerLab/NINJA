@@ -13,6 +13,14 @@ TreeBuilderExtMem::TreeBuilderExtMem (std::string** names, int namesSize, float 
 	this->numCandTriplesToDisk = 16384;
 	this->usingSimpleCandidates = true;
 
+	this->candidatesD = NULL;
+	this->candidatesI = NULL;
+	this->candidatesJ = NULL;
+	this->freeCandidates = NULL;
+	this->candidatesActive = NULL;
+	this->candHeapList = NULL;
+	this->arrayHeaps = NULL;
+
 	if (!useBinPairHeaps && !useCandHeaps) {
 		Exception::critical();
 		//throw new Exception ("external memory method must use one of the heaps");
@@ -72,9 +80,10 @@ void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 		candidatesD = new float[10000];
 		candidatesI = new int[10000];
 		candidatesJ = new int[10000];
-		//freeCandidates = new int[10000];
 		freeCandidates = new Stack();
 		candidatesActive = new bool[10000];
+
+		this->candidatesSize = 10000;
 	} else { //else - must already be created.  Just keep it the same size
 		if (useCandHeaps) freeCandidates->clear();
 	}
@@ -105,64 +114,65 @@ void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 	} else { // useBinPairHeapsHeaps
 
 		// pick clusters
-		clustAssignments = new int[K];
+		this->clustAssignments = new int[this->K](); //TODO: debug: come back here if needed
 
-		float maxT = 0;
-		float minT = FLT_MAX;
+		long maxT = 0;
+		long minT = FLT_MAX;
 
-
-		i = firstActiveNode;
+		i = this->firstActiveNode;
 		while (i<maxIndex) {
-			ri = redirect[i];
-			if (R[ri] > maxT) maxT = R[ri];
-			if (R[ri] < minT) minT = R[ri];
-			i=nextActiveNode[i];
+			ri = this->redirect[i];
+			if (this->R[ri] > maxT) maxT = this->R[ri];
+			if (this->R[ri] < minT) minT = this->R[ri];
+			i=this->nextActiveNode[i];
 		}
-		clustMins = new float[clustCnt];
-		clustMaxes = new float[clustCnt];
+		this->clustMins = new float[clustCnt];
+		this->clustMaxes = new float[this->clustCnt];
 		float seedTRange = maxT - minT;
-		for (i=0; i<clustCnt-1; i++) {
-			clustMaxes[i] = minT + (i+1)*seedTRange/clustCnt;
+		for (i=0; i<this->clustCnt-1; i++) {
+			this->clustMaxes[i] = minT + (i+1)*seedTRange/this->clustCnt;
 		}
-		clustMaxes[clustCnt-1] = maxT;
-		clustSizes = new int[clustCnt];
-		i=firstActiveNode;
+		this->clustMaxes[this->clustCnt-1] = maxT;
+		this->clustSizes = new int[this->clustCnt]();
+		i=this->firstActiveNode;
 		while (i<maxIndex) {
-			ri = redirect[i];
-			for (j=0; j<clustCnt; j++) {
-				if (R[ri]<=clustMaxes[j]) {
-					clustAssignments[ri] = j;
-					clustSizes[j]++;
+			ri = this->redirect[i];
+			for (j=0; j<this->clustCnt; j++) {
+				if (this->R[ri]<=this->clustMaxes[j]) {
+					this->clustAssignments[ri] = j;
+					this->clustSizes[j]++;
 					break;
 				}
 			}
-			i=nextActiveNode[i];
+			i=this->nextActiveNode[i];
 		}
 
 
 		//sort using a heap
 		BinaryHeap *heap = new BinaryHeap();
-		for (i=0; i<clustCnt; i++)
-			heap->insert(i, clustSizes[i]);
-		clustersBySize = new int[clustCnt];
-
-		for (i=0; i<clustCnt; i++)  {
-
-			clustersBySize[i] = heap->heap->front().first;
+		for (i=0; i<this->clustCnt; i++)
+			heap->insert(i, this->clustSizes[i]);
+		this->clustersBySize = new int[this->clustCnt];
+		for (i=0; i<this->clustCnt; i++)  {
+			this->clustersBySize[i] = heap->heap->front().first;
 			heap->deleteMin();
 		}
+		delete heap;
 
 
-		if (arrayHeaps == NULL){
-			arrayHeaps = new ArrayHeapExtMem**[clustCnt];
-			for(int i=0;i<clustCnt;i++)
-				arrayHeaps[i] = new ArrayHeapExtMem*[clustCnt];
+		if (this->arrayHeaps == NULL){
+			this->arrayHeaps = new ArrayHeapExtMem**[this->clustCnt];
+			for(int i=0;i<this->clustCnt;i++){
+				this->arrayHeaps[i] = new ArrayHeapExtMem*[this->clustCnt];
+				for(int j=0;j<this->clustCnt;j++)
+					this->arrayHeaps[i][j] = NULL;
+			}
 		}
 
 
 		for (i=0; i<clustCnt; i++) {
 			for (j=i; j<clustCnt; j++) {
-				if (arrayHeaps[i][j]!= NULL) {
+				if (arrayHeaps[i][j] != NULL) {
 					arrayHeaps[i][j]->prepare();
 				} else {
 					arrayHeaps[i][j] = new ArrayHeapExtMem(njTmpDir, redirect, maxMemory/666 /*that's about 3MB if mem is 2GB*/);
@@ -633,9 +643,9 @@ TreeNode** TreeBuilderExtMem::build (){
 
 						while (!h->isEmpty()) {
 
-							which = cHeap->getBinaryHeapWithMin().which;
-							if(which) bh2 = (BinaryHeap_FourInts*)cHeap->getBinaryHeapWithMin().h;
-							else bh = (BinaryHeap_TwoInts*)cHeap->getBinaryHeapWithMin().h;
+							which = h->getBinaryHeapWithMin().which;
+							if(which) bh2 = (BinaryHeap_FourInts*)h->getBinaryHeapWithMin().h;
+							else bh = (BinaryHeap_TwoInts*)h->getBinaryHeapWithMin().h;
 
 /*							if (bh == NULL) {
 								//LogWriter.stdErrLogln("Surprising: null binary heap, for heap " + clA + ", " + clB);
@@ -1264,8 +1274,8 @@ int TreeBuilderExtMem::appendCandToSimpleList (float d, int i, int j){
 
 
 	//make sure we don't overflow
-	if (freePos == 10000) { //is it the right number?
-		int newLength = (int)(10000 * (10000 < 1000000 ? 10 : 2 ));
+	if (freePos == this->candidatesSize) { //is it the right number?
+		int newLength = (int)(this->candidatesSize * (this->candidatesSize < 1000000 ? 10 : 2 ));
 
 		int x;
 
@@ -1300,24 +1310,26 @@ int TreeBuilderExtMem::appendCandToSimpleList (float d, int i, int j){
 		} else {
 
 			float* D = new float[newLength];
-			for (x=0; x<10000; x++ )
+			for (x=0; x<this->candidatesSize; x++ )
 				D[x] = candidatesD[x];
 			candidatesD = D;
 
 			int* I = new int[newLength];
-			for (x=0; x<10000; x++ )
+			for (x=0; x<this->candidatesSize; x++ )
 				I[x] = candidatesI[x];
 			candidatesI = I;
 
 			int* J = new int[newLength];
-			for (x=0; x<10000; x++ )
+			for (x=0; x<this->candidatesSize; x++ )
 				J[x] = candidatesJ[x];
 			candidatesJ = J;
 
 			bool* act = new bool[newLength];
-			for (x=0; x<10000; x++ )
+			for (x=0; x<this->candidatesSize; x++ )
 				act[x] = candidatesActive[x];
 			candidatesActive = act;
+
+			this->candidatesSize = newLength;
 		}
 	}
 	candidatesD[freePos] = d;
