@@ -85,6 +85,8 @@ class TreeBuilderExtMem {
 
 		bool usingSimpleCandidates;
 
+		float candidatesSize;
+
 		static const int floatSize = 4;
 		int rowLength;
 

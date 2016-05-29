@@ -48,7 +48,7 @@ int DistanceReaderExtMem::read (std::string** names, float* R, FILE* diskD, floa
 	float* fBuff = new float[numColsToDisk];
 	int floatsInBuff = 0;
 
-
+	//TODO: implement threads here, more complicated that in the in memory function, but still feasible
 	if(this->distCalc != NULL){
     	while (row != K && buffPtr<buffSize) {
 
@@ -88,6 +88,7 @@ int DistanceReaderExtMem::read (std::string** names, float* R, FILE* diskD, floa
 	}
 	return numColsToDisk;
 }
+
 float DistanceReaderExtMem::atoi (char* in, int end){
 	float val = 0.0;
 	int pos = end;
@@ -113,3 +114,4 @@ float DistanceReaderExtMem::atoi (char* in, int end){
 	else
 		return val;
 }
+

@@ -16,6 +16,9 @@
 #include <tmmintrin.h>      /* SSE3 */
 #include <stdint.h>
 
+#include <omp.h>
+
+
 class DistanceCalculator{
 		const float bl45[20][20];
 	public:
