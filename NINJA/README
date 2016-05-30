@@ -60,5 +60,6 @@ Example:
 
 Notes:
 
-It currently does not support stockholm files and external memory. The behaviour for stockholm files is unpredictable, only fasta format works. The use of the extmem argument will make the program abort, and if the input is too large to fit in memory and you use the inmem argument, the behaviour is unpredictable.
+It currently does not support stockholm files and external memory. The behaviour for stockholm files is unpredictable, only fasta format works. The use of the extmem argument has not been thoroughly tested.
+It currently uses SSE and multiple threads: the behaviour in the case one of these is not available is unpredictable.
 

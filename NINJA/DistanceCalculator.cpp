@@ -39,8 +39,8 @@ bl45{
 	this->numberOfSequences = numberOfSequences;
 	this->lengthOfSequences = A[0]->size();
 
-	if(this->newCalculation)
-	convertAll();
+	if(this->newCalculation && this->alph_type == dna)
+		convertAllDNA();
 
 	if (this->corr_type == not_assigned) {
 		if (this->alph_type == amino) {
@@ -187,7 +187,7 @@ inline void DistanceCalculator::count128(register __m128i &seq1, register __m128
 
 
 }
-double DistanceCalculator::newCalc(int a, int b){
+double DistanceCalculator::newCalcDNA(int a, int b){
 	/*
 	 * A = 00
 	 * C = 01
@@ -213,13 +213,13 @@ double DistanceCalculator::newCalc(int a, int b){
 	 *
 	 * We can now use a count process based on SHUFFLE to figure out how many gaps there are:
 	 *
-	 * TMP3 = SHUFFLE(TMP2, GAPS_COUNT_MASK)
+	 * TMP3 = SHUFFLE(GAPS_COUNT_MASK, TMP2)
 	 *
 	 * COUNTS_GAP = ADD(COUNTS_GAP, TMP3)
 	 *
 	 * Now we have added the 8-bit count bins to COUNTS_GAP. We can then proceed to calculate the transitions and transversions:
 	 *
-	 * TMP3 = SHUFFLE(TPM2, DECOMPRESSED_GAPS) //we use the 0000 - 1 bit representation per gap, and map it to a 2 bit representation of the gaps, with 11 as gap, and 00 as not-gap
+	 * TMP3 = SHUFFLE(DECOMPRESSED_GAPS, TPM2) //we use the 0000 - 1 bit representation per gap, and map it to a 2 bit representation of the gaps, with 11 as gap, and 00 as not-gap
 	 *
 	 * Now that we have the right mask we AND the mask and the result of the XOR:
 	 *
@@ -235,40 +235,31 @@ double DistanceCalculator::newCalc(int a, int b){
 	 *
 	 * Finally get the transitions count:
 	 *
-	 * TMP = SHUFFLE(TMP2, TRANSITIONS_MASK) //get the counts
+	 * TMP = SHUFFLE(TRANSITIONS_MASK, TMP2) //get the counts
 	 *
 	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
 	 *
-	 * TMP = SHUFFLE(TMP3, TRANSITIONS_MASK) //get the counts
+	 * TMP = SHUFFLE(TRANSITIONS_MASK, TMP3) //get the counts
 	 *
 	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
 	 *
 	 *
 	 * And then the same happens to transversions:
 	 *
-	 * TMP = SHUFFLE(TMP2, TRANSVERSIONS_MASK) //get the counts
+	 * TMP = SHUFFLE(TRANSVERSIONS_MASK, TMP2) //get the counts
 	 *
 	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
 	 *
-	 * TMP = SHUFFLE(TMP3, TRANSVERSIONS_MASK) //get the counts
+	 * TMP = SHUFFLE(TRANSVERSIONS_MASK, TMP3) //get the counts
 	 *
 	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
 	 *
 	 *
-	 * And that`s it. We can calculate 64 characters in 17 operations. There is also a gather/extract part after all vectors (at least up to 131072 characters is supported) which is 5 instructions
+	 * And that`s it. We can calculate 64 characters in 17 operations. There is also a gather/extract part after all vectors which is 5 instructions
 	 * for each count, which equals 15.
 	 *
 	 */
 
-
-
-	if (this->alph_type == amino) {
-		fprintf(stderr, "Not implemented yet\n");
-		Exception::critical();
-	}/*else if(this->lengthOfSequences<64){
-		fprintf(stderr, "Sequence too short\n");
-		Exception::critical();
-	}*/
 
 	register __m128i seq1;
 	register __m128i seq2;
@@ -296,15 +287,9 @@ double DistanceCalculator::newCalc(int a, int b){
 
 	int num_transversions = 0;
 
-	int num_transversions_aux = 0; //debug
-
 	int num_transitions = 0;
 
-	int num_transitions_aux = 0; //debug
-
 	int gaps = 0;
-
-	int gaps_aux = 0; //debug
 
 	int i = 0;
 
@@ -317,8 +302,6 @@ double DistanceCalculator::newCalc(int a, int b){
 
 		for(int j = 0;i<numOfInts && j < 31;i += 4){
 
-				//printf("transitions: %d tranversions: %d counts: %d\n", num_transitions_aux, num_transversions_aux, (i*16)-gaps_aux);
-
 				seq1 = *(__m128i*)&Achar[i];
 				seq2 = *(__m128i*)&Bchar[i];
 
@@ -326,40 +309,6 @@ double DistanceCalculator::newCalc(int a, int b){
 				gap2 = *(__m128i*)&Bgap[i];
 
 				count128(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
-
-
-/*				//debug
-				tmp2 = counts_transversions;
-
-				tmp2 = _mm_xor_si128(tmp2, x128);
-
-				tmp2 = _mm_sad_epu8 (tmp2, zero);
-				tmp = _mm_shuffle_epi32(tmp2, _MM_SHUFFLE(1, 1, 1, 2));
-				tmp2 = _mm_add_epi16(tmp2, tmp);
-
-				num_transversions_aux =  _mm_extract_epi16(tmp2, 0) + num_transversions;
-
-				//debug
-				tmp2 = counts_transitions;
-
-				tmp2 = _mm_xor_si128(tmp2, x128);
-
-				tmp2 = _mm_sad_epu8 (tmp2, zero);
-				tmp = _mm_shuffle_epi32(tmp2, _MM_SHUFFLE(1, 1, 1, 2));
-				tmp2 = _mm_add_epi16(tmp2, tmp);
-
-				num_transitions_aux =  _mm_extract_epi16(tmp2, 0) + num_transitions;
-
-				//debug
-				tmp2 = counts_gaps;
-
-				tmp2 = _mm_xor_si128(tmp2, x128);
-
-				tmp2 = _mm_sad_epu8 (tmp2, zero);
-				tmp = _mm_shuffle_epi32(tmp2, _MM_SHUFFLE(1, 1, 1, 2));
-				tmp2 = _mm_add_epi16(tmp2, tmp);
-
-				gaps_aux =  _mm_extract_epi16(tmp2, 0) + gaps;*/
 
 
 				j+=4;
@@ -426,8 +375,8 @@ double DistanceCalculator::newCalc(int a, int b){
 }
 
 double DistanceCalculator::calc (int a, int b){
-	if(newCalculation){
-		return newCalc(a,b);
+	if(newCalculation && this->alph_type == dna){
+		return newCalcDNA(a,b);
 	}
 
 	float dist = 0.0f;
@@ -452,13 +401,6 @@ double DistanceCalculator::calc (int a, int b){
 				count++;
 			}
 		}
-
-/*		for (int i=0; i<(int)this->A[0]->length(); i++){
-			if (this->inv_alph[(int)this->A[a]->at(i)] >= 0 && this->inv_alph[(int)A[b]->at(i)] >= 0) { // both are characters in the core alphabet
-				dist += this->bl45[ this->inv_alph[(int)this->A[a]->at(i)]  ]  [ this->inv_alph[(int)this->A[b]->at(i)]  ] ;
-				count++;
-			}
-		}*/
 
 		if (count==0) {
 			dist = maxscore;
@@ -492,10 +434,7 @@ double DistanceCalculator::calc (int a, int b){
 						q++;
 				}
 			}
-/*			if(i%64==63)
-				printf("transitions: %d tranversions: %d count: %d \n",p,q,count);*/
 		}
-		//printf("Final transitions: %d tranversions: %d count: %d \n",p,q,count);
 
 		if (count == 0) {
 				dist = maxscore;
@@ -515,17 +454,14 @@ double DistanceCalculator::calc (int a, int b){
 
 	}
 
-	double dist_d = (dist < maxscore ? dist : maxscore); // I do this because the java float keeps enough precision for my needs, but
-														//for reasons I don't understand, uses different such values for division/multiplication
-	         											//(used in distance-file prinout) vs casting to a double.  This is a little faster
-														//than just using doubles throughout.
+	double dist_d = (dist < maxscore ? dist : maxscore);
 	return dist_d;
 }
 
 DistanceCalculator::~DistanceCalculator(){
 	delete[](this->inv_alph);
 }
-void DistanceCalculator::getBits(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut){ //TODO: debug: checked
+void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut){
 	/*
 	 * transform the sequence of files into 2-bit-packed characters
 	 *
@@ -535,7 +471,7 @@ void DistanceCalculator::getBits(char* seq, int* size, unsigned int *seqOut, uns
 	 * T = 11
 	 *
 	 * A is ignored in the loop, because it would add 0 to the integer.
-	 * If the size left is less than 32, the other bits are all set to 0 by default,
+	 * If the size left is less than 16, the other bits are all set to 0 by default,
 	 * therefore it will not be counted as transitions or transversions. It will not
 	 * affect the length of the sequence as well because we assume all sequences have
 	 * the same length and this value is stored before the conversion to bits.
@@ -546,8 +482,6 @@ void DistanceCalculator::getBits(char* seq, int* size, unsigned int *seqOut, uns
 	 *
 	 */
 
-	/*TODO: I do not see how I would do that for protein. No way to approximate values, they vary too much in BLOSUM45.
-	 */
 	*seqOut = 0x0;
 	*gapOut = 0xF0F0F0F; // initialize higher 4 bits as 0, and lower 4 bits as one
 
@@ -565,7 +499,7 @@ void DistanceCalculator::getBits(char* seq, int* size, unsigned int *seqOut, uns
 
 	int i;
 
-	for(i=0;i<*size && i<16;i++){ //goes until the sequence ends or 32 characters are converted
+	for(i=0;i<*size && i<numCharPerElement;i++){ //goes until the sequence ends or 16 characters are converted
 		if(seq[i] == 'C'){ //01
 			*seqOut += powersOfTwo[((numCharPerElement-i)*2)-2];
 		}else if(seq[i] == 'G'){ //10
@@ -579,13 +513,66 @@ void DistanceCalculator::getBits(char* seq, int* size, unsigned int *seqOut, uns
 	*size -= i;
 
 }
-void DistanceCalculator::convertAll(){
+void DistanceCalculator::getBitsProtein(char* seq, int* size, unsigned int *seqOut){
+	*seqOut = 0x0;
+
+	if(size<=0){//TODO: perhaps remove later?
+		return;
+	}
+
+	int i;
+
+	for(i=0;i<*size && i<4;i++){
+		if(seq[i] == '-')
+			*seqOut += (0xFF << ((3-i)*8));
+		*seqOut += (this->inv_alph_new[(int)seq[i]] << ((3-i)*8));
+	}
+	*size -= i;
+}
+unsigned int* DistanceCalculator::getProteinDic (std::string alph, int length) {
+	unsigned int* inv_alph = new unsigned int[256];
+	for (int i=0; i<256; i++)
+		inv_alph[i]= 0xFFFFFFFF;
+	for (int i=0; i<length; i++)
+		inv_alph[(int)alph.at(i)] = i;
+	return inv_alph;
+}
+void DistanceCalculator::convertAllProtein(){
+	/*
+	 * TODO: at first use all 20 proteins, and represent them in 1 byte, although we only need 5 bits. We will also represent gaps with 1 byte in the same array, all 1`s,
+	 *  but later on we can pack at least 3 gaps in one byte (higher 3 bits).
+	 */
 
 	this->x128 = _mm_set1_epi8((int8_t) -128);
 	this->zero = _mm_set1_epi8((int8_t) 0x00);
 	this->COUNTS_MASK = _mm_set1_epi8((int8_t) 0xF);
 
-	/*
+	//TODO: make sure all of these are aligned, so I can load them faster
+	this->convertedSequences = new unsigned int*[this->numberOfSequences];
+
+	int allocSize = ceil((float)this->lengthOfSequences/4.0);
+	if(allocSize % 4 != 0)
+		allocSize += 4 - (allocSize % 4);
+	int sizeLeft;
+	for(int i=0;i<this->numberOfSequences;i++){
+		this->convertedSequences[i] = new unsigned int[allocSize]; //min of 128bits, no need to change
+		sizeLeft = this->lengthOfSequences;
+		for(int j=0;j<allocSize;j++){
+			getBitsProtein((char*)(this->A[i]->c_str()+(this->lengthOfSequences-sizeLeft)),&sizeLeft, &(this->convertedSequences[i][j]));
+		}
+
+	}
+	//TODO: free all the unnecessary memory
+
+}
+void DistanceCalculator::convertAllDNA(){
+
+	this->x128 = _mm_set1_epi8((int8_t) -128);
+	this->zero = _mm_set1_epi8((int8_t) 0x00);
+	this->COUNTS_MASK = _mm_set1_epi8((int8_t) 0xF);
+
+	/* GAPS MASK:
+	 *
 	 *  0000	4
 	 * 	0001	3
 	 * 	0010	3
@@ -628,10 +615,11 @@ void DistanceCalculator::convertAll(){
 
 		sizeLeft = this->lengthOfSequences;
 		for(int j=0;j<allocSize;j++){
-			getBits((char*)(this->A[i]->c_str()+(this->lengthOfSequences-sizeLeft)),&sizeLeft, &(this->convertedSequences[i][j]), &(this->gapInTheSequences[i][j]));
+			getBitsDNA((char*)(this->A[i]->c_str()+(this->lengthOfSequences-sizeLeft)),&sizeLeft, &(this->convertedSequences[i][j]), &(this->gapInTheSequences[i][j]));
 		}
 
 	}
+	//TODO: free all the unnecessary memory
 /*	for(int i=0;i<this->numberOfSequences;i++)
 		delete(this->A[i]);
 	delete[](this->A);*/
