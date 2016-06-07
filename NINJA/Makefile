@@ -40,9 +40,8 @@ debugfile = Ninja_debug
 all: $(OBJECTS)
 	g++ $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
-debug: $(debugfile)
-
-$(debugfile): 
+debug: $(OBJECTS)
+	g++ $(DBXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS) 
 
 clean:
 	$(RM) count *.o *~
