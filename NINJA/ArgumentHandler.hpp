@@ -30,6 +30,7 @@ class ArgumentHandler{
 		std::string getNJTmpDir();
 		InputType getInputType();
 		OutputType getOutputType();
+		FILE* getOutpuFile();
 
 		AlphabetType getAlphabetType();
 

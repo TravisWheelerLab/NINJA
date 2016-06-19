@@ -17,6 +17,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->outType = tree;
 	this->alphType = amino;
 	this->corrType = not_assigned;
+	this->outFile = stdout;
 
 
 	if(argc == 1){
@@ -37,7 +38,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			}
 		}else if (!x.compare("--out") || !x.compare("-o")){
 			if (i < argc-1){
-				FILE* out = fopen(argv[i+1],"w");
+				FILE* out = fopen(argv[i+1],"w+");
 				i++;
 				if (out == NULL){
 					fprintf(stderr,"Error opening file");
@@ -53,7 +54,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				if(!y.compare("default")){
 					//TreeBuilderExtMem.useCandHeaps = true;
 				}else if(!y.compare("extmem")){
-					//TreeBuilderExtMem.useCandHeaps = true;
+					this->method.assign("extmem");
 				}else if(!y.compare("inmem")){
 					//nothing happens
 				}else{
@@ -132,7 +133,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 		}else if (!x.compare("--verbose")){
 			if (i < argc-1){
 				int v = *argv[i+1] - '0'; //revisit
-				//TreeBuilder.verbose = v;
+				//TreeBuilder.verbose = v; TODO:
 				i++;
 			}else{
 				fprintf(stderr,"No verbose integer specified.\n");
@@ -155,7 +156,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 		}else if (!x.compare("--clust_size") || !x.compare("-s")){
 			if (i < argc-1){
 				int s = *argv[i+1] - '0'; //revisit
-				//TreeBuilder.clustCnt = s;
+				//TreeBuilder.clustCnt = s; TODO:
 				i++;
 			}else{
 				fprintf(stderr,"No clust_size integer specified.\n");
@@ -214,6 +215,9 @@ ArgumentHandler::InputType ArgumentHandler::getInputType () {
 
 ArgumentHandler::OutputType ArgumentHandler::getOutputType () {
 	return this->outType;
+}
+FILE* ArgumentHandler::getOutpuFile () {
+	return this->outFile;
 }
 
 ArgumentHandler::AlphabetType ArgumentHandler::getAlphabetType () {

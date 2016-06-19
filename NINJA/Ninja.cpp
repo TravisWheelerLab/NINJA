@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
 	ArgumentHandler::OutputType outType = argHandler->getOutputType();
 	ArgumentHandler::AlphabetType alphType = argHandler->getAlphabetType();
 	ArgumentHandler::CorrectionType corrType = argHandler->getCorrectionType();
-	FILE* out = argHandler->outFile;
+	FILE* out = argHandler->getOutpuFile();
 
 	fprintf(stderr,"Reading...\n");
 	TreeBuilderManager* manager = new TreeBuilderManager(method, njTmpDir, inFile, out, (TreeBuilderManager::InputType) inType,(TreeBuilderManager::OutputType) outType, (TreeBuilderManager::AlphabetType) alphType,(TreeBuilderManager::CorrectionType) corrType);
@@ -74,7 +74,8 @@ int main(int argc, char *argv[]){
 		fclose(out);
 		return 0;
 	}
-
+	//printf("String: %s \n",treeString.c_str());
+	//return 0;
 	if (!treeString.empty()) {
 		fprintf(out,"%s",treeString.c_str() );
 		fprintf(stderr,"Tree successfully generated.\n");

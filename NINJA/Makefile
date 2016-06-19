@@ -33,7 +33,7 @@ SOURCES += TreeNode.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
 CXXFLAGS = -std=gnu++11 -O3 -Wall -mssse3 -fopenmp
-DBGFLAGS = -O0 -g3 -pg -std=gnu++11 -Wall -mssse3 -fopenmp
+DBGFLAGS = -O0 -g3 -pg
 EXEC = Ninja
 debugfile = Ninja_debug
 
@@ -41,7 +41,7 @@ all: $(OBJECTS)
 	g++ $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
 debug: $(OBJECTS)
-	g++ $(DBXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS) 
+	g++ $(DBGFLAGS) $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS) 
 
 clean:
 	$(RM) count *.o *~
