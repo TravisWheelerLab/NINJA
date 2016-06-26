@@ -34,82 +34,83 @@ TreeBuilderExtMem::TreeBuilderExtMem (std::string** names, int namesSize, float 
 	this->memD = memD;
 	this->maxMemory = maxMemory;
 
-	memDSize = memDFirstSize;
-	fBuff = new float[memDSize];
+	this->memDSize = memDFirstSize;
+	this->fBuff = new float[this->memDSize];
 
 
 	this->R = R;
+	this->RSize = namesSize;
 
-	nextInternalNode = K = namesSize;
+	this->nextInternalNode = this->K = namesSize;
 
-	curColInMem = firstColInMem = firstMemCol; //K;
+	this->curColInMem = this->firstColInMem = firstMemCol; //K;
 
-	candidateCountPerLoop = new int[K-1];
-	candidateViewsPerLoop = new int[K-1];
-	candidateRowsCountPerLoop = new int[K-1];
-	redirect = new int[2*K-1];
-	nodes = new TreeNode*[2*K-1];
+	this->candidateCountPerLoop = new int[this->K-1];
+	this->candidateViewsPerLoop = new int[this->K-1];
+	this->candidateRowsCountPerLoop = new int[this->K-1];
+	this->redirect = new int[2*this->K-1];
+	this->nodes = new TreeNode*[2*this->K-1];
 
 	int i;
 
-	for (i=0; i<K; i++) {
-		redirect[i] = i;
-		nodes[i] = new TreeNode(names[i]);
+	for (i=0; i<this->K; i++) {
+		this->redirect[i] = i;
+		this->nodes[i] = new TreeNode(names[i]);
 	}
 
-	for (i=K; i<2*K-1; i++) {
-		redirect[i] = -1;
-		nodes[i] = new TreeNode();
+	for (i=this->K; i<2*this->K-1; i++) {
+		this->redirect[i] = -1;
+		this->nodes[i] = new TreeNode();
 	}
 
-	firstActiveNode = 0;
-	nextActiveNode = new int[2*K-1];
-	prevActiveNode = new int[2*K-1];
+	this->firstActiveNode = 0;
+	this->nextActiveNode = new int[2*this->K-1];
+	this->prevActiveNode = new int[2*this->K-1];
 	for ( i=0; i<2*K-1; i++) {
-		nextActiveNode[i] = i+1;
-		prevActiveNode[i] = i-1;
+		this->nextActiveNode[i] = i+1;
+		this->prevActiveNode[i] = i-1;
 	}
 
-	newK = K;
+	this->newK = this->K;
 
-	clusterAndHeap(K);
+	clusterAndHeap(this->K);
 }
 void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 
-	if (candidatesD == NULL) {
-		candidatesD = new float[10000];
-		candidatesI = new int[10000];
-		candidatesJ = new int[10000];
-		freeCandidates = new Stack();
-		candidatesActive = new bool[10000];
+	if (this->candidatesD == NULL) {
+		this->candidatesD = new float[10000];
+		this->candidatesI = new int[10000];
+		this->candidatesJ = new int[10000];
+		this->freeCandidates = new Stack();
+		this->candidatesActive = new bool[10000];
 
 		this->candidatesSize = 10000;
 	} else { //else - must already be created.  Just keep it the same size
-		if (useCandHeaps) freeCandidates->clear();
+		if (this->useCandHeaps) this->freeCandidates->clear();
 	}
-	lastCandidateIndex = -1;
+	this->lastCandidateIndex = -1;
 
 
-	if (useCandHeaps) {
-		if (candHeapList == NULL) {
-			candHeapList = new std::vector<CandidateHeap*>();
+	if (this->useCandHeaps) {
+		if (this->candHeapList == NULL) {
+			this->candHeapList = new std::vector<CandidateHeap*>();
 		} else {
 /*			if (TreeBuilder.verbose >= 2 && candHeapListsize() > 0){
 				LogWriter.stdErrLogln("Cleared candidate heap list when K = " + (2 * K - nextInternalNode));
 			}*/
 
-			for (int i=0;i<(signed)candHeapList->size();i++)
-				candHeapList->at(i)->clear();
-			candHeapList->clear();
+			for (int i=0;i<(signed)this->candHeapList->size();i++)
+				this->candHeapList->at(i)->clear();
+			this->candHeapList->clear();
 		}
 	}
 
 	int i,j, ri, rj;
 
-	if (!useBinPairHeaps) { // just using candidate heaps
+	if (!this->useBinPairHeaps) { // just using candidate heaps
 
 		//starterCandHeap = new CandidateHeap(njTmpDir, NULL, newK, this, 29 /* 1/2 GB */);
-		starterCandHeap = new CandidateHeap(njTmpDir, NULL, newK, this, maxMemory/4);
+		this->starterCandHeap = new CandidateHeap(this->njTmpDir, NULL, this->newK, this, this->maxMemory/4);
 
 	} else { // useBinPairHeapsHeaps
 

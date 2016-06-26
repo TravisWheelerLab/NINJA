@@ -25,7 +25,7 @@ void CandidateHeap::initialize (int kPrime, TreeBuilderExtMem *tb) {
 
 	this->tb = tb;
 	this->kPrime = kPrime;
-	rowCounts = new int[tb->nextInternalNode+1];
+	rowCounts = new int[tb->nextInternalNode+1]();
 	rDeltas = new float[tb->nextInternalNode+1];
 	nextActiveNode = new int[tb->nextInternalNode+1];
 	prevActiveNode = new int[tb->nextInternalNode+1];
@@ -38,7 +38,6 @@ void CandidateHeap::initialize (int kPrime, TreeBuilderExtMem *tb) {
 
 void CandidateHeap::insert(int i, int j, float key){
 	ArrayHeapExtMem::insert(i, j, key);
-
 
 	rowCounts[i]++;
 	rowCounts[j]++;

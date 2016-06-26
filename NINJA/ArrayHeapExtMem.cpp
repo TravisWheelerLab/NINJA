@@ -13,6 +13,45 @@ ArrayHeapExtMem::ArrayHeapExtMem(std::string dir, int* activeIJs){
 ArrayHeapExtMem::ArrayHeapExtMem(std::string dir, int* activeIJs, long sizeExp){
 	initialize ( dir, activeIJs, sizeExp);
 }
+ArrayHeapExtMem::~ArrayHeapExtMem(){
+	delete[] this->cntMax;
+	delete this->H1;
+	delete this->H2;
+	if (this->perSlotIntBuffer!= NULL){
+		for(int i=0;i<this->maxLevels;i++){
+			for(int j=0;j<this->numSlots;j++)
+				delete[] this->perSlotIntBuffer[i][j];
+			delete[] this->perSlotIntBuffer[i];
+		}
+		delete[] this->perSlotIntBuffer;
+	}
+	delete[] this->buffI;
+	delete[] this->buffB;
+	delete[] this->bigBuffI;
+	delete[] this->bigBuffB;
+	if (this->slotNodeCnt != NULL){
+		delete[] this->slotNodeCnt;
+		for(int i=0;i<this->maxLevels;i++)
+			delete[] this->slotNodeCnt[i];
+	}
+	if (this->cntOnHeap != NULL){
+		for(int i=0;i<this->maxLevels;i++)
+			delete[] this->cntOnHeap[i];
+		delete[] this->cntOnHeap;
+	}
+	if (this->slotPositions != NULL){
+		for(int i=0;i<this->maxLevels;i++)
+			delete[] this->slotPositions[i];
+		delete[] this->slotPositions;
+	}
+	if (this->slotBuffPos != NULL){
+		for(int i=0;i<this->maxLevels;i++)
+			delete[] this->slotBuffPos[i];
+		delete[] this->slotBuffPos;
+	}
+	fclose(this->file);
+}
+
 void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
 
 	this->H1 = NULL;
@@ -49,10 +88,8 @@ void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
 	this->cntMax = new long[maxLevels];
 	this->c = (float)1/85;
 
-
-
-
 	this->active = activeIJs;
+
 	this->tmpDir = dir;
 
 	if (sizeExp >  pow(2, 22)  /*4MB*/) {
