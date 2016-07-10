@@ -21,6 +21,7 @@ class TreeBuilderExtMem {
 
 	public:
 		TreeBuilderExtMem (std::string** names, int namesSize, float *R, std::string njTmpDir, FILE* diskD, float** memD, int memDFirstSize, int firstMemCol, int rowLength, long maxMemory);
+		~TreeBuilderExtMem ();
 
 		int K;
 		std::string** names;

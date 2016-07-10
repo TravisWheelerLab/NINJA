@@ -16,6 +16,7 @@ class CandidateHeap: public ArrayHeapExtMem{
 	public:
 		CandidateHeap(std::string dir, int* activeIJs, int kPrime, TreeBuilderExtMem* tb, long sizeExp);
 		CandidateHeap(std::string dir, int* activeIJs, int kPrime, TreeBuilderExtMem* tb);
+		~CandidateHeap();
 
 
 		int kPrime;

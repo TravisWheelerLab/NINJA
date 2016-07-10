@@ -49,7 +49,9 @@ ArrayHeapExtMem::~ArrayHeapExtMem(){
 			delete[] this->slotBuffPos[i];
 		delete[] this->slotBuffPos;
 	}
-	fclose(this->file);
+	if (this->file!=NULL)
+		fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
+		fclose(this->file);
 }
 
 void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){

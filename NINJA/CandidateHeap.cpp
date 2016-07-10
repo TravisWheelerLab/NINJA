@@ -14,6 +14,9 @@ CandidateHeap::CandidateHeap(std::string dir, int* activeIJs, int kPrime, TreeBu
 CandidateHeap::CandidateHeap(std::string dir, int* activeIJs, int kPrime, TreeBuilderExtMem *tb) : ArrayHeapExtMem(dir,activeIJs){
 	initialize( kPrime, tb);
 }
+CandidateHeap::~CandidateHeap(){
+	clear();
+}
 
 void CandidateHeap::initialize (int kPrime, TreeBuilderExtMem *tb) {
 
@@ -139,5 +142,30 @@ void CandidateHeap::calcDeltaValues (int newK) {
 
 }
 void CandidateHeap::clear(){
-	//revisit, implement
+
+	//TODO: fix
+	if (rPrimes!=NULL){
+		delete[] rPrimes;
+		rPrimes = NULL;
+	}
+	if (rDeltas!=NULL){
+		delete[] rDeltas;
+		rDeltas = NULL;
+	}
+	if (rowCounts!=NULL){
+		delete[] rowCounts;
+		rowCounts = NULL;
+	}
+	if (nextActiveNode!=NULL){
+		delete[] nextActiveNode;
+		nextActiveNode = NULL;
+	}
+	if (prevActiveNode!=NULL){
+		delete[] prevActiveNode;
+		prevActiveNode = NULL;
+	}
+	if (this->tb!=NULL){
+		delete this->tb;
+		tb = NULL;
+	}
 }

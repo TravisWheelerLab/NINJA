@@ -31,6 +31,7 @@ TreeBuilderExtMem::TreeBuilderExtMem (std::string** names, int namesSize, float 
 	this->njTmpDir = njTmpDir;
 	this->names = names;
 	this->diskD = diskD;
+	this->candFile = NULL;
 	this->memD = memD;
 	this->maxMemory = maxMemory;
 
@@ -74,6 +75,35 @@ TreeBuilderExtMem::TreeBuilderExtMem (std::string** names, int namesSize, float 
 	this->newK = this->K;
 
 	clusterAndHeap(this->K);
+}
+TreeBuilderExtMem::~TreeBuilderExtMem(){
+	//TODO: fix
+	if (nextActiveNode!=NULL){
+		delete[] nextActiveNode;
+		nextActiveNode = NULL;
+	}
+	if (prevActiveNode!=NULL){
+		delete[] prevActiveNode;
+		prevActiveNode = NULL;
+	}
+	if (candFile!=NULL){
+		fprintf(stderr,"File deleted: TreeBuilderExtMem delete.\n");
+		fclose(candFile);
+	}
+	if (candHeapList!=NULL){
+		for (int i=0;i<(signed)this->candHeapList->size();i++)
+			if (this->candHeapList->at(i)!=NULL)
+				this->candHeapList->at(i)->clear();
+		this->candHeapList->clear();
+	}
+	if (this->arrayHeaps != NULL){
+		for(int i=0;i<this->clustCnt;i++){
+			for(int j=0;j<this->clustCnt;j++)
+				delete this->arrayHeaps[i][j];
+			delete this->arrayHeaps[i];
+		}
+		delete this->arrayHeaps;
+	}
 }
 void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 

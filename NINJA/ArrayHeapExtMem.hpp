@@ -52,6 +52,7 @@ class ArrayHeapExtMem {
 
 		ArrayHeapExtMem(std::string dir, int* activeIJs);
 		ArrayHeapExtMem(std::string dir, int* activeIJs, long sizeExp);
+		~ArrayHeapExtMem();
 
 		std::string tmpDir; //path to directory
 

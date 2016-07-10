@@ -32,11 +32,12 @@ SOURCES += TreeNode.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-CXXFLAGS = -std=gnu++11 -O3 -Wall -mssse3 -fopenmp
+CXXFLAGS = -std=gnu++11 -Wall -mssse3 -fopenmp
 EXEC = Ninja
 debugfile = Ninja_debug
 
 debug: CXXFLAGS += -O0 -g3 -pg
+all: CXXFLAGS += -O3
 
 all: $(OBJECTS)
 	g++ $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
