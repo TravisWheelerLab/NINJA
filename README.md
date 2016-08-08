@@ -6,7 +6,7 @@ We use a "git flow" workflow. We have two active branches:
  * **develop** is the NINJA development branch
 
 
-To clone your own copy of HMMER3 source code repository for the first time:
+To clone your own copy of NINJA source code repository for the first time:
 
 ```bash
    $ git clone https://github.com/TravisWheelerLab/NINJA
