@@ -106,14 +106,14 @@ class ArrayHeapExtMem {
 		void closeAndDeleteFile ();
 		void insert(int i, int j, float key);
 		void prepare();
-		void clear();
+		void clearAndInitialize();
 		bool isEmpty();
 		void describeHeap();
 		HeapReturn getBinaryHeapWithMin();
 		void removeMin();
 		int size();
 		bool test(bool verbose);
-
+		void deleteAll();
 
 	private:
 		int* active;

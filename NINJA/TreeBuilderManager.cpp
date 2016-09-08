@@ -82,11 +82,10 @@ std::string TreeBuilderManager::doJob(){
 		FILE* tempFile;
 		njTmpDir += "treeBuilderManager";
 
-		//TODO: review
-/*	    mkdir(njTmpDir.c_str(), 0700);
+	    mkdir(njTmpDir.c_str(), 0700);
 		fprintf(stderr,"created temporary directory for this run of NINJA : %s\n", njTmpDir.c_str());
 
-		this->njTmpDir += "/";*/
+		this->njTmpDir += "/";
 
 		DistanceReaderExtMem* reader = NULL;
 

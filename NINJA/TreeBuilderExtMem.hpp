@@ -82,7 +82,7 @@ class TreeBuilderExtMem {
 
 		CandidateHeap* starterCandHeap;
 
-		std::vector<CandidateHeap*> *candHeapList;
+		std::vector<CandidateHeap*>* candHeapList;
 
 		bool usingSimpleCandidates;
 
@@ -94,6 +94,7 @@ class TreeBuilderExtMem {
 		long maxMemory;
 
 		TreeNode** build ();
+		void clear();
 	private:
 		void clusterAndHeap (int maxIndex );
 		void returnCandidates ();

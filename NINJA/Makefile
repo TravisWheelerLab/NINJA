@@ -47,3 +47,5 @@ debug: $(OBJECTS)
 
 clean:
 	$(RM) count *.o *~
+	$(RM) $(EXEC)
+	$(RM) $(debugfile)

@@ -104,6 +104,12 @@ TreeBuilderExtMem::~TreeBuilderExtMem(){
 		}
 		delete this->arrayHeaps;
 	}
+	if(this->names != NULL){
+		delete[] this->names;
+	}
+	if(this->nodes != NULL){
+		delete[] this->nodes;
+	}
 }
 void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 
@@ -919,7 +925,7 @@ TreeNode** TreeBuilderExtMem::build (){
 				}
 
 				//then write each column as a full new row in the file (which will cover multiple blocks)
-				float* fBuff_horiz = new float[nextInternalNode];
+				float fBuff_horiz[nextInternalNode];
 				int ry;
 				for (i=firstColInMem; i<curColInMem; i++ ) { // for each new column
 					//write distances from the memD into a buffer,

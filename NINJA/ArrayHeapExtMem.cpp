@@ -13,10 +13,91 @@ ArrayHeapExtMem::ArrayHeapExtMem(std::string dir, int* activeIJs){
 ArrayHeapExtMem::ArrayHeapExtMem(std::string dir, int* activeIJs, long sizeExp){
 	initialize ( dir, activeIJs, sizeExp);
 }
+void ArrayHeapExtMem::deleteAll(){ // same as the ~ArrayHeapExtMem(), but it does not destroy the object.
+	this->n = 0;
+	if (this->H1 != NULL) this->H1->makeEmpty();
+	if (this->H2 != NULL) this->H2->makeEmpty();
+
+	if (this->freeSlots != NULL){
+		freeSlots->clear();
+	}
+
+	if (this->perSlotIntBuffer!= NULL){
+		for(int i=0;i<this->maxLevels;i++){
+			if (this->perSlotIntBuffer[i] != NULL){
+				for(int j=0;j<this->numSlots;j++){
+					if (this->perSlotIntBuffer[i][j] != NULL)
+						delete[] this->perSlotIntBuffer[i][j];
+				}
+				delete[] this->perSlotIntBuffer[i];
+			}
+		}
+		delete[] this->perSlotIntBuffer;
+		this->perSlotIntBuffer = NULL;
+	}
+	if (bigBuffI != NULL){
+		delete[] this->bigBuffI;
+		this->bigBuffI = NULL;
+	}
+	if (bigBuffB != NULL){
+		delete[] this->bigBuffB;
+		this->bigBuffB = NULL;
+	}
+
+	if (cntMax != NULL){
+		delete[] this->cntMax;
+		this->cntMax = NULL;
+	}
+	if (buffI != NULL){
+		delete[] this->buffI;
+		this->buffI = NULL;
+	}
+	if (buffB != NULL){
+		delete[] this->buffB;
+		this->buffB = NULL;
+	}
+	if (this->slotNodeCnt != NULL){
+		for(int i=0;i<this->maxLevels;i++)
+			if (this->slotNodeCnt[i] != NULL)
+				delete[] this->slotNodeCnt[i];
+		delete[] this->slotNodeCnt;
+		this->slotNodeCnt = NULL;
+	}
+	if (this->cntOnHeap != NULL){
+		for(int i=0;i<this->maxLevels;i++)
+			if (this->cntOnHeap[i] != NULL)
+				delete[] this->cntOnHeap[i];
+		delete[] this->cntOnHeap;
+		this->cntOnHeap = NULL;
+	}
+	if (this->slotPositions != NULL){
+		for(int i=0;i<this->maxLevels;i++)
+			if (this->slotPositions[i] != NULL)
+				delete[] this->slotPositions[i];
+		delete[] this->slotPositions;
+		this->slotPositions = NULL;
+	}
+	if (this->slotBuffPos != NULL){
+		for(int i=0;i<this->maxLevels;i++)
+			if (this->slotBuffPos[i] != NULL)
+				delete[] this->slotBuffPos[i];
+		delete[] this->slotBuffPos;
+		this->slotBuffPos = NULL;
+	}
+
+	if (this->file!=NULL){
+		fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
+		fclose(this->file);
+		this->file = NULL;
+	}
+}
 ArrayHeapExtMem::~ArrayHeapExtMem(){
-	delete[] this->cntMax;
-	delete this->H1;
-	delete this->H2;
+	if (cntMax != NULL)
+		delete[] this->cntMax;
+	if (H1 != NULL)
+		delete this->H1;
+	if (H2 != NULL)
+		delete this->H2;
 	if (this->perSlotIntBuffer!= NULL){
 		for(int i=0;i<this->maxLevels;i++){
 			for(int j=0;j<this->numSlots;j++)
@@ -25,10 +106,14 @@ ArrayHeapExtMem::~ArrayHeapExtMem(){
 		}
 		delete[] this->perSlotIntBuffer;
 	}
-	delete[] this->buffI;
-	delete[] this->buffB;
-	delete[] this->bigBuffI;
-	delete[] this->bigBuffB;
+	if (buffI != NULL)
+		delete[] this->buffI;
+	if (buffB != NULL)
+		delete[] this->buffB;
+	if (bigBuffI != NULL)
+		delete[] this->bigBuffI;
+	if (bigBuffB != NULL)
+		delete[] this->bigBuffB;
 	if (this->slotNodeCnt != NULL){
 		delete[] this->slotNodeCnt;
 		for(int i=0;i<this->maxLevels;i++)
@@ -49,9 +134,10 @@ ArrayHeapExtMem::~ArrayHeapExtMem(){
 			delete[] this->slotBuffPos[i];
 		delete[] this->slotBuffPos;
 	}
-	if (this->file!=NULL)
+	if (this->file!=NULL){
 		fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
 		fclose(this->file);
+	}
 }
 
 void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
@@ -105,12 +191,12 @@ void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
 	this->cM = (int)(this->c*this->mem);
 	this->numSlots = (int)((this->cM/this->blockSize)-1);
 	this->numNodesPerBlock = this->blockSize/this->numFields;
-	this->numFieldsPerBlock = this->numNodesPerBlock*this->numFields;
+	this->numFieldsPerBlock = this->numNodesPerBlock*this->numFields; // note, this might not be blockSize, because of rounding.
 
 	prepare();
 }
 void ArrayHeapExtMem::prepare(){
-	clear();
+	clearAndInitialize();
 	if (this->H1 == NULL) this->H1 = new BinaryHeap_TwoInts(this->cM*2);
 	if (this->H2 == NULL) this->H2 = new BinaryHeap_FourInts();
 	if (this->perSlotIntBuffer== NULL){
@@ -160,7 +246,7 @@ void ArrayHeapExtMem::prepare(){
 
 	}
 }
-void ArrayHeapExtMem::clear(){
+void ArrayHeapExtMem::clearAndInitialize(){
 
 	this->n = 0;
 	if (this->H1 != NULL) this->H1->makeEmpty();
