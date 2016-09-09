@@ -165,8 +165,9 @@ void CandidateHeap::clear(){
 		delete[] prevActiveNode;
 		prevActiveNode = NULL;
 	}
+	/*
 	if (this->tb!=NULL){
 		delete this->tb;
 		tb = NULL;
-	}
+	}*/
 }
