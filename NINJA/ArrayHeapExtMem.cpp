@@ -86,7 +86,7 @@ void ArrayHeapExtMem::deleteAll(){ // same as the ~ArrayHeapExtMem(), but it doe
 	}
 
 	if (this->file!=NULL){
-		fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
+		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
 		fclose(this->file);
 		this->file = NULL;
 	}
@@ -135,7 +135,7 @@ ArrayHeapExtMem::~ArrayHeapExtMem(){
 		delete[] this->slotBuffPos;
 	}
 	if (this->file!=NULL){
-		fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
+		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
 		fclose(this->file);
 	}
 }
@@ -157,11 +157,8 @@ void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
 	this->file = NULL;
 	this->sortingHeap = NULL;
 
-
 	this->slotPairList = new std::vector<SlotPair*>();
 	this->freeSlots = new std::vector<std::list<int>*>();
-
-
 
 	this->A = -1;
 	this->B = -1;
@@ -228,10 +225,14 @@ void ArrayHeapExtMem::prepare(){
 			this->slotBuffPos[i] = new int[this->numSlots];
 	}
 
-	this->tmpDir += "arrayHeapExtMem";
+	this->tmpDir += "arrayHeap";
+
 	this->tempFile = fopen(this->tmpDir.c_str(), "w+");
 	if(this->tempFile == NULL) Exception::criticalErrno(this->tmpDir.c_str());
 	if (this->file == NULL) this->file = this->tempFile;
+	fclose(this->file);
+	this->file = NULL;
+	this->tempFile = NULL;
 
 
 	this->buffI = new int[this->numFieldsPerBlock];
@@ -379,6 +380,12 @@ int ArrayHeapExtMem::mergeLevels (int targetLevel, int* is, int* js, Float keys)
 		fprintf(stderr,"unexpected occurance: External Memory Array heap tried to write to a level > %d \n",maxLevels);
 		Exception::critical();
 	}
+
+
+	//open file for use
+	if (this->tempFile == NULL) this->tempFile = fopen(this->tmpDir.c_str(), "r+");
+	if (this->tempFile == NULL) Exception::criticalErrno(this->tmpDir.c_str());
+	if (this->file == NULL) this->file = this->tempFile;
 
 
 	int targetSlot = freeSlots->at(targetLevel)->front();
@@ -573,6 +580,14 @@ int ArrayHeapExtMem::mergeLevels (int targetLevel, int* is, int* js, Float keys)
 	slotNodeCnt[targetLevel][targetSlot] = newCnt;
 	cntOnHeap[targetLevel][targetSlot] = 0;
 	slotPositions[targetLevel][targetSlot] = 0;
+
+	//close file
+	if (this->file!=NULL){
+		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
+		fclose(this->file);
+		this->tempFile = NULL;
+		this->file = NULL;
+	}
 
 	return targetSlot;
 }
@@ -787,6 +802,10 @@ void ArrayHeapExtMem::load (int level, int slot){
 		return;
 	}
 
+	//open file for use
+	if (this->tempFile == NULL) this->tempFile = fopen(this->tmpDir.c_str(), "r+");
+	if (this->tempFile == NULL) Exception::criticalErrno(this->tmpDir.c_str());
+	if (this->file == NULL) this->file = this->tempFile;
 
 
 	//long basePos = cntMax[level] * numFields * 4 * slot;
@@ -823,9 +842,22 @@ void ArrayHeapExtMem::load (int level, int slot){
 		slotPositions[level][slot]++;
 	}
 
+	//close file
+	if (this->file!=NULL){
+		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
+		fclose(this->file);
+		this->tempFile = NULL;
+		this->file = NULL;
+	}
+
 }
 
 int ArrayHeapExtMem::store(int level, int* is, int* js, float* keys, int cnt){
+
+	//open file for use
+	if (this->tempFile == NULL) this->tempFile = fopen(this->tmpDir.c_str(), "r+");
+	if (this->tempFile == NULL) Exception::criticalErrno(this->tmpDir.c_str());
+	if (this->file == NULL) this->file = this->tempFile;
 
 	int freeSlot = freeSlots->at(level)->front();
 
@@ -856,6 +888,14 @@ int ArrayHeapExtMem::store(int level, int* is, int* js, float* keys, int cnt){
 	cntOnHeap[level][freeSlot] = 0;
 
 	slotNodeCnt[level][freeSlot] = cnt;
+
+	//close file
+	if (this->file!=NULL){
+		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
+		fclose(this->file);
+		this->tempFile = NULL;
+		this->file = NULL;
+	}
 
 	return freeSlot;
 }

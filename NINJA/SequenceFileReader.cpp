@@ -165,9 +165,15 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 	this->seqs = sequences;
 }
 SequenceFileReader::~SequenceFileReader(){
-	for(int i=0;i<this->seqSize;i++)
-		delete(this->names[i]);
-	delete[](this->names);
+	/*
+	if (this->names != NULL){
+		for(int i=0;i<this->seqSize;i++){
+			if (this->names[i] != NULL)
+				delete(this->names[i]);
+		}
+		delete[](this->names);
+	}
+	*/
 
 /*	for(int i=0;i<this->seqSize;i++)
 		delete(this->seqs[i]);

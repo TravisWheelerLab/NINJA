@@ -87,7 +87,7 @@ TreeBuilderExtMem::~TreeBuilderExtMem(){
 		prevActiveNode = NULL;
 	}
 	if (candFile!=NULL){
-		fprintf(stderr,"File deleted: TreeBuilderExtMem delete.\n");
+		//fprintf(stderr,"File deleted: TreeBuilderExtMem delete.\n");
 		fclose(candFile);
 	}
 	if (candHeapList!=NULL){
