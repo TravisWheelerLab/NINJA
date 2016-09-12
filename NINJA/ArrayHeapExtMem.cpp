@@ -89,6 +89,7 @@ void ArrayHeapExtMem::deleteAll(){ // same as the ~ArrayHeapExtMem(), but it doe
 		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
 		fclose(this->file);
 		this->file = NULL;
+		remove(this->fileName.c_str());
 	}
 }
 ArrayHeapExtMem::~ArrayHeapExtMem(){
@@ -137,6 +138,7 @@ ArrayHeapExtMem::~ArrayHeapExtMem(){
 	if (this->file!=NULL){
 		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
 		fclose(this->file);
+		remove(this->fileName.c_str());
 	}
 }
 
@@ -175,7 +177,15 @@ void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
 
 	this->active = activeIJs;
 
-	this->tmpDir = dir;
+	char num[15];
+
+	sprintf(num, "%d",rand()); //TODO: I might have to improve the randomness of this number, if I receive any occurance of file creation error
+	if (dir == "")
+		this->tmpDir = "tmp/";
+	else
+		this->tmpDir = dir;
+
+	this->fileName = this->tmpDir + "arrayHeap" + num;
 
 	if (sizeExp >  pow(2, 22)  /*4MB*/) {
 		this->blockSize = 2048;
@@ -225,10 +235,8 @@ void ArrayHeapExtMem::prepare(){
 			this->slotBuffPos[i] = new int[this->numSlots];
 	}
 
-	this->tmpDir += "arrayHeap";
-
-	this->tempFile = fopen(this->tmpDir.c_str(), "w+");
-	if(this->tempFile == NULL) Exception::criticalErrno(this->tmpDir.c_str());
+	this->tempFile = fopen(this->fileName.c_str(), "w+");
+	if(this->tempFile == NULL) Exception::criticalErrno(this->fileName.c_str());
 	if (this->file == NULL) this->file = this->tempFile;
 	fclose(this->file);
 	this->file = NULL;
@@ -383,8 +391,8 @@ int ArrayHeapExtMem::mergeLevels (int targetLevel, int* is, int* js, Float keys)
 
 
 	//open file for use
-	if (this->tempFile == NULL) this->tempFile = fopen(this->tmpDir.c_str(), "r+");
-	if (this->tempFile == NULL) Exception::criticalErrno(this->tmpDir.c_str());
+	if (this->tempFile == NULL) this->tempFile = fopen(this->fileName.c_str(), "r+");
+	if (this->tempFile == NULL) Exception::criticalErrno(this->fileName.c_str());
 	if (this->file == NULL) this->file = this->tempFile;
 
 
@@ -803,8 +811,8 @@ void ArrayHeapExtMem::load (int level, int slot){
 	}
 
 	//open file for use
-	if (this->tempFile == NULL) this->tempFile = fopen(this->tmpDir.c_str(), "r+");
-	if (this->tempFile == NULL) Exception::criticalErrno(this->tmpDir.c_str());
+	if (this->tempFile == NULL) this->tempFile = fopen(this->fileName.c_str(), "r+");
+	if (this->tempFile == NULL) Exception::criticalErrno(this->fileName.c_str());
 	if (this->file == NULL) this->file = this->tempFile;
 
 
@@ -818,7 +826,7 @@ void ArrayHeapExtMem::load (int level, int slot){
 	int sizeRead = fread(buffI,sizeof(int),this->numFieldsPerBlock,file);
 	//Arrays.byteToInt(buffB, buffI);
 	if (sizeRead == 0){
-		Exception::criticalErrno(this->tmpDir.c_str());
+		Exception::criticalErrno(this->fileName.c_str());
 	}
 
 	long endPos = slotPositions[level][slot] + numNodesPerBlock;
@@ -855,8 +863,8 @@ void ArrayHeapExtMem::load (int level, int slot){
 int ArrayHeapExtMem::store(int level, int* is, int* js, float* keys, int cnt){
 
 	//open file for use
-	if (this->tempFile == NULL) this->tempFile = fopen(this->tmpDir.c_str(), "r+");
-	if (this->tempFile == NULL) Exception::criticalErrno(this->tmpDir.c_str());
+	if (this->tempFile == NULL) this->tempFile = fopen(this->fileName.c_str(), "r+");
+	if (this->tempFile == NULL) Exception::criticalErrno(this->fileName.c_str());
 	if (this->file == NULL) this->file = this->tempFile;
 
 	int freeSlot = freeSlots->at(level)->front();
@@ -880,7 +888,7 @@ int ArrayHeapExtMem::store(int level, int* is, int* js, float* keys, int cnt){
 
 	fseek(file,basePos,SEEK_SET);
 	int sizeWritten = fwrite(bI,sizeof(int),cnt * numFields,file);
-	if(sizeWritten==0) Exception::criticalErrno(this->tmpDir.c_str());
+	if(sizeWritten==0) Exception::criticalErrno(this->fileName.c_str());
 
 	delete[] bI;
 

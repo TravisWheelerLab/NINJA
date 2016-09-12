@@ -26,7 +26,11 @@ class Node {
 			this->key = key;
 		}
 
-		Node() {}
+		Node() {
+			this->i = 0;
+			this->j = 0;
+			this->key = 0.0;
+		}
 };
 class SlotPair{
 	public:
@@ -55,9 +59,11 @@ class ArrayHeapExtMem {
 		~ArrayHeapExtMem();
 
 		std::string tmpDir; //path to directory
+		std::string fileName; //path to directory
 
 		static const bool chopBottom = true;
 		static const bool trimInactiveFromHeapArray = true;
+		static int numArrays;
 
 		int A;
 		int B;

@@ -143,7 +143,6 @@ void CandidateHeap::calcDeltaValues (int newK) {
 }
 void CandidateHeap::clear(){
 
-	//TODO: fix
 	ArrayHeapExtMem::deleteAll();
 	if (rPrimes!=NULL){
 		delete[] rPrimes;
