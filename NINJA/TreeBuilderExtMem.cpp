@@ -77,7 +77,6 @@ TreeBuilderExtMem::TreeBuilderExtMem (std::string** names, int namesSize, float 
 	clusterAndHeap(this->K);
 }
 TreeBuilderExtMem::~TreeBuilderExtMem(){
-	//TODO: fix
 	if (nextActiveNode!=NULL){
 		delete[] nextActiveNode;
 		nextActiveNode = NULL;
@@ -95,14 +94,16 @@ TreeBuilderExtMem::~TreeBuilderExtMem(){
 			if (this->candHeapList->at(i)!=NULL)
 				this->candHeapList->at(i)->clear();
 		this->candHeapList->clear();
+		this->candHeapList = NULL;
 	}
 	if (this->arrayHeaps != NULL){
 		for(int i=0;i<this->clustCnt;i++){
 			for(int j=0;j<this->clustCnt;j++)
 				delete this->arrayHeaps[i][j];
-			delete this->arrayHeaps[i];
+			delete[] this->arrayHeaps[i];
 		}
-		delete this->arrayHeaps;
+		delete[] this->arrayHeaps;
+		this->arrayHeaps = NULL;
 	}
 	if(this->names != NULL){
 		delete[] this->names;

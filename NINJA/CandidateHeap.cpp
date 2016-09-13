@@ -29,11 +29,11 @@ void CandidateHeap::initialize (int kPrime, TreeBuilderExtMem *tb) {
 	this->tb = tb;
 	this->kPrime = kPrime;
 	rowCounts = new int[tb->nextInternalNode+1]();
-	rDeltas = new float[tb->nextInternalNode+1];
-	nextActiveNode = new int[tb->nextInternalNode+1];
-	prevActiveNode = new int[tb->nextInternalNode+1];
+	rDeltas = new float[tb->nextInternalNode+1]();
+	nextActiveNode = new int[tb->nextInternalNode+1]();
+	prevActiveNode = new int[tb->nextInternalNode+1]();
 
-	rPrimes = new float[tb->RSize];
+	rPrimes = new float[tb->RSize]();
 	for (int i=0; i< tb->RSize; i++ ) {
 		rPrimes[i] = tb->R[i];
 	}
@@ -70,7 +70,7 @@ void CandidateHeap::buildNodeList () {
 
 void CandidateHeap::removeMin(){
 	HeapReturn x = ArrayHeapExtMem::getBinaryHeapWithMin();
-	int i,j;
+	int i = 0,j = 0;
 	if(x.which){
 		BinaryHeap_FourInts* H = (BinaryHeap_FourInts*)x.h;
 		i = H->heap->front().first;
@@ -82,7 +82,7 @@ void CandidateHeap::removeMin(){
 	}
 
 
-	int prev, next;
+	int prev = 0, next = 0;
 	if (--rowCounts[i] == 0) { // compact list
 		representedRowCount--;
 		prev = prevActiveNode[i];
