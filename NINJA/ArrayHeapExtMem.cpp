@@ -7,6 +7,14 @@
 
 #include "ArrayHeapExtMem.hpp"
 
+#define LINUX 1
+
+#ifdef LINUX
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
+
 ArrayHeapExtMem::ArrayHeapExtMem(std::string dir, int* activeIJs){
 	initialize ( dir, activeIJs, (long)pow(2,21));
 }
@@ -89,8 +97,8 @@ void ArrayHeapExtMem::deleteAll(){ // same as the ~ArrayHeapExtMem(), but it doe
 		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
 		fclose(this->file);
 		this->file = NULL;
-		remove(this->fileName.c_str());
 	}
+	remove(this->fileName.c_str());
 }
 ArrayHeapExtMem::~ArrayHeapExtMem(){
 	if (cntMax != NULL)
@@ -138,8 +146,8 @@ ArrayHeapExtMem::~ArrayHeapExtMem(){
 	if (this->file!=NULL){
 		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
 		fclose(this->file);
-		remove(this->fileName.c_str());
 	}
+	remove(this->fileName.c_str());
 }
 
 void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
@@ -184,6 +192,8 @@ void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
 		this->tmpDir = "tmp/";
 	else
 		this->tmpDir = dir;
+
+    mkdir(this->tmpDir.c_str(), 0700);
 
 	this->fileName = this->tmpDir + "arrayHeap" + num;
 
@@ -1196,5 +1206,6 @@ bool ArrayHeapExtMem::test(bool verbose){
 		printf("Array Heap ExtMem test failed... \n");
 
 	delete[] vals;
+	delete h;
 	return isOk;
 }
