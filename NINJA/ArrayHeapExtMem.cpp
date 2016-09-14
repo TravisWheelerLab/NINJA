@@ -101,53 +101,7 @@ void ArrayHeapExtMem::deleteAll(){ // same as the ~ArrayHeapExtMem(), but it doe
 	remove(this->fileName.c_str());
 }
 ArrayHeapExtMem::~ArrayHeapExtMem(){
-	if (cntMax != NULL)
-		delete[] this->cntMax;
-	if (H1 != NULL)
-		delete this->H1;
-	if (H2 != NULL)
-		delete this->H2;
-	if (this->perSlotIntBuffer!= NULL){
-		for(int i=0;i<this->maxLevels;i++){
-			for(int j=0;j<this->numSlots;j++)
-				delete[] this->perSlotIntBuffer[i][j];
-			delete[] this->perSlotIntBuffer[i];
-		}
-		delete[] this->perSlotIntBuffer;
-	}
-	if (buffI != NULL)
-		delete[] this->buffI;
-	if (buffB != NULL)
-		delete[] this->buffB;
-	if (bigBuffI != NULL)
-		delete[] this->bigBuffI;
-	if (bigBuffB != NULL)
-		delete[] this->bigBuffB;
-	if (this->slotNodeCnt != NULL){
-		delete[] this->slotNodeCnt;
-		for(int i=0;i<this->maxLevels;i++)
-			delete[] this->slotNodeCnt[i];
-	}
-	if (this->cntOnHeap != NULL){
-		for(int i=0;i<this->maxLevels;i++)
-			delete[] this->cntOnHeap[i];
-		delete[] this->cntOnHeap;
-	}
-	if (this->slotPositions != NULL){
-		for(int i=0;i<this->maxLevels;i++)
-			delete[] this->slotPositions[i];
-		delete[] this->slotPositions;
-	}
-	if (this->slotBuffPos != NULL){
-		for(int i=0;i<this->maxLevels;i++)
-			delete[] this->slotBuffPos[i];
-		delete[] this->slotBuffPos;
-	}
-	if (this->file!=NULL){
-		//fprintf(stderr,"File deleted: ArrayHeapExtMem delete.\n");
-		fclose(this->file);
-	}
-	remove(this->fileName.c_str());
+	deleteAll();
 }
 
 void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
