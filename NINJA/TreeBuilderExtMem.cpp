@@ -313,10 +313,10 @@ TreeNode** TreeBuilderExtMem::build (){
 
 	float minQ, q, qLimit, minD;
 
-	int* maxT1 = new int[this->clustCnt];
-	int* maxT2 = new int[this->clustCnt];
-	float* maxT1val = new float[this->clustCnt];
-	float* maxT2val = new float[this->clustCnt];
+	int* maxT1 = new int[this->clustCnt]();
+	int* maxT2 = new int[this->clustCnt]();
+	float* maxT1val = new float[this->clustCnt]();
+	float* maxT2val = new float[this->clustCnt]();
 
 	int stepsUntilRebuild = TreeBuilder::rebuildSteps;
 
@@ -327,8 +327,8 @@ TreeNode** TreeBuilderExtMem::build (){
 	CandidateHeap *cHeap;
 
 
-	float* fBuff_i = new float[this->memDSize];
-	float* fBuff_j = new float[this->memDSize];
+	float* fBuff_i = new float[this->memDSize]();
+	float* fBuff_j = new float[this->memDSize]();
 
 
 	//try {
@@ -370,7 +370,6 @@ TreeNode** TreeBuilderExtMem::build (){
 			float maxTSum;
 			int inactiveCnt = 0;
 			if (!returnCandsToHeaps) {
-				std::tr1::unordered_set<int> *hash = new std::tr1::unordered_set<int>();
 				for (x=lastCandidateIndex; x>=0; x--) {
 					if (!candidatesActive[x]) {
 						inactiveCnt++;
@@ -379,9 +378,6 @@ TreeNode** TreeBuilderExtMem::build (){
 
 					ri = redirect[candidatesI[x]];
 					rj = redirect[candidatesJ[x]];
-
-					hash->insert(ri);
-					hash->insert(rj);
 
 					if (rj == -1 || ri == -1 /*leftovers from prior seqs redirected to this position*/) {
 						candidatesActive[x] = false; // dead node ... can safely remove, 'cause we're going backwards through the list
@@ -407,7 +403,6 @@ TreeNode** TreeBuilderExtMem::build (){
 				}
 
 				candidateViewsPerLoop[K-newK] = candidateCountPerLoop[K-newK] = lastCandidateIndex-inactiveCnt+1;
-				candidateRowsCountPerLoop[K-newK] = hash->size(); // This is used only for verbose.
 
 				if (useCandHeaps) {
 					for (int i=0;i<(int)candHeapList->size();i++) {
@@ -504,11 +499,11 @@ TreeNode** TreeBuilderExtMem::build (){
 							if ( cHeap->k_over_kprime * qPrime + cHeap->minDeltaSum  < minQ) { // "key" hold the q_prime value (q at time of insertion to candidate list)
 
 								if(which){
-									i = qPrime = H2->heap->front().first;
-									j = qPrime = H2->heap->front().second;
+									i = H2->heap->front().first;
+									j = H2->heap->front().second;
 								}else{
-									i = qPrime = H->heap->front().first;
-									j = qPrime = H->heap->front().second;
+									i = H->heap->front().first;
+									j = H->heap->front().second;
 								}
 								ri = redirect[i];
 								rj = redirect[j];
