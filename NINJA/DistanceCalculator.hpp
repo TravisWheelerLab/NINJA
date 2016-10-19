@@ -40,6 +40,7 @@ class DistanceCalculator{
 		int numberOfSequences;
 		int lengthOfSequences;
 
+		//TODO: set this as true only if it has support for SSE3
 		const bool newCalculation = true;
 
 
@@ -70,12 +71,14 @@ class DistanceCalculator{
 
 		double newCalcDNA(int a, int b);
 
+		double newCalcProtein(int a, int b);
+
 		void convertAllDNA();
 		void convertAllProtein();
 
 		void getBitsDNA(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut);
 
-		void getBitsProtein(char* seq, int* size, unsigned int *seqOut);
+		void getBitsProtein(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut);
 
 		unsigned int* getProteinDic(std::string alph, int length);
 
