@@ -45,8 +45,6 @@ class DistanceCalculator{
 
 
 		double calc (int a, int b);
-		inline void count128(register __m128i &seq1, register __m128i &seq2, register __m128i &gap1, register __m128i &gap2, register __m128i &tmp, register __m128i &tmp2, register __m128i &tmp3, register __m128i &count_transversions, register __m128i &count_transitions, register __m128i &count_gaps);
-
 		int* getInverseAlphabet (std::string alph, int length);
 
 
@@ -67,7 +65,11 @@ class DistanceCalculator{
 	private:
 		int *inv_alph;
 
-		int* inv_alph_new;
+		int protein_dict[128];
+
+		inline void count128(register __m128i &seq1, register __m128i &seq2, register __m128i &gap1, register __m128i &gap2, register __m128i &tmp, register __m128i &tmp2, register __m128i &tmp3, register __m128i &count_transversions, register __m128i &count_transitions, register __m128i &count_gaps);
+		inline void count128P(register __m128i &seq1, register __m128i &seq2, register __m128i &gap1, register __m128i &gap2, register __m128i &tmp, register __m128i &tmp2, register __m128i &tmp3, register __m128i &count_equal);
+
 
 		double newCalcDNA(int a, int b);
 
@@ -78,7 +80,8 @@ class DistanceCalculator{
 
 		void getBitsDNA(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut);
 
-		void getBitsProtein(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut);
+		void generateProteinClusterDict(int* protein_dictionary);
+		void getBitsProteinClustered(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut);
 
 		unsigned int* getProteinDic(std::string alph, int length);
 
