@@ -22,9 +22,9 @@ class DistanceReaderExtMem {
 		float** inD = NULL;
 		DistanceCalculator* distCalc = NULL;
 
-		int read (std::string** names, float* R, FILE* diskD, float** memD, int rowLength,  int pageBlockSize);
+		int read  (std::string** names, float* R, FILE* diskD, float** memD, int memDRowsize, int rowLength,  int pageBlockSize);
 
 	private:
-		float atof (char* in, int end);
+		float atoi (char* in, int end);
 
 };

@@ -31,90 +31,127 @@ TreeBuilderExtMem::TreeBuilderExtMem (std::string** names, int namesSize, float 
 	this->njTmpDir = njTmpDir;
 	this->names = names;
 	this->diskD = diskD;
+	this->candFile = NULL;
 	this->memD = memD;
 	this->maxMemory = maxMemory;
 
-	memDSize = memDFirstSize;
-	fBuff = new float[memDSize];
+	this->memDSize = memDFirstSize;
+	this->fBuff = new float[this->memDSize];
 
 
 	this->R = R;
+	this->RSize = namesSize;
 
-	nextInternalNode = K = namesSize;
+	this->nextInternalNode = this->K = namesSize;
 
-	curColInMem = firstColInMem = firstMemCol; //K;
+	this->curColInMem = this->firstColInMem = firstMemCol; //K;
 
-	candidateCountPerLoop = new int[K-1];
-	candidateViewsPerLoop = new int[K-1];
-	candidateRowsCountPerLoop = new int[K-1];
-	redirect = new int[2*K-1];
-	nodes = new TreeNode*[2*K-1];
+	this->candidateCountPerLoop = new int[this->K-1];
+	this->candidateViewsPerLoop = new int[this->K-1];
+	this->candidateRowsCountPerLoop = new int[this->K-1];
+	this->redirect = new int[2*this->K-1];
+	this->nodes = new TreeNode*[2*this->K-1];
 
 	int i;
 
-	for (i=0; i<K; i++) {
-		redirect[i] = i;
-		nodes[i] = new TreeNode(names[i]);
+	for (i=0; i<this->K; i++) {
+		this->redirect[i] = i;
+		this->nodes[i] = new TreeNode(names[i]);
 	}
 
-	for (i=K; i<2*K-1; i++) {
-		redirect[i] = -1;
-		nodes[i] = new TreeNode();
+	for (i=this->K; i<2*this->K-1; i++) {
+		this->redirect[i] = -1;
+		this->nodes[i] = new TreeNode();
 	}
 
-	firstActiveNode = 0;
-	nextActiveNode = new int[2*K-1];
-	prevActiveNode = new int[2*K-1];
-	for ( i=0; i<2*K-1; i++) {
-		nextActiveNode[i] = i+1;
-		prevActiveNode[i] = i-1;
+	this->firstActiveNode = 0;
+	this->nextActiveNode = new int[2*this->K-1];
+	this->prevActiveNode = new int[2*this->K-1];
+	for ( i=0; i<2*this->K-1; i++) {
+		this->nextActiveNode[i] = i+1;
+		this->prevActiveNode[i] = i-1;
 	}
 
-	newK = K;
+	this->newK = this->K;
 
-	clusterAndHeap(K);
+	clusterAndHeap(this->K);
+}
+TreeBuilderExtMem::~TreeBuilderExtMem(){
+	if (this->nextActiveNode!=NULL){
+		delete[] this->nextActiveNode;
+		this->nextActiveNode = NULL;
+	}
+	if (this->prevActiveNode!=NULL){
+		delete[] this->prevActiveNode;
+		this->prevActiveNode = NULL;
+	}
+	if (this->candFile!=NULL){
+		//fprintf(stderr,"File deleted: TreeBuilderExtMem delete.\n");
+		fclose(this->candFile);
+	}
+	if (this->candHeapList!=NULL){
+		for (int i=0;i<(signed)this->candHeapList->size();i++)
+			if (this->candHeapList->at(i)!=NULL)
+				this->candHeapList->at(i)->clear();
+		this->candHeapList->clear();
+		this->candHeapList = NULL;
+	}
+	if (this->arrayHeaps != NULL){
+		for(int i=0;i<this->clustCnt;i++){
+			for(int j=0;j<this->clustCnt;j++)
+				delete this->arrayHeaps[i][j];
+			delete[] this->arrayHeaps[i];
+		}
+		delete[] this->arrayHeaps;
+		this->arrayHeaps = NULL;
+	}
+	if(this->names != NULL){
+		delete[] this->names;
+	}
+	if(this->nodes != NULL){
+		delete[] this->nodes;
+	}
 }
 void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 
-	if (candidatesD == NULL) {
-		candidatesD = new float[10000];
-		candidatesI = new int[10000];
-		candidatesJ = new int[10000];
-		freeCandidates = new Stack();
-		candidatesActive = new bool[10000];
+	if (this->candidatesD == NULL) {
+		this->candidatesD = new float[10000];
+		this->candidatesI = new int[10000];
+		this->candidatesJ = new int[10000];
+		this->freeCandidates = new Stack();
+		this->candidatesActive = new bool[10000];
 
 		this->candidatesSize = 10000;
 	} else { //else - must already be created.  Just keep it the same size
-		if (useCandHeaps) freeCandidates->clear();
+		if (this->useCandHeaps) this->freeCandidates->clear();
 	}
-	lastCandidateIndex = -1;
+	this->lastCandidateIndex = -1;
 
 
-	if (useCandHeaps) {
-		if (candHeapList == NULL) {
-			candHeapList = new std::vector<CandidateHeap*>();
+	if (this->useCandHeaps) {
+		if (this->candHeapList == NULL) {
+			this->candHeapList = new std::vector<CandidateHeap*>();
 		} else {
 /*			if (TreeBuilder.verbose >= 2 && candHeapListsize() > 0){
 				LogWriter.stdErrLogln("Cleared candidate heap list when K = " + (2 * K - nextInternalNode));
 			}*/
 
-			for (int i=0;i<(signed)candHeapList->size();i++)
-				candHeapList->at(i)->clear();
-			candHeapList->clear();
+			for (int i=0;i<(signed)this->candHeapList->size();i++)
+				this->candHeapList->at(i)->clear();
+			this->candHeapList->clear();
 		}
 	}
 
 	int i,j, ri, rj;
 
-	if (!useBinPairHeaps) { // just using candidate heaps
+	if (!this->useBinPairHeaps) { // just using candidate heaps
 
-		//starterCandHeap = new CandidateHeap(njTmpDir, NULL, newK, this, 29 /* 1/2 GB */);
-		starterCandHeap = new CandidateHeap(njTmpDir, NULL, newK, this, maxMemory/4);
+		this->starterCandHeap = new CandidateHeap(this->njTmpDir, NULL, this->newK, this, this->maxMemory/4);
 
 	} else { // useBinPairHeapsHeaps
 
 		// pick clusters
-		this->clustAssignments = new int[this->K](); //TODO: debug: come back here if needed
+		this->clustAssignments = new int[this->K]();
 
 		long maxT = 0;
 		long minT = FLT_MAX;
@@ -126,7 +163,7 @@ void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 			if (this->R[ri] < minT) minT = this->R[ri];
 			i=this->nextActiveNode[i];
 		}
-		this->clustMins = new float[clustCnt];
+		this->clustMins = new float[clustCnt]();
 		this->clustMaxes = new float[this->clustCnt];
 		float seedTRange = maxT - minT;
 		for (i=0; i<this->clustCnt-1; i++) {
@@ -170,52 +207,49 @@ void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 		}
 
 
-		for (i=0; i<clustCnt; i++) {
-			for (j=i; j<clustCnt; j++) {
-				if (arrayHeaps[i][j] != NULL) {
-					arrayHeaps[i][j]->prepare();
+		for (i=0; i<this->clustCnt; i++) {
+			for (j=i; j<this->clustCnt; j++) {
+				if (this->arrayHeaps[i][j] != NULL) {
+					this->arrayHeaps[i][j]->prepare();
 				} else {
-					arrayHeaps[i][j] = new ArrayHeapExtMem(njTmpDir, redirect, maxMemory/666 /*that's about 3MB if mem is 2GB*/);
-					arrayHeaps[i][j]->A = i;
-					arrayHeaps[i][j]->B = j;
+					this->arrayHeaps[i][j] = new ArrayHeapExtMem(this->njTmpDir, this->redirect, this->maxMemory/666 /*that's about 3MB if mem is 2GB*/);
+					this->arrayHeaps[i][j]->A = i;
+					this->arrayHeaps[i][j]->B = j;
 				}
 			}
 		}
 	}
 
 	int cra=-1, crb=-1 ;
-	float d, q;
-	long diskPos;
-	int buffStart;
+	float d = 0.0, q = 0.0;
+	long diskPos = 0;
+	int buffStart = 0;
 
-	i=firstActiveNode;
-	int numLeft;
+	i=this->firstActiveNode;
+	int numLeft = 0;
 
-	//long cntr = 0;
 
 	while (i<maxIndex) {
-		ri = redirect[i];
-		buffStart = -memDSize; // get a new buffer
+		ri = this->redirect[i];
+		buffStart = -this->memDSize; // get a new buffer
 
-		j = nextActiveNode[i];
+		j = this->nextActiveNode[i];
 		while (j<maxIndex) {
-			rj = redirect[j];
+			rj = this->redirect[j];
 
-			if (useBinPairHeaps) {
-				if (clustAssignments[ri] < clustAssignments[rj]) {
-					cra = clustAssignments[ri];
-					crb = clustAssignments[rj];
+			if (this->useBinPairHeaps) {
+				if (this->clustAssignments[ri] < this->clustAssignments[rj]) {
+					cra = this->clustAssignments[ri];
+					crb = this->clustAssignments[rj];
 				} else {
-					cra = clustAssignments[rj];
-					crb = clustAssignments[ri];
+					cra = this->clustAssignments[rj];
+					crb = this->clustAssignments[ri];
 				}
 			}
 
 
-
-			//d = D[ra][rb-ra-1];  was this
-			if (j>=firstColInMem) {
-				d = memD[ri][j-firstColInMem];
+			if (j>=this->firstColInMem) {
+				d = this->memD[ri][j-this->firstColInMem];
 			} else {
 				if (j >= buffStart + memDSize) {
 					//read in next page;
@@ -262,7 +296,7 @@ void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 }
 TreeNode** TreeBuilderExtMem::build (){
 
-	nextInternalNode = K;
+	this->nextInternalNode = this->K;
 
 	int cand_cnt = 0;
 	int defunct_cnt = 0;
@@ -279,51 +313,51 @@ TreeNode** TreeBuilderExtMem::build (){
 
 	float minQ, q, qLimit, minD;
 
-	int* maxT1 = new int[clustCnt];
-	int* maxT2 = new int[clustCnt];
-	float* maxT1val = new float[clustCnt];
-	float* maxT2val = new float[clustCnt];
+	int* maxT1 = new int[this->clustCnt]();
+	int* maxT2 = new int[this->clustCnt]();
+	float* maxT1val = new float[this->clustCnt]();
+	float* maxT2val = new float[this->clustCnt]();
 
 	int stepsUntilRebuild = TreeBuilder::rebuildSteps;
 
 	if ( stepsUntilRebuild == -1 ) stepsUntilRebuild = (int)(K * TreeBuilder::rebuildStepRatio);
 	if ( stepsUntilRebuild < 500 )
-		stepsUntilRebuild = K; //don't bother rebuilding for tiny trees
+		stepsUntilRebuild = this->K; //don't bother rebuilding for tiny trees
 
 	CandidateHeap *cHeap;
 
 
-	float* fBuff_i = new float[memDSize];
-	float* fBuff_j = new float[memDSize];
+	float* fBuff_i = new float[this->memDSize]();
+	float* fBuff_j = new float[this->memDSize]();
 
 
 	//try {
-		while (nextInternalNode<2*K-1) {// until there are 3 left ... at which point the merging is obvious
+		while (this->nextInternalNode<2*this->K-1) {// until there are 3 left ... at which point the merging is obvious
 
-			usingSimpleCandidates = true;
+			this->usingSimpleCandidates = true;
 
 			//get two biggest T values for each cluster maxT1[] and maxT2[]
-			if (useBinPairHeaps) {
+			if (this->useBinPairHeaps) {
 				for (i=0; i<clustCnt; i++) {
 					maxT1[i] = maxT2[i] = -1;
 					maxT1val[i] = maxT2val[i] = FLT_MIN;
 				}
-				x=firstActiveNode;
-				while (x < nextInternalNode) {
-					rx = redirect[x];
-					cluster = clustAssignments[rx];
-					if (R[rx] > maxT2val[cluster]){
-						if (R[rx] > maxT1val[cluster]){
+				x=this->firstActiveNode;
+				while (x < this->nextInternalNode) {
+					rx = this->redirect[x];
+					cluster = this->clustAssignments[rx];
+					if (this->R[rx] > maxT2val[cluster]){
+						if (this->R[rx] > maxT1val[cluster]){
 							maxT2val[cluster] = maxT1val[cluster];
-							maxT1val[cluster] = R[rx];
+							maxT1val[cluster] = this->R[rx];
 							maxT2[cluster] = maxT1[cluster];
 							maxT1[cluster] = rx;
 						} else {
-							maxT2val[cluster] = R[rx];
+							maxT2val[cluster] = this->R[rx];
 							maxT2[cluster] = rx;
 						}
 					}
-					x = nextActiveNode[x];
+					x = this->nextActiveNode[x];
 				}
 			}
 
@@ -336,7 +370,6 @@ TreeNode** TreeBuilderExtMem::build (){
 			float maxTSum;
 			int inactiveCnt = 0;
 			if (!returnCandsToHeaps) {
-				std::tr1::unordered_set<int> *hash = new std::tr1::unordered_set<int>();
 				for (x=lastCandidateIndex; x>=0; x--) {
 					if (!candidatesActive[x]) {
 						inactiveCnt++;
@@ -345,9 +378,6 @@ TreeNode** TreeBuilderExtMem::build (){
 
 					ri = redirect[candidatesI[x]];
 					rj = redirect[candidatesJ[x]];
-
-					hash->insert(ri);
-					hash->insert(rj);
 
 					if (rj == -1 || ri == -1 /*leftovers from prior seqs redirected to this position*/) {
 						candidatesActive[x] = false; // dead node ... can safely remove, 'cause we're going backwards through the list
@@ -362,7 +392,6 @@ TreeNode** TreeBuilderExtMem::build (){
 					} else {
 						q = candidatesD[x] * (newK-2) - R[ri] - R[rj];
 
-						//System.err.println("A: " + candidatesI[x] + ", " + candidatesJ[x] + ": " + q);
 
 						if (q <= minQ) {
 							min_i = candidatesI[x];
@@ -374,7 +403,6 @@ TreeNode** TreeBuilderExtMem::build (){
 				}
 
 				candidateViewsPerLoop[K-newK] = candidateCountPerLoop[K-newK] = lastCandidateIndex-inactiveCnt+1;
-				candidateRowsCountPerLoop[K-newK] = hash->size();
 
 				if (useCandHeaps) {
 					for (int i=0;i<(int)candHeapList->size();i++) {
@@ -471,11 +499,11 @@ TreeNode** TreeBuilderExtMem::build (){
 							if ( cHeap->k_over_kprime * qPrime + cHeap->minDeltaSum  < minQ) { // "key" hold the q_prime value (q at time of insertion to candidate list)
 
 								if(which){
-									i = qPrime = H2->heap->front().first;
-									j = qPrime = H2->heap->front().second;
+									i = H2->heap->front().first;
+									j = H2->heap->front().second;
 								}else{
-									i = qPrime = H->heap->front().first;
-									j = qPrime = H->heap->front().second;
+									i = H->heap->front().first;
+									j = H->heap->front().second;
 								}
 								ri = redirect[i];
 								rj = redirect[j];
@@ -861,10 +889,6 @@ TreeNode** TreeBuilderExtMem::build (){
 			}
 
 
-/*			if (TreeBuilder.verbose >= 3) {
-				LogWriter.stdErrLogln("(extmem) next node: " + nextInternalNode + ": " + min_i + "(" + ri +") , " + min_j + "(" + rj + ") Q = " + minQ + " (" + cand_cnt + " cands; " + defunct_cnt +  " defunct);  R[" + ri + "] = " + R[ri] );
-				LogWriter.stdErrLogln("     lengths: " + nodes[min_i].length + ", " + nodes[min_j].length );
-			}*/
 
 			redirect[nextInternalNode] = ri;
 
@@ -888,7 +912,7 @@ TreeNode** TreeBuilderExtMem::build (){
 				}
 
 				//then write each column as a full new row in the file (which will cover multiple blocks)
-				float* fBuff_horiz = new float[nextInternalNode];
+				float fBuff_horiz[nextInternalNode];
 				int ry;
 				for (i=firstColInMem; i<curColInMem; i++ ) { // for each new column
 					//write distances from the memD into a buffer,
@@ -996,101 +1020,6 @@ TreeNode** TreeBuilderExtMem::build (){
 				firstColInMem = curColInMem;
 
 		}
-	//} catch (Exception e){
-/*
-		LogWriter.stdErrLogln("\n\nException caught while building tree ");
-	//			LogWriter.stdErrLogln("building node: " + nextInternalNode + ", checkpoint: " + checkpoint );
-		e.printStackTrace();
-*/
-
-		//throw e;
-	/*} catch (OutOfMemoryError e){
-		LogWriter.stdErrLogln("\n\nOut of memory error !!! ");
-	//			LogWriter.stdErrLogln("building node: " + nextInternalNode + ", checkpoint: " + checkpoint );
-
-		LogWriter.stdErrLogln("candidate array sizes : " + candidatesActive.length + ", " +
-				"last cand index = " + lastCandidateIndex + ", freeCands stack size " +  freeCandidates.capacity() );
-
-
-		throw e;
-	*///}
-
-/*	if (TreeBuilder.verbose >= 1) {
-		LogWriter.stdErrLogln(cand_cnt + " candidates added");
-		LogWriter.stdErrLogln(defunct_cnt + " defunct nodes removed");
-	}*/
-
-	/*if (TreeBuilder.verbose >= 2) {
-		long max_cnt = 0;
-		long max_cnt_iter = 0;
-		long views_at_max_count = 0;
-		long max_views = 0;
-		long max_views_iter = 0;
-		long count_at_max_views = 0;
-		float max_cnt_ratio = 0;
-		float max_view_ratio = 0;
-		long sum_possible = 0;
-		long sum_cnt = 0;
-		long sum_views = 0;
-		float cntPerRowMax = 0;
-		long row_sum_cnt = 0;
-		long max_rowCnt = 0;
-		for (i=1; i<candidateCountPerLoop.length; i++) {
-
-
-			long rowCnt = candidateRowsCountPerLoop[i];
-			long views = candidateViewsPerLoop[i];
-
-			long cnt = candidateCountPerLoop[i];
-			if (cnt > max_cnt) {
-				max_cnt = cnt;
-				max_rowCnt = rowCnt;
-				max_cnt_iter = i;
-				views_at_max_count = views;
-				cntPerRowMax = (float)cnt / rowCnt;
-			}
-			sum_cnt += cnt;
-			row_sum_cnt += rowCnt;
-
-
-			if (views > max_views) {
-				max_views = views;
-				max_views_iter = i;
-				count_at_max_views = cnt;
-			}
-			sum_views += views;
-
-
-
-			long all_pairs_cnt = ( (K-i) * (K-i-1) / 2 ) ;
-			sum_possible += all_pairs_cnt;
-
-			float cnt_ratio = (float)cnt / all_pairs_cnt;
-			if (cnt_ratio>max_cnt_ratio) max_cnt_ratio = cnt_ratio;
-
-			float view_ratio = (float)cnt / all_pairs_cnt;
-			if (view_ratio>max_view_ratio) max_view_ratio = view_ratio;
-
-		}
-
-		LogWriter.stdErrLogln("max # candidates: " + max_cnt + " with " + max_rowCnt + " rows represtented, at iteration " + max_cnt_iter + " of " + candidateCountPerLoop.length + ", with " + views_at_max_count + " viewed");
-		LogWriter.stdErrLogln("max # candidates: " + max_views + ", at iteration " + max_views_iter + ", with " + count_at_max_views + " total");
-		LogWriter.stdErrLogln( "max ratio of candidates to possible pairs: " + String.format("%.8f", (float)max_cnt_ratio/100) + "%");
-		LogWriter.stdErrLogln( "max ratio of viewed candidates to possible pairs: " + String.format("%.8f", (float)max_view_ratio/100) + "%");
-
-		LogWriter.stdErrLogln("average # candidates: " + (sum_cnt/(K-4)) );
-		LogWriter.stdErrLogln("average # views: " + (sum_views/(K-4)) );
-		LogWriter.stdErrLogln("total # candidates: " + sum_cnt + "  ( of " + sum_possible + " possible), with " + sum_views + " viewed");
-
-		LogWriter.stdErrLogln("avg ratio of candidates to possible pairs: " + String.format("%.8f", ((float)sum_cnt/sum_possible)/100 ) + "%");
-		LogWriter.stdErrLogln("avg ratio of viewed candidates to possible pairs: " + String.format("%.8f", ((float)sum_views/sum_possible)/100 ) + "%");
-
-
-		LogWriter.stdErrLogln("avg number of candidates per row represented in candidates list: " + String.format("%.1f", ((float)sum_cnt/row_sum_cnt) ) );
-		LogWriter.stdErrLogln("number of candidates per row represented in candidates list, for max cand size: " + String.format("%.1f", cntPerRowMax ) );
-
-	}
-*/
 
 	return nodes;
 

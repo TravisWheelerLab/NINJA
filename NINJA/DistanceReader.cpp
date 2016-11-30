@@ -87,8 +87,9 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
     unsigned int begin = 0, end = 0, numBegin = 0, numEnd = 0;
     int count = 0;
 
-
+    omp_set_num_threads(omp_get_max_threads());
     if (this->distCalc != NULL) {//using distCalc on input alignment
+		#pragma omp parallel for
     	for (int i=0; i<this->K; i++)
     		for (int j=i+1; j<this->K; j++)
     			distances[i][j-i-1] = 100 * (int)(((100000000*this->distCalc->calc(i,j))+50)/100) ; // this gets the same rounding I have in the distance writer code

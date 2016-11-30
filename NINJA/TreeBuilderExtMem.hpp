@@ -21,6 +21,7 @@ class TreeBuilderExtMem {
 
 	public:
 		TreeBuilderExtMem (std::string** names, int namesSize, float *R, std::string njTmpDir, FILE* diskD, float** memD, int memDFirstSize, int firstMemCol, int rowLength, long maxMemory);
+		~TreeBuilderExtMem ();
 
 		int K;
 		std::string** names;
@@ -81,9 +82,11 @@ class TreeBuilderExtMem {
 
 		CandidateHeap* starterCandHeap;
 
-		std::vector<CandidateHeap*> *candHeapList;
+		std::vector<CandidateHeap*>* candHeapList;
 
 		bool usingSimpleCandidates;
+
+		float candidatesSize;
 
 		static const int floatSize = 4;
 		int rowLength;
@@ -91,6 +94,7 @@ class TreeBuilderExtMem {
 		long maxMemory;
 
 		TreeNode** build ();
+		void clear();
 	private:
 		void clusterAndHeap (int maxIndex );
 		void returnCandidates ();

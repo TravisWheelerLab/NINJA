@@ -10,6 +10,8 @@
 #define LINUX 1
 
 #ifdef LINUX
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #endif
 
@@ -80,12 +82,10 @@ std::string TreeBuilderManager::doJob(){
 		FILE* tempFile;
 		njTmpDir += "treeBuilderManager";
 
-
-		tempFile = fopen(njTmpDir.c_str(), "w+");
-		if(tempFile == NULL) Exception::criticalErrno(njTmpDir.c_str());
-
+	    mkdir(njTmpDir.c_str(), 0700);
 		fprintf(stderr,"created temporary directory for this run of NINJA : %s\n", njTmpDir.c_str());
 
+		this->njTmpDir += "/";
 
 		DistanceReaderExtMem* reader = NULL;
 

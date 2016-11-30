@@ -14,6 +14,9 @@ CandidateHeap::CandidateHeap(std::string dir, int* activeIJs, int kPrime, TreeBu
 CandidateHeap::CandidateHeap(std::string dir, int* activeIJs, int kPrime, TreeBuilderExtMem *tb) : ArrayHeapExtMem(dir,activeIJs){
 	initialize( kPrime, tb);
 }
+CandidateHeap::~CandidateHeap(){
+	clear();
+}
 
 void CandidateHeap::initialize (int kPrime, TreeBuilderExtMem *tb) {
 
@@ -25,12 +28,12 @@ void CandidateHeap::initialize (int kPrime, TreeBuilderExtMem *tb) {
 
 	this->tb = tb;
 	this->kPrime = kPrime;
-	rowCounts = new int[tb->nextInternalNode+1];
-	rDeltas = new float[tb->nextInternalNode+1];
-	nextActiveNode = new int[tb->nextInternalNode+1];
-	prevActiveNode = new int[tb->nextInternalNode+1];
+	rowCounts = new int[tb->nextInternalNode+1]();
+	rDeltas = new float[tb->nextInternalNode+1]();
+	nextActiveNode = new int[tb->nextInternalNode+1]();
+	prevActiveNode = new int[tb->nextInternalNode+1]();
 
-	rPrimes = new float[tb->RSize];
+	rPrimes = new float[tb->RSize]();
 	for (int i=0; i< tb->RSize; i++ ) {
 		rPrimes[i] = tb->R[i];
 	}
@@ -38,7 +41,6 @@ void CandidateHeap::initialize (int kPrime, TreeBuilderExtMem *tb) {
 
 void CandidateHeap::insert(int i, int j, float key){
 	ArrayHeapExtMem::insert(i, j, key);
-
 
 	rowCounts[i]++;
 	rowCounts[j]++;
@@ -68,7 +70,7 @@ void CandidateHeap::buildNodeList () {
 
 void CandidateHeap::removeMin(){
 	HeapReturn x = ArrayHeapExtMem::getBinaryHeapWithMin();
-	int i,j;
+	int i = 0,j = 0;
 	if(x.which){
 		BinaryHeap_FourInts* H = (BinaryHeap_FourInts*)x.h;
 		i = H->heap->front().first;
@@ -80,7 +82,7 @@ void CandidateHeap::removeMin(){
 	}
 
 
-	int prev, next;
+	int prev = 0, next = 0;
 	if (--rowCounts[i] == 0) { // compact list
 		representedRowCount--;
 		prev = prevActiveNode[i];
@@ -140,5 +142,31 @@ void CandidateHeap::calcDeltaValues (int newK) {
 
 }
 void CandidateHeap::clear(){
-	//revisit, implement
+
+	ArrayHeapExtMem::deleteAll();
+	if (rPrimes!=NULL){
+		delete[] rPrimes;
+		rPrimes = NULL;
+	}
+	if (rDeltas!=NULL){
+		delete[] rDeltas;
+		rDeltas = NULL;
+	}
+	if (rowCounts!=NULL){
+		delete[] rowCounts;
+		rowCounts = NULL;
+	}
+	if (nextActiveNode!=NULL){
+		delete[] nextActiveNode;
+		nextActiveNode = NULL;
+	}
+	if (prevActiveNode!=NULL){
+		delete[] prevActiveNode;
+		prevActiveNode = NULL;
+	}
+	/*
+	if (this->tb!=NULL){
+		delete this->tb;
+		tb = NULL;
+	}*/
 }

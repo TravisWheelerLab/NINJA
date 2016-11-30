@@ -34,9 +34,6 @@ int DistanceReaderExtMem::read (std::string** names, float* R, FILE* diskD, floa
 	    if (numColsToDisk > K) numColsToDisk = K;
     }
 
-
-    int currCol = 0;
-
     int buffSize = numPages*pageBlockSize;
 
 
@@ -46,41 +43,45 @@ int DistanceReaderExtMem::read (std::string** names, float* R, FILE* diskD, floa
 	long diskPos;
 
 	float* fBuff = new float[numColsToDisk];
-	int floatsInBuff = 0;
 
+    omp_set_num_threads(omp_get_max_threads());
 
+	//TODO: implement threads here, more complicated that in the in memory function, but still feasible
 	if(this->distCalc != NULL){
     	while (row != K && buffPtr<buffSize) {
 
-			for (int col=0; col<K; col++) {
+    		//interleave columns in the
+			//#pragma omp parallel for private(d)
+			for (int col=0; col<numColsToDisk; col++) {
 
 				d = ((float)ceil((float)(10000000 * distCalc->calc(row, col))))/10000000;
 
+				//#pragma omp atomic
 				R[row] += d;
 
-				if (currCol<numColsToDisk)  {
+				fBuff[col] = d;
 
-					fBuff[floatsInBuff++] = d;
-			    	if (floatsInBuff == numColsToDisk ) {
+			}
+			if (numColsToDisk > 0 ) {
 
-				    	diskPos = (long)floatSize * rowLength * row ;
-				    	fseek(diskD,diskPos,SEEK_SET);
-				    	fwrite(fBuff,sizeof(float),numColsToDisk,diskD);
+				diskPos = (long)floatSize * rowLength * row ;
+				fseek(diskD,diskPos,SEEK_SET);
+				fwrite(fBuff,sizeof(float),numColsToDisk,diskD);
 
-				    	floatsInBuff = 0;
+			}
+			//#pragma omp parallel for
+			for (int col=numColsToDisk; col<this->K; col++) {
 
-			    	}
-				} else {
-					memD[row][currCol-numColsToDisk] = d;
-				}
+				float d = ((float)ceil((float)(10000000 * distCalc->calc(row, col))))/10000000;
 
+				//#pragma omp atomic
+				R[row] += d;
 
-				currCol++;
+				memD[row][col-numColsToDisk] = d;
 
 			}
 
 			row++;
-	        currCol=0;
 	    }
 	}else{
     	fprintf(stderr,"Not allowed yet.\n");
@@ -88,6 +89,7 @@ int DistanceReaderExtMem::read (std::string** names, float* R, FILE* diskD, floa
 	}
 	return numColsToDisk;
 }
+
 float DistanceReaderExtMem::atoi (char* in, int end){
 	float val = 0.0;
 	int pos = end;
@@ -113,3 +115,4 @@ float DistanceReaderExtMem::atoi (char* in, int end){
 	else
 		return val;
 }
+
