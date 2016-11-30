@@ -92,8 +92,13 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
 		#pragma omp parallel for
     	for (int i=0; i<this->K; i++)
     		for (int j=i+1; j<this->K; j++)
+    		{
+				#ifdef TEST_DIFF
+    			distances[i][j-i-1] = this->distCalc->testDifferenceCluster(i,j);
+				#endif
     			distances[i][j-i-1] = 100 * (int)(((100000000*this->distCalc->calc(i,j))+50)/100) ; // this gets the same rounding I have in the distance writer code
 
+    		}
     } else { //TODO: optimize this, too slow
 
     	char *x = new char[this->fileSize];

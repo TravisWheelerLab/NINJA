@@ -71,9 +71,7 @@ std::string TreeBuilderManager::doJob(){
 	//TODO: check if I close all the files
 
 	SequenceFileReader* seqReader = NULL;
-	if (!this->method.compare("extmem")){ //The external memory if currently in debugging, therefore it is unabled.
-/*		fprintf(stderr,"External memory not allowed yet.\n");
-		Exception::critical();*/
+	if (!this->method.compare("extmem")){
 		if (maxMemory < 1900000000) {
 			fprintf(stderr,"Warning: using an external-memory variant of NINJA with less than 2GB allocated RAM.\n");
 			fprintf(stderr,"The data structures of NINJA may not work well if given less than 2GB.\n");
@@ -140,6 +138,11 @@ std::string TreeBuilderManager::doJob(){
 		}
 		firstMemCol = reader->read( names, R, diskD, memD, numCols, rowLength, pageBlockSize);
 
+		if(this->outType == dist){
+			//reader->write(this->outFile,distances);
+			return "";
+		}
+
 	}else{
 		DistanceReader* reader = NULL;
 
@@ -168,7 +171,7 @@ std::string TreeBuilderManager::doJob(){
 		reader->read( this->names, distances);
 
 		if(this->outType == dist){
-			reader->write(this->outFile,distances);
+			//reader->write(this->outFile,distances);
 			return "";
 		}
 

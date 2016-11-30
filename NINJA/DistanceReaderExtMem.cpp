@@ -71,7 +71,9 @@ int DistanceReaderExtMem::read (std::string** names, float* R, FILE* diskD, floa
 			}
 			//#pragma omp parallel for
 			for (int col=numColsToDisk; col<this->K; col++) {
-
+				#ifdef TEST_DIFF
+				float d = this->distCalc->testDifferenceCluster(row,col);
+				#endif
 				float d = ((float)ceil((float)(10000000 * distCalc->calc(row, col))))/10000000;
 
 				//#pragma omp atomic

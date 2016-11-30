@@ -41,8 +41,12 @@ bl45{
 
 	if(this->newCalculation && this->alph_type == this->dna)
 		convertAllDNA();
-	else if(this->newCalculation && this->alph_type == this->amino)
+	else if(this->newCalculation && this->alph_type == this->amino){
 		convertAllProtein();
+		#ifdef TEST_DIFF
+		generateProteinOriginalDict(this->protein_dict_original);
+		#endif
+	}
 
 	if (this->corr_type == not_assigned) {
 		if (this->alph_type == amino) {
@@ -375,24 +379,211 @@ double DistanceCalculator::newCalcDNA(int a, int b){
     return dist_d;
 
 }
-inline void DistanceCalculator::count128P(register __m128i &seq1, register __m128i &seq2, register __m128i &gap1, register __m128i &gap2, register __m128i &tmp, register __m128i &tmp2, register __m128i &tmp3, register __m128i &count_equal){
-	//TODO: define MASK and right COUNT_MASK
-	//TODO: review calculations
+inline void DistanceCalculator::count128P(register __m128i &seq1, register __m128i &seq2,  register __m128i &gap1,  register __m128i &gap2, register __m128i &VALUES_0,  register __m128i &VALUES_1,  register __m128i &VALUES_2,  register __m128i &VALUES_3,  register __m128i &VALUES_4,  register __m128i &VALUES_5,  register __m128i &VALUES_6,  register __m128i &VALUES_7, register __m128i &sum, register __m128i &gap_count, register __m128i &tmp1, register __m128i &tmp2){
+
+	tmp1 = _mm_min_epu8(seq1,seq2);
+	tmp2 = _mm_max_epu8(seq1,seq2);
+
+	gap1 = _mm_or_si128(gap1, gap2);
+
+	// use tmp1, tmp2, gap1
+	//tmp1 = min
+	//tmp2 = max
+	//gap1 = gaps
+
+	seq2 = _mm_set1_epi8((char)29);
+
+	seq2 = _mm_sub_epi8(seq2, tmp1); //29-min = index
+
+	// use tmp1, tmp2, gap1, seq2
+	// use tmp1, tmp2, gap1
+	//tmp1 = min
+	//tmp2 = max
+	//gap1 = gaps
+	//gap2 = index
+
+	seq1 = _mm_slli_epi16(seq2, 8); //go left by 8 to erase higher 8
+
+	//index1
+	seq1 = _mm_srli_epi16(seq1, 8); //go back by 8
+
+	gap2 = _mm_srli_epi16(tmp1, 8); //go left by 8 to erase higher 8
+
+	//min1
+	gap2 = _mm_slli_epi16(gap2, 8); //go back by 8
+
+	seq1 = _mm_mullo_epi16(seq1, gap2); //multiply index1 and min1
+
+	seq1 = _mm_srli_epi16(seq1, 1); //divide by 2
+
+	seq1 = _mm_add_epi8(seq1, tmp2); //add seq1 to max
+
+	//used tmp1, tmp2, gap1, seq1
+	//tmp1 = min
+	//tmp2 = max
+	//gap1 = gaps
+	//seq1 = index1 final
 
 
-	tmp = _mm_xor_si128(seq1, seq2);
-	tmp  = _mm_and_si128(tmp, gap1);
-	tmp  = _mm_and_si128(tmp, gap2);
-	tmp2 = _mm_srli_epi64(tmp, 4);
+	//min2
+	gap2 = _mm_srli_epi16(tmp1, 8); //go right by 8
 
-	//tmp = _mm_and_si128(tmp, MASK);
-	//tmp2 = _mm_and_si128(tmp2, MASK);
+	__m128i min = tmp1; //new vector, store min
 
-	//tmp = _mm_shuffle_epi8(COUNTS_MASK, tmp);
-	//tmp2 = _mm_shuffle_epi8(COUNTS_MASK, tmp2);
+	tmp1 = _mm_cmpeq_epi8(tmp1, tmp2); //store equal proteins
+	//after this I should not need max anymore
 
-	count_equal = _mm_add_epi8(count_equal, tmp);
-	count_equal = _mm_add_epi8(count_equal, tmp2);
+	//used tmp1, tmp2, gap1, gap2, seq1
+	//tmp1 = equal
+	//tmp2 = max
+	//gap1 = gaps
+	//gap2 = min2
+	//seq1 = index1 final
+
+	//index2
+	seq2 = _mm_srli_epi16(seq1, 8); //go right by 8
+
+	seq2 = _mm_mullo_epi16(gap2, seq2);
+
+	seq2 = _mm_srli_epi16(seq2, 1); //divide by 2
+
+	seq2 = _mm_add_epi8(seq2, tmp2); // add max to it
+
+	seq2 = _mm_slli_epi16(seq2, 8); //go left by 8
+
+	//final index
+	seq1 = _mm_or_si128(seq2, seq1);
+
+	//used tmp1, tmp2, gap1, seq1
+	//tmp1 = equal
+	//tmp2 = max
+	//gap1 = gaps
+	//seq1 = index final
+	//empty seq2, gap2
+
+	gap2 = _mm_srli_si128(tmp2, 4);
+
+	seq2 = //MASK_ERASE_HIGHER_4
+
+	gap2 = _mm_and_si128(gap2, seq2);
+
+	seq2 = _mm_and_si128(seq1, seq2);
+
+	//use tmp1, tmp2, gap1, gap2, seq1, seq2
+	//tmp1 = equal
+	//tmp2 = max
+	//gap1 = gaps
+	//seq2 = used for next step, lower 4 bits
+	//gap2 = used for next step, higher 4 bits
+	//seq1 is free, I should not need the original index anymore
+
+	__m128i sum_aux = _mm_setzero_si128(); //create new temp variable and set it to 0
+
+	//for all 8 vectors
+
+	seq1 = _mm_set1_epi8(0);
+
+	seq1 = _mm_cmpeq_epi8(gap2, seq1);
+
+	__m128i tmp3 = _mm_shuffle_epi8(VALUES_0, seq2);
+
+	seq1 = _mm_and_si128(seq1, tmp3);
+
+	sum_aux = _mm_add_epi8(sum_aux, seq1);
+
+
+	seq1 = _mm_set1_epi8(1);
+
+	seq1 = _mm_cmpeq_epi8(gap2, seq1);
+
+	tmp3 = _mm_shuffle_epi8(VALUES_1, seq2);
+
+	seq1 = _mm_and_si128(seq1, tmp3);
+
+	sum_aux = _mm_add_epi8(sum_aux, seq1);
+
+
+	seq1 = _mm_set1_epi8(2);
+
+	seq1 = _mm_cmpeq_epi8(gap2, seq1);
+
+	tmp3 = _mm_shuffle_epi8(VALUES_2, seq2);
+
+	seq1 = _mm_and_si128(seq1, tmp3);
+
+	sum_aux = _mm_add_epi8(sum_aux, seq1);
+
+
+	seq1 = _mm_set1_epi8(3);
+
+	seq1 = _mm_cmpeq_epi8(gap2, seq1);
+
+	tmp3 = _mm_shuffle_epi8(VALUES_3, seq2);
+
+	seq1 = _mm_and_si128(seq1, tmp3);
+
+	sum_aux = _mm_add_epi8(sum_aux, seq1);
+
+
+	seq1 = _mm_set1_epi8(4);
+
+	seq1 = _mm_cmpeq_epi8(gap2, seq1);
+
+	tmp3 = _mm_shuffle_epi8(VALUES_4, seq2);
+
+	seq1 = _mm_and_si128(seq1, tmp3);
+
+	sum_aux = _mm_add_epi8(sum_aux, seq1);
+
+
+
+	seq1 = _mm_set1_epi8(5);
+
+	seq1 = _mm_cmpeq_epi8(gap2, seq1);
+
+	tmp3 = _mm_shuffle_epi8(VALUES_5, seq2);
+
+	seq1 = _mm_and_si128(seq1, tmp3);
+
+	sum_aux = _mm_add_epi8(sum_aux, seq1);
+
+
+
+	seq1 = _mm_set1_epi8(6);
+
+	seq1 = _mm_cmpeq_epi8(gap2, seq1);
+
+	tmp3 = _mm_shuffle_epi8(VALUES_6, seq2);
+
+	seq1 = _mm_and_si128(seq1, tmp3);
+
+	sum_aux = _mm_add_epi8(sum_aux, seq1);
+
+
+
+	seq1 = _mm_set1_epi8(7);
+
+	seq1 = _mm_cmpeq_epi8(gap2, seq1);
+
+	tmp3 = _mm_shuffle_epi8(VALUES_7, seq2);
+
+	seq1 = _mm_and_si128(seq1, tmp3);
+
+	sum_aux = _mm_add_epi8(sum_aux, seq1);
+
+	//use tmp1, gap1, sum_aux, min
+	//tmp1 = equal proteins
+	//gap1 = gaps
+
+	seq2 = _mm_set_epi8(16, 18, 20, 20, 26, 15, 20, 24, 15, 16, 20, 22, 16, 28, 30, 22); //EQUAL_VALUES
+
+	seq1 = _mm_shuffle_epi8(seq2, min);
+	seq1 = _mm_and_si128(tmp1, seq1);
+	sum_aux = _mm_andnot_si128(sum_aux, tmp1);
+	sum_aux = _mm_add_epi8(sum_aux, seq1);
+	sum_aux = _mm_and_si128(sum_aux, gap1);
+	sum = _mm_add_epi8(sum_aux, sum);
+	gap_count = _mm_add_epi8(seq1, gap_count);
 
 }
 double DistanceCalculator::newCalcProtein(int a, int b){
@@ -401,10 +592,10 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	register __m128i seq2;
 	register __m128i gap1;
 	register __m128i gap2;
-	register __m128i tmp;
+	register __m128i tmp1;
 	register __m128i tmp2;
-	register __m128i tmp3;
-	register __m128i counts_equal;
+	//register __m128i tmp3;
+	register __m128i distance;
 	register __m128i counts_gaps;
 
 
@@ -420,16 +611,17 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	const unsigned int* Agap = this->gapInTheSequences[a];
 	const unsigned int* Bgap = this->gapInTheSequences[b];
 
-	int equal = 0;
+	int sum = 0;
+	int gaps = 0;
 
 	int i = 0;
 
 	//TODO: review number of max iterations
-	while(i < numOfInts){ //a maximum of 32 vectors allowed not to overflow things
-		counts_equal = x128;
+	while(i < numOfInts){ //a maximum of 8 vectors allowed not to overflow things
+		distance = x128;
 		counts_gaps= x128;
 
-		for(int j = 0;i<numOfInts && j < 31;i += 4){
+		for(int j = 0;i<numOfInts && j < 8;j += 1){
 
 				seq1 = *(__m128i*)&Achar[i];
 				seq2 = *(__m128i*)&Bchar[i];
@@ -437,25 +629,139 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 				gap1 = *(__m128i*)&Agap[i];
 				gap2 = *(__m128i*)&Bgap[i];
 
-				//count128P(seq1,seq2,gap1, gap2, tmp, tmp2, tmp3, counts_equal, counts_gaps);
+				count128P(seq1, seq2, gap1, gap2, this->VALUES_0, this->VALUES_1, this->VALUES_2, this->VALUES_3, this->VALUES_4, this->VALUES_5, this->VALUES_6, this->VALUES_7, distance, counts_gaps, tmp1, tmp2);
 
-				j+=4;
+				i+=4;
 		}
 
-		/*gather equal counts*/
+		/*gather distance*/
 
-		counts_equal = _mm_xor_si128(counts_equal, x128);
+		distance = _mm_xor_si128(distance, x128);
 
-		counts_equal = _mm_sad_epu8 (counts_equal, zero);
-		tmp = _mm_shuffle_epi32(counts_equal, _MM_SHUFFLE(1, 1, 1, 2));
-		counts_equal = _mm_add_epi16(counts_equal, tmp);
+		distance = _mm_sad_epu8 (distance, zero);
+		tmp1 = _mm_shuffle_epi32(distance, _MM_SHUFFLE(1, 1, 1, 2));
+		distance = _mm_add_epi16(distance, tmp1);
 
-		equal +=  _mm_extract_epi16(counts_equal, 0);
+		sum +=  _mm_extract_epi16(distance, 0);
+
+
+		/*gather gaps counts*/
+
+		counts_gaps = _mm_xor_si128(counts_gaps, x128);
+
+		counts_gaps = _mm_sad_epu8 (counts_gaps, zero);
+		tmp1 = _mm_shuffle_epi32(counts_gaps, _MM_SHUFFLE(1, 1, 1, 2));
+		counts_gaps = _mm_add_epi16(counts_gaps, tmp1);
+
+		gaps += _mm_extract_epi16(counts_gaps, 0);
 	}
 
-    return (length-equal);
+    return (sum/(length-gaps));
 }
+double DistanceCalculator::testDifferenceCluster(int a, int b){
 
+	static const int bl62[20][20] = {
+			{16, 6, 4, 4, 8, 6, 6, 8, 4, 6, 6, 6, 6, 4, 6, 10, 8, 2, 4, 8},
+			 {6, 18, 8, 4, 2, 10, 8, 4, 8, 2, 4, 12, 6, 2, 4, 6, 6, 2, 4, 2},
+			 {4, 8, 20, 10, 2, 8, 8, 8, 10, 2, 2, 8, 4, 2, 4, 10, 8, 0, 4, 2},
+			 {4, 4, 10, 20, 2, 8, 12, 6, 6, 2, 0, 6, 2, 2, 6, 8, 6, 0, 2, 2},
+			 {8, 2, 2, 2, 26, 2, 0, 2, 2, 6, 6, 2, 6, 4, 2, 6, 6, 4, 4, 6},
+			 {6, 10, 8, 8, 2, 18, 12, 4, 8, 2, 4, 10, 8, 2, 6, 8, 6, 4, 6, 4},
+			 {6, 8, 8, 12, 0, 12, 18, 4, 8, 2, 2, 10, 4, 2, 6, 8, 6, 2, 4, 4},
+			 {8, 4, 8, 6, 2, 4, 4, 20, 4, 0, 0, 4, 2, 2, 4, 8, 4, 4, 2, 2},
+			 {4, 8, 10, 6, 2, 8, 8, 4, 24, 2, 2, 6, 4, 6, 4, 6, 4, 4, 12, 2},
+			 {6, 2, 2, 2, 6, 2, 2, 0, 2, 16, 12, 2, 10, 8, 2, 4, 6, 2, 6, 14},
+			 {6, 4, 2, 0, 6, 4, 2, 0, 2, 12, 16, 4, 12, 8, 2, 4, 6, 4, 6, 10},
+			 {6, 12, 8, 6, 2, 10, 10, 4, 6, 2, 4, 18, 6, 2, 6, 8, 6, 2, 4, 4},
+			 {6, 6, 4, 2, 6, 8, 4, 2, 4, 10, 12, 6, 18, 8, 4, 6, 6, 6, 6, 10},
+			 {4, 2, 2, 2, 4, 2, 2, 2, 6, 8, 8, 2, 8, 20, 0, 4, 4, 10, 14, 6},
+			 {6, 4, 4, 6, 2, 6, 6, 4, 4, 2, 2, 6, 4, 0, 22, 6, 6, 0, 2, 4},
+			 {10, 6, 10, 8, 6, 8, 8, 8, 6, 4, 4, 8, 6, 4, 6, 16, 10, 2, 4, 4},
+			 {8, 6, 8, 6, 6, 6, 6, 4, 4, 6, 6, 6, 6, 4, 6, 10, 18, 4, 4, 8},
+			 {2, 2, 0, 0, 4, 4, 2, 4, 4, 2, 4, 2, 6, 10, 0, 2, 4, 30, 12, 2},
+			 {4, 4, 4, 2, 4, 6, 4, 2, 12, 6, 6, 4, 6, 14, 2, 4, 4, 12, 22, 6},
+			 {8, 2, 2, 2, 6, 4, 4, 2, 2, 14, 10, 4, 10, 6, 4, 4, 8, 2, 6, 16}
+	};
+/*	static const int bl62_clusterized[16][16] = {
+			{16, 6, 4, 4, 8, 6, 8, 4, 7, 6, 4, 6, 10, 8, 2, 4},
+			 {6, 16, 8, 5, 2, 10, 4, 7, 3, 6, 2, 5, 7, 6, 2, 4},
+			 {4, 8, 20, 10, 2, 8, 8, 10, 2, 4, 2, 4, 10, 8, 0, 4},
+			 {4, 5, 10, 20, 2, 11, 6, 6, 1, 2, 2, 6, 8, 6, 0, 2},
+			 {8, 2, 2, 2, 26, 1, 2, 2, 6, 6, 4, 2, 6, 6, 4, 4},
+			 {6, 10, 8, 11, 1, 16, 4, 8, 3, 6, 2, 6, 8, 6, 3, 5},
+			 {8, 4, 8, 6, 2, 4, 20, 4, 1, 2, 2, 4, 8, 4, 4, 2},
+			 {4, 7, 10, 6, 2, 8, 4, 24, 2, 4, 6, 4, 6, 4, 4, 12},
+			 {7, 3, 2, 1, 6, 3, 1, 2, 14, 11, 8, 3, 4, 7, 3, 6},
+			 {6, 6, 4, 2, 6, 6, 2, 4, 11, 18, 8, 4, 6, 6, 6, 6},
+			 {4, 2, 2, 2, 4, 2, 2, 6, 8, 8, 20, 0, 4, 4, 10, 14},
+			 {6, 5, 4, 6, 2, 6, 4, 4, 3, 4, 0, 22, 6, 6, 0, 2},
+			 {10, 7, 10, 8, 6, 8, 8, 6, 4, 6, 4, 6, 16, 10, 2, 4},
+			 {8, 6, 8, 6, 6, 6, 4, 4, 7, 6, 4, 6, 10, 18, 4, 4},
+			 {2, 2, 0, 0, 4, 3, 4, 4, 3, 6, 10, 0, 2, 4, 30, 12},
+			 {4, 4, 4, 2, 4, 5, 2, 12, 6, 6, 14, 2, 4, 4, 12, 22}
+					};*/
+
+	//considering frequencies on distant calculation for the clusters
+	static const int bl62_clusterized[16][16] = {
+			{16, 6, 4, 4, 8, 6, 8, 4, 7, 6, 4, 6, 10, 8, 2, 4},
+			 {6, 18, 8, 4, 2, 11, 4, 8, 2, 4, 2, 4, 6, 6, 2, 4},
+			 {4, 8, 20, 10, 2, 8, 8, 10, 2, 2, 2, 4, 10, 8, 0, 4},
+			 {4, 4, 10, 20, 2, 10, 6, 6, 2, 0, 2, 6, 8, 6, 0, 2},
+			 {8, 2, 2, 2, 26, 1, 2, 2, 6, 6, 4, 2, 6, 6, 4, 4},
+			 {6, 11, 8, 10, 1, 15, 4, 7, 3, 3, 2, 6, 8, 6, 2, 5},
+			 {8, 4, 8, 6, 2, 4, 20, 4, 1, 0, 2, 4, 8, 4, 4, 2},
+			 {4, 8, 10, 6, 2, 7, 4, 24, 2, 2, 6, 4, 6, 4, 4, 12},
+			 {7, 2, 2, 2, 6, 3, 1, 2, 15, 11, 7, 3, 4, 7, 2, 6},
+			 {6, 4, 2, 0, 6, 3, 0, 2, 11, 16, 8, 2, 4, 6, 4, 6},
+			 {4, 2, 2, 2, 4, 2, 2, 6, 7, 8, 20, 0, 4, 4, 10, 14},
+			 {6, 4, 4, 6, 2, 6, 4, 4, 3, 2, 0, 22, 6, 6, 0, 2},
+			 {10, 6, 10, 8, 6, 8, 8, 6, 4, 4, 4, 6, 16, 10, 2, 4},
+			 {8, 6, 8, 6, 6, 6, 4, 4, 7, 6, 4, 6, 10, 18, 4, 4},
+			 {2, 2, 0, 0, 4, 2, 4, 4, 2, 4, 10, 0, 2, 4, 30, 12},
+			 {4, 4, 4, 2, 4, 5, 2, 12, 6, 6, 14, 2, 4, 4, 12, 22}
+	};
+
+
+	float dist = 0.0f;
+	float dist_2 = 0.0f;
+
+	if (this->corr_type != none && this->corr_type != FastTree){
+		fprintf(stderr, "illegal choice of correction method; must be 'n' or 's'");
+		Exception::critical();
+	}
+
+	int count = 0;
+	int length = (int)this->A[0]->length();
+	const char* Achar = this->A[a]->c_str();
+	const char* Bchar = this->A[b]->c_str();
+	//printf("%s", Achar);
+	//Exception::critical();
+
+	for (int i=0; i<length; i++){
+		if (this->inv_alph[(int)Achar[i]] >= 0 && this->inv_alph[(int)Bchar[i]] >= 0) { // both are characters in the core alphabet
+			dist += bl62[this->protein_dict_original[(int)Achar[i]]][this->protein_dict_original[(int)Bchar[i]]];
+			//printf("%d\n", this->protein_dict[(int)Bchar[i]]);
+			dist_2 += bl62_clusterized[ this->protein_dict[(int)Achar[i]]][this->protein_dict[(int)Bchar[i]]];
+			//printf("%c:%d %c:%d-- ", Achar[i], this->protein_dict_original[(int)Achar[i]], Bchar[i], this->protein_dict[(int)Bchar[i]]);
+			//printf("%d %d || ", bl62[this->protein_dict_original[(int)Achar[i]]][this->protein_dict_original[(int)Bchar[i]]], bl62_clusterized[ this->protein_dict[(int)Achar[i]]][this->protein_dict[(int)Bchar[i]]]);
+			count++;
+		}
+	}
+
+/*	if (count==0) {
+		dist = maxscore;
+	} else {
+		dist /= count;
+		if (this->corr_type == FastTree)
+			dist = dist < 0.91 ? (float)(-1.3*log((double)(1.0 - dist))) : maxscore;
+	}*/
+
+	//double dist_d = (dist < maxscore ? dist : maxscore);
+	//printf("%f %f\n", dist, dist_2);
+	if (dist != 0)
+		printf("%f %f %f %f %f\n", dist, dist_2, (dist - dist_2), ((dist - dist_2)/dist), (dist - dist_2)/(float)count);
+	return dist - dist_2;
+}
 double DistanceCalculator::calc (int a, int b){
 	if(this->newCalculation && this->alph_type == this->dna){
 		return newCalcDNA(a,b);
@@ -599,16 +905,43 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 }
 void DistanceCalculator::generateProteinClusterDict(int* protein_dictionary){
 	/*
-	 * Clusters: {A} {R, N} {D} {C} {Q, E} {G} {H} {I, L, K} {M} {F} {S} {T} {W} {Y} {V}
+	 *
+	 * [['ala'], ['arg', 'lys'], ['asn'], ['asp'], ['cys'], ['gln', 'glu'], ['gly'], ['his'], ['ile', 'val', 'leu'], ['met'], ['phe'], ['pro'], ['ser'], ['thr'], ['trp'], ['tyr']]
 	 */
-	char proteins[20] = {'A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'S', 'T', 'W', 'Y', 'V'};
+/*
+	char proteins[20] = {'A', 'R', 'K', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'V', 'L', 'M', 'F', 'P', 'S', 'T', 'W', 'Y'};
+	protein_dictionary[(int)proteins[0]] = 0; // {A}
+	protein_dictionary[(int)proteins[1]] = 1; // {R, K}
+	protein_dictionary[(int)proteins[2]] = 1; // {R, K}
+	protein_dictionary[(int)proteins[3]] = 2; // {N}
+	protein_dictionary[(int)proteins[4]] = 3; // {D}
+	protein_dictionary[(int)proteins[5]] = 4; // {C}
+	protein_dictionary[(int)proteins[6]] = 5; // {Q, E}
+	protein_dictionary[(int)proteins[7]] = 5; // {Q, E}
+	protein_dictionary[(int)proteins[8]] = 6; // {G}
+	protein_dictionary[(int)proteins[9]] = 7; // {H}
+	protein_dictionary[(int)proteins[10]] = 8; // {I, V, L}
+	protein_dictionary[(int)proteins[11]] = 8; // {I, V, L}
+	protein_dictionary[(int)proteins[12]] = 8; // I, V, L}
+	protein_dictionary[(int)proteins[13]] = 9; // {M}
+	protein_dictionary[(int)proteins[14]] = 10; // {F}
+	protein_dictionary[(int)proteins[15]] = 11; // {P}
+	protein_dictionary[(int)proteins[16]] = 12; // {S}
+	protein_dictionary[(int)proteins[17]] = 13; // {T}
+	protein_dictionary[(int)proteins[18]] = 14; // {W}
+	protein_dictionary[(int)proteins[19]] = 15; // {Y}
+*/
+
+	//new frequencies clusters
+	//[['A'], ['R'], ['N'], ['D'], ['C'], ['Q', 'E', 'K'], ['G'], ['H'], ['I', 'V', 'M'], ['L'], ['F'], ['P'], ['S'], ['T'], ['W'], ['Y']]
+	char proteins[20] = {'A', 'R', 'N', 'D', 'C', 'Q', 'E', 'K', 'G', 'H', 'I', 'V', 'M', 'L', 'F', 'P', 'S', 'T', 'W', 'Y'};
 	protein_dictionary[(int)proteins[0]] = 0;
 	protein_dictionary[(int)proteins[1]] = 1;
-	protein_dictionary[(int)proteins[2]] = 1;
-	protein_dictionary[(int)proteins[3]] = 2;
-	protein_dictionary[(int)proteins[4]] = 3;
-	protein_dictionary[(int)proteins[5]] = 4;
-	protein_dictionary[(int)proteins[6]] = 4;
+	protein_dictionary[(int)proteins[2]] = 2;
+	protein_dictionary[(int)proteins[3]] = 3;
+	protein_dictionary[(int)proteins[4]] = 4;
+	protein_dictionary[(int)proteins[5]] = 5;
+	protein_dictionary[(int)proteins[6]] = 5;
 	protein_dictionary[(int)proteins[7]] = 5;
 	protein_dictionary[(int)proteins[8]] = 6;
 	protein_dictionary[(int)proteins[9]] = 7;
@@ -623,6 +956,34 @@ void DistanceCalculator::generateProteinClusterDict(int* protein_dictionary){
 	protein_dictionary[(int)proteins[18]] = 14;
 	protein_dictionary[(int)proteins[19]] = 15;
 }
+void DistanceCalculator::generateProteinOriginalDict(int* protein_dictionary){
+	/*
+	 * Clusters: {A} {R, N} {D} {C} {Q, E} {G} {H} {I, L, K} {M} {F} {S} {T} {W} {Y} {V}
+	 * A R N D C Q E G H I L K M F P   S T  W Y V
+	 * [['ala'], ['arg', 'lys'], ['asn'], ['asp'], ['cys'], ['gln', 'glu'], ['gly'], ['his'], ['ile', 'val', 'leu'], ['met'], ['phe'], ['pro'], ['ser'], ['thr'], ['trp'], ['tyr']]
+	 */
+	char proteins[20] = {'A', 'R', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V'};
+	protein_dictionary[(int)proteins[0]] = 0;
+	protein_dictionary[(int)proteins[1]] = 1;
+	protein_dictionary[(int)proteins[2]] = 2;
+	protein_dictionary[(int)proteins[3]] = 3;
+	protein_dictionary[(int)proteins[4]] = 4;
+	protein_dictionary[(int)proteins[5]] = 5;
+	protein_dictionary[(int)proteins[6]] = 6;
+	protein_dictionary[(int)proteins[7]] = 7;
+	protein_dictionary[(int)proteins[8]] = 8;
+	protein_dictionary[(int)proteins[9]] = 9;
+	protein_dictionary[(int)proteins[10]] = 10;
+	protein_dictionary[(int)proteins[11]] = 11;
+	protein_dictionary[(int)proteins[12]] = 12;
+	protein_dictionary[(int)proteins[13]] = 13;
+	protein_dictionary[(int)proteins[14]] = 14;
+	protein_dictionary[(int)proteins[15]] = 15;
+	protein_dictionary[(int)proteins[16]] = 16;
+	protein_dictionary[(int)proteins[17]] = 17;
+	protein_dictionary[(int)proteins[18]] = 18;
+	protein_dictionary[(int)proteins[19]] = 19;
+}
 void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut){
 	/*
 	 * For now use a vector for the gaps, just to count them and make the whole calculation easier.
@@ -631,7 +992,7 @@ void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned 
 	 */
 
 	*seqOut = 0x0;
-	*gapOut = 0x0; // initialize higher 4 bits as 0, and lower 4 bits as one
+	*gapOut = 0xFFFFFFFF;
 
 	if(size<=0){//TODO: perhaps remove later?
 		return;
@@ -639,14 +1000,14 @@ void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned 
 
 	const static int numCharPerElement = 8;
 
-	const unsigned int gapValues[] = {15, 240, 3840, 61440, 983040, 15728640, 251658240, 4026531840};
+	const unsigned unsigned int gapValues[] = {255, 65535, 16777215, 4294967295};
 
 	int i;
 
 	for(i=0;i<*size && i<numCharPerElement;i++){
 		if(seq[i] == '-'){
 			//*seqOut += (0xFF << ((3-i)*8)); This byte will be all zeros
-			*gapOut += gapValues[i]; //put up the gap in the right place
+			*gapOut -= gapValues[i]; //put up the gap in the right place
 		}else{
 			*seqOut += (this->protein_dict[(int)seq[i]]) << (i*4);
 		}
@@ -670,7 +1031,6 @@ void DistanceCalculator::convertAllProtein(){
 
 	this->x128 = _mm_set1_epi8((int8_t) -128);
 	this->zero = _mm_set1_epi8((int8_t) 0x00);
-	this->COUNTS_MASK = _mm_set1_epi8((int8_t) 0xF);
 
 	generateProteinClusterDict(this->protein_dict);
 
@@ -705,35 +1065,15 @@ void DistanceCalculator::convertAllDNA(){
 	this->zero = _mm_set1_epi8((int8_t) 0x00);
 	this->COUNTS_MASK = _mm_set1_epi8((int8_t) 0xF);
 
-	/* GAPS MASK:
-	 *
-	 *  0000	4
-	 * 	0001	3
-	 * 	0010	3
-	 * 	0011	2
-	 * 	0100	3
-	 * 	0101	2
-	 * 	0110	2
-	 * 	0111	1
-	 * 	1000	3
-	 * 	1001	2
-	 * 	1010	2
-	 * 	1011	1
-	 * 	1100	2
-	 * 	1101	1
-	 * 	1110	1
-	 * 	1111	0
-	 */
 
-
-	this->GAPS_COUNT_MASK = _mm_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
-
-	this->DECOMPRESSED_GAPS = _mm_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
-
-	this->TRANSITIONS_MASK = _mm_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
-
-	this->TRANSVERSIONS_MASK = _mm_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
-
+	this->VALUES_0 =_mm_set_epi8(6, 4, 8, 4, 4, 10, 8, 2, 2, 2, 6, 11, 8, 10, 1, 8);
+	this->VALUES_1 =_mm_set_epi8(4, 8, 6, 2, 4, 4, 8, 10, 6, 2, 7, 4, 7, 2, 2, 2);
+	this->VALUES_2 =_mm_set_epi8(6, 3, 1, 2, 6, 4, 2, 0, 6, 3, 0, 2, 11, 4, 2, 2);
+	this->VALUES_3 =_mm_set_epi8(2, 4, 2, 2, 6, 7, 8, 6, 4, 4, 6, 2, 6, 4, 4, 3);
+	this->VALUES_4 =_mm_set_epi8(2, 0, 10, 6, 10, 8, 6, 8, 8, 6, 4, 4, 4, 6, 8, 6);
+	this->VALUES_5 =_mm_set_epi8(8, 6, 6, 6, 4, 4, 7, 6, 4, 6, 10, 2, 2, 0, 0, 4);
+	this->VALUES_6 =_mm_set_epi8(2, 4, 4, 2, 4, 10, 0, 2, 4, 4, 4, 4, 2, 4, 5, 2);
+	this->VALUES_7 =_mm_set_epi8(12, 6, 6, 14, 2, 4, 4, 12, 0, 0, 0, 0, 0, 0, 0, 0);
 
 	//TODO: make sure all of these are aligned, so I can load them faster
 	this->convertedSequences = new unsigned int*[this->numberOfSequences];
