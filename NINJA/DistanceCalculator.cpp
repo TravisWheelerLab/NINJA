@@ -998,7 +998,7 @@ void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned 
 		return;
 	}
 
-	const static int numCharPerElement = 8;
+	const static int numCharPerElement = 4;
 
 	const unsigned unsigned int gapValues[] = {255, 65535, 16777215, 4294967295};
 
@@ -1009,7 +1009,7 @@ void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned 
 			//*seqOut += (0xFF << ((3-i)*8)); This byte will be all zeros
 			*gapOut -= gapValues[i]; //put up the gap in the right place
 		}else{
-			*seqOut += (this->protein_dict[(int)seq[i]]) << (i*4);
+			*seqOut += (this->protein_dict[(int)seq[i]]) << (i*8);
 		}
 	}
 	*size -= i;
