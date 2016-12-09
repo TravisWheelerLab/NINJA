@@ -1000,7 +1000,7 @@ void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned 
 
 	const static int numCharPerElement = 4;
 
-	const unsigned unsigned int gapValues[] = {255, 65535, 16777215, 4294967295};
+	const unsigned int gapValues[] = {255, 65535, 16777215, 4294967295};
 
 	int i;
 
@@ -1044,12 +1044,13 @@ void DistanceCalculator::convertAllProtein(){
 	this->convertedSequences = new unsigned int*[this->numberOfSequences];
 	this->gapInTheSequences = new unsigned int*[this->numberOfSequences];
 
-	int allocSize = ceil((float)this->lengthOfSequences/8.0);
+	int allocSize = ceil((float)this->lengthOfSequences/4.0);
 	if(allocSize % 4 != 0) //min size of 128bits
 		allocSize += 4 - (allocSize % 4);
 	int sizeLeft;
 	for(int i=0;i<this->numberOfSequences;i++){
 		this->convertedSequences[i] = new unsigned int[allocSize]; //min of 128bits, no need to change
+		this->gapInTheSequences[i] = new unsigned int[allocSize]; //min of 128bits, no need to change
 		sizeLeft = this->lengthOfSequences;
 		for(int j=0;j<allocSize;j++){
 			getBitsProteinClustered((char*)(this->A[i]->c_str()+(this->lengthOfSequences-sizeLeft)),&sizeLeft, &(this->convertedSequences[i][j]), &(this->gapInTheSequences[i][j]));
