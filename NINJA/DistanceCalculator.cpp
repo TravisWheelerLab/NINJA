@@ -583,6 +583,12 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	sum_aux = _mm_add_epi8(sum_aux, seq1);
 	sum_aux = _mm_and_si128(sum_aux, gap1);
 	sum = _mm_add_epi8(sum_aux, sum);
+
+	sum_aux = _mm_setzero_si128();
+	gap2 = _mm_set1_epi8(1);
+
+	seq1 = _mm_cmpeq_epi8(seq1, sum_aux);
+	seq1 = _mm_and_si128(seq1,gap2);
 	gap_count = _mm_add_epi8(seq1, gap_count);
 
 }
@@ -1000,7 +1006,7 @@ void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned 
 
 	const static int numCharPerElement = 4;
 
-	const unsigned int gapValues[] = {255, 65535, 16777215, 4294967295};
+	const unsigned int gapValues[] = {255, 65280, 16711680, 4278190080};
 
 	int i;
 
