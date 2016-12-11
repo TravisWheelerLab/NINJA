@@ -384,7 +384,7 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	tmp1 = _mm_min_epu8(seq1,seq2);
 	tmp2 = _mm_max_epu8(seq1,seq2);
 
-	gap1 = _mm_or_si128(gap1, gap2);
+	gap1 = _mm_and_si128(gap1, gap2);
 
 	// use tmp1, tmp2, gap1
 	//tmp1 = min
@@ -407,16 +407,20 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	//index1
 	seq1 = _mm_srli_epi16(seq1, 8); //go back by 8
 
-	gap2 = _mm_srli_epi16(tmp1, 8); //go left by 8 to erase higher 8
+	gap2 = _mm_slli_epi16(tmp1, 8); //go left by 8 to erase higher 8
 
 	//min1
-	gap2 = _mm_slli_epi16(gap2, 8); //go back by 8
+	gap2 = _mm_srli_epi16(gap2, 8); //go back by 8
 
 	seq1 = _mm_mullo_epi16(seq1, gap2); //multiply index1 and min1
 
 	seq1 = _mm_srli_epi16(seq1, 1); //divide by 2
 
 	seq1 = _mm_add_epi8(seq1, tmp2); //add seq1 to max
+
+	seq1 = _mm_slli_epi16(seq1, 8); // go left by 8 to erase higher 8
+
+	seq1 = _mm_srli_epi16(seq1, 8); // go back
 
 	//used tmp1, tmp2, gap1, seq1
 	//tmp1 = min
@@ -441,15 +445,19 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	//seq1 = index1 final
 
 	//index2
-	seq2 = _mm_srli_epi16(seq1, 8); //go right by 8
+	seq2 = _mm_srli_epi16(seq2, 8); //go right by 8
 
 	seq2 = _mm_mullo_epi16(gap2, seq2);
 
 	seq2 = _mm_srli_epi16(seq2, 1); //divide by 2
 
+	seq2 = _mm_slli_epi16(seq2, 8); //go left by 8
+
 	seq2 = _mm_add_epi8(seq2, tmp2); // add max to it
 
-	seq2 = _mm_slli_epi16(seq2, 8); //go left by 8
+	seq2 = _mm_srli_epi16(seq2, 8); //go right by 8 to clear
+
+	seq2 = _mm_slli_epi16(seq2, 8); //go back
 
 	//final index
 	seq1 = _mm_or_si128(seq2, seq1);
@@ -587,7 +595,7 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	sum_aux = _mm_setzero_si128();
 	gap2 = _mm_set1_epi8(1);
 
-	seq1 = _mm_cmpeq_epi8(seq1, sum_aux);
+	seq1 = _mm_cmpeq_epi8(gap1, sum_aux);
 	seq1 = _mm_and_si128(seq1,gap2);
 	gap_count = _mm_add_epi8(seq1, gap_count);
 
@@ -605,7 +613,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	register __m128i counts_gaps;
 
 
-	int numOfInts = ceil((float)this->lengthOfSequences/8.0);
+	int numOfInts = ceil((float)this->lengthOfSequences/4.0);
 	if(numOfInts % 4 != 0)
 		numOfInts += 4 - (numOfInts % 4);
 
@@ -627,7 +635,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 		distance = x128;
 		counts_gaps= x128;
 
-		for(int j = 0;i<numOfInts && j < 8;j += 1){
+		for(int j = 0;i<numOfInts && j < 8; j++){
 
 				seq1 = *(__m128i*)&Achar[i];
 				seq2 = *(__m128i*)&Bchar[i];
@@ -660,6 +668,44 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 		counts_gaps = _mm_add_epi16(counts_gaps, tmp1);
 
 		gaps += _mm_extract_epi16(counts_gaps, 0);
+	}
+	//TEST, DELETE AFTER
+	static const int bl62_clusterized[16][16] = {
+			{16, 6, 4, 4, 8, 6, 8, 4, 7, 6, 4, 6, 10, 8, 2, 4},
+			 {6, 18, 8, 4, 2, 11, 4, 8, 2, 4, 2, 4, 6, 6, 2, 4},
+			 {4, 8, 20, 10, 2, 8, 8, 10, 2, 2, 2, 4, 10, 8, 0, 4},
+			 {4, 4, 10, 20, 2, 10, 6, 6, 2, 0, 2, 6, 8, 6, 0, 2},
+			 {8, 2, 2, 2, 26, 1, 2, 2, 6, 6, 4, 2, 6, 6, 4, 4},
+			 {6, 11, 8, 10, 1, 15, 4, 7, 3, 3, 2, 6, 8, 6, 2, 5},
+			 {8, 4, 8, 6, 2, 4, 20, 4, 1, 0, 2, 4, 8, 4, 4, 2},
+			 {4, 8, 10, 6, 2, 7, 4, 24, 2, 2, 6, 4, 6, 4, 4, 12},
+			 {7, 2, 2, 2, 6, 3, 1, 2, 15, 11, 7, 3, 4, 7, 2, 6},
+			 {6, 4, 2, 0, 6, 3, 0, 2, 11, 16, 8, 2, 4, 6, 4, 6},
+			 {4, 2, 2, 2, 4, 2, 2, 6, 7, 8, 20, 0, 4, 4, 10, 14},
+			 {6, 4, 4, 6, 2, 6, 4, 4, 3, 2, 0, 22, 6, 6, 0, 2},
+			 {10, 6, 10, 8, 6, 8, 8, 6, 4, 4, 4, 6, 16, 10, 2, 4},
+			 {8, 6, 8, 6, 6, 6, 4, 4, 7, 6, 4, 6, 10, 18, 4, 4},
+			 {2, 2, 0, 0, 4, 2, 4, 4, 2, 4, 10, 0, 2, 4, 30, 12},
+			 {4, 4, 4, 2, 4, 5, 2, 12, 6, 6, 14, 2, 4, 4, 12, 22}
+	};
+
+	float dist_2 = 0.0f;
+
+	if (this->corr_type != none && this->corr_type != FastTree){
+		fprintf(stderr, "illegal choice of correction method; must be 'n' or 's'");
+		Exception::critical();
+	}
+
+	int count = 0;
+	const char* Achar2 = this->A[a]->c_str();
+	const char* Bchar2 = this->A[b]->c_str();
+
+
+	for (int i=0; i<length; i++){
+		if (this->inv_alph[(int)Achar2[i]] >= 0 && this->inv_alph[(int)Bchar2[i]] >= 0) { // both are characters in the core alphabet
+			dist_2 += bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]];
+			count++;
+		}
 	}
 
     return (sum/(length-gaps));
@@ -1040,6 +1086,14 @@ void DistanceCalculator::convertAllProtein(){
 
 	generateProteinClusterDict(this->protein_dict);
 
+	this->VALUES_0 =_mm_set_epi8(6, 4, 8, 4, 4, 10, 8, 2, 2, 2, 6, 11, 8, 10, 1, 8);
+	this->VALUES_1 =_mm_set_epi8(4, 8, 6, 2, 4, 4, 8, 10, 6, 2, 7, 4, 7, 2, 2, 2);
+	this->VALUES_2 =_mm_set_epi8(6, 3, 1, 2, 6, 4, 2, 0, 6, 3, 0, 2, 11, 4, 2, 2);
+	this->VALUES_3 =_mm_set_epi8(2, 4, 2, 2, 6, 7, 8, 6, 4, 4, 6, 2, 6, 4, 4, 3);
+	this->VALUES_4 =_mm_set_epi8(2, 0, 10, 6, 10, 8, 6, 8, 8, 6, 4, 4, 4, 6, 8, 6);
+	this->VALUES_5 =_mm_set_epi8(8, 6, 6, 6, 4, 4, 7, 6, 4, 6, 10, 2, 2, 0, 0, 4);
+	this->VALUES_6 =_mm_set_epi8(2, 4, 4, 2, 4, 10, 0, 2, 4, 4, 4, 4, 2, 4, 5, 2);
+	this->VALUES_7 =_mm_set_epi8(12, 6, 6, 14, 2, 4, 4, 12, 0, 0, 0, 0, 0, 0, 0, 0);
 
 	this->GAPS_COUNT_MASK = _mm_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
 
@@ -1071,16 +1125,6 @@ void DistanceCalculator::convertAllDNA(){
 	this->x128 = _mm_set1_epi8((int8_t) -128);
 	this->zero = _mm_set1_epi8((int8_t) 0x00);
 	this->COUNTS_MASK = _mm_set1_epi8((int8_t) 0xF);
-
-
-	this->VALUES_0 =_mm_set_epi8(6, 4, 8, 4, 4, 10, 8, 2, 2, 2, 6, 11, 8, 10, 1, 8);
-	this->VALUES_1 =_mm_set_epi8(4, 8, 6, 2, 4, 4, 8, 10, 6, 2, 7, 4, 7, 2, 2, 2);
-	this->VALUES_2 =_mm_set_epi8(6, 3, 1, 2, 6, 4, 2, 0, 6, 3, 0, 2, 11, 4, 2, 2);
-	this->VALUES_3 =_mm_set_epi8(2, 4, 2, 2, 6, 7, 8, 6, 4, 4, 6, 2, 6, 4, 4, 3);
-	this->VALUES_4 =_mm_set_epi8(2, 0, 10, 6, 10, 8, 6, 8, 8, 6, 4, 4, 4, 6, 8, 6);
-	this->VALUES_5 =_mm_set_epi8(8, 6, 6, 6, 4, 4, 7, 6, 4, 6, 10, 2, 2, 0, 0, 4);
-	this->VALUES_6 =_mm_set_epi8(2, 4, 4, 2, 4, 10, 0, 2, 4, 4, 4, 4, 2, 4, 5, 2);
-	this->VALUES_7 =_mm_set_epi8(12, 6, 6, 14, 2, 4, 4, 12, 0, 0, 0, 0, 0, 0, 0, 0);
 
 	//TODO: make sure all of these are aligned, so I can load them faster
 	this->convertedSequences = new unsigned int*[this->numberOfSequences];
