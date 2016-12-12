@@ -583,12 +583,22 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	//tmp1 = equal proteins
 	//gap1 = gaps
 
-	seq2 = _mm_set_epi8(16, 18, 20, 20, 26, 15, 20, 24, 15, 16, 20, 22, 16, 28, 30, 22); //EQUAL_VALUES
+	//seq2 = _mm_set_epi8(16, 18, 20, 20, 26, 15, 20, 24,
+	//		15, 16, 20, 22, 16, 28, 30, 22); //EQUAL_VALUES
+
+/*
+	seq2 = _mm_set_epi8(15, 16, 20, 22, 16, 28, 30, 22,
+			16, 18, 20, 20, 26, 15, 20, 24); //EQUAL_VALUES
+*/
+	seq2 = _mm_set_epi8(22, 30, 28, 16, 22, 20, 26, 15, 24, 20, 15, 26, 20, 20, 18, 16); //EQUAL_VALUES
 
 	seq1 = _mm_shuffle_epi8(seq2, min);
 	seq1 = _mm_and_si128(tmp1, seq1);
-	sum_aux = _mm_andnot_si128(sum_aux, tmp1);
-	sum_aux = _mm_add_epi8(sum_aux, seq1);
+	seq2 = _mm_set1_epi8(255);
+	//TODO: this did not work like I envisioned with a nand on itself
+	tmp2 = _mm_xor_si128(seq2, tmp1); // not on equal proteins
+	sum_aux = _mm_and_si128(sum_aux, tmp2);
+	sum_aux = _mm_or_si128(sum_aux, seq1); //add equal values
 	sum_aux = _mm_and_si128(sum_aux, gap1);
 	sum = _mm_add_epi8(sum_aux, sum);
 
@@ -703,6 +713,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 
 	for (int i=0; i<length; i++){
 		if (this->inv_alph[(int)Achar2[i]] >= 0 && this->inv_alph[(int)Bchar2[i]] >= 0) { // both are characters in the core alphabet
+			printf("SEQ1:%d SEQ2:%d MATCH:%d\n", this->protein_dict[(int)Achar2[i]], this->protein_dict[(int)Bchar2[i]], bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
 			dist_2 += bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]];
 			count++;
 		}
@@ -1086,18 +1097,25 @@ void DistanceCalculator::convertAllProtein(){
 
 	generateProteinClusterDict(this->protein_dict);
 
-	this->VALUES_0 =_mm_set_epi8(6, 4, 8, 4, 4, 10, 8, 2, 2, 2, 6, 11, 8, 10, 1, 8);
+	//the values are set in a peculiar way, it is actually the inverse of the expected, right to left
+/*	this->VALUES_0 =_mm_set_epi8(6, 4, 8, 4, 4, 10, 8, 2, 2, 2, 6, 11, 8, 10, 1, 8);
 	this->VALUES_1 =_mm_set_epi8(4, 8, 6, 2, 4, 4, 8, 10, 6, 2, 7, 4, 7, 2, 2, 2);
 	this->VALUES_2 =_mm_set_epi8(6, 3, 1, 2, 6, 4, 2, 0, 6, 3, 0, 2, 11, 4, 2, 2);
 	this->VALUES_3 =_mm_set_epi8(2, 4, 2, 2, 6, 7, 8, 6, 4, 4, 6, 2, 6, 4, 4, 3);
 	this->VALUES_4 =_mm_set_epi8(2, 0, 10, 6, 10, 8, 6, 8, 8, 6, 4, 4, 4, 6, 8, 6);
 	this->VALUES_5 =_mm_set_epi8(8, 6, 6, 6, 4, 4, 7, 6, 4, 6, 10, 2, 2, 0, 0, 4);
 	this->VALUES_6 =_mm_set_epi8(2, 4, 4, 2, 4, 10, 0, 2, 4, 4, 4, 4, 2, 4, 5, 2);
-	this->VALUES_7 =_mm_set_epi8(12, 6, 6, 14, 2, 4, 4, 12, 0, 0, 0, 0, 0, 0, 0, 0);
+	this->VALUES_7 =_mm_set_epi8(12, 6, 6, 14, 2, 4, 4, 12, 0, 0, 0, 0, 0, 0, 0, 0);*/
 
-	this->GAPS_COUNT_MASK = _mm_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
 
-	this->DECOMPRESSED_GAPS = _mm_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
+	this->VALUES_0 =_mm_set_epi8(8, 1, 10, 8, 11, 6, 2, 2, 2, 8, 10, 4, 4, 8, 4, 6);
+	this->VALUES_1 =_mm_set_epi8(2, 2, 2, 7, 4, 7, 2, 6, 10, 8, 4, 4, 2, 6, 8, 4);
+	this->VALUES_2 =_mm_set_epi8(2, 2, 4, 11, 2, 0, 3, 6, 0, 2, 4,  6, 2, 1, 3, 6);
+	this->VALUES_3 =_mm_set_epi8(3, 4, 4, 6, 2, 6, 4, 4, 6, 8, 7, 6, 2, 2, 4, 2);
+	this->VALUES_4 =_mm_set_epi8(6, 8, 6, 4, 4, 4, 6, 8, 8, 6, 8, 10, 6, 10, 0, 2);
+	this->VALUES_5 =_mm_set_epi8(4, 0, 0, 2, 2, 10, 6, 4, 6, 7, 4, 4, 6, 6, 6, 8);
+	this->VALUES_6 =_mm_set_epi8(2, 5, 4, 2, 4, 4, 4, 4, 2, 0, 10, 4, 2, 4, 4, 2);
+	this->VALUES_7 =_mm_set_epi8(0, 0, 0, 0, 0, 0, 0, 0, 12, 4, 4, 2, 14, 6, 6, 12);
 
 
 	//TODO: make sure all of these are aligned, so I can load them faster
