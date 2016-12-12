@@ -469,11 +469,13 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	//seq1 = index final
 	//empty seq2, gap2
 
-	gap2 = _mm_srli_si128(tmp2, 4);
+	//let`s make a srli_si128 that shifts bytes while all the other srli shift bits? sure, why not?
+	gap2 = _mm_srli_epi16(seq1, 4);
 
 	seq2 = _mm_set1_epi8(15);
 
 	gap2 = _mm_and_si128(gap2, seq2);
+
 
 	seq2 = _mm_and_si128(seq1, seq2);
 
@@ -590,7 +592,10 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	seq2 = _mm_set_epi8(15, 16, 20, 22, 16, 28, 30, 22,
 			16, 18, 20, 20, 26, 15, 20, 24); //EQUAL_VALUES
 */
-	seq2 = _mm_set_epi8(22, 30, 28, 16, 22, 20, 26, 15, 24, 20, 15, 26, 20, 20, 18, 16); //EQUAL_VALUES
+
+
+	seq2 = _mm_set_epi8(22, 30, 18, 16, 22, 20, 16, 15, 24, 20, 15, 26, 20, 20, 18, 16); //EQUAL_VALUES
+
 
 	seq1 = _mm_shuffle_epi8(seq2, min);
 	seq1 = _mm_and_si128(tmp1, seq1);
@@ -601,6 +606,13 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	sum_aux = _mm_or_si128(sum_aux, seq1); //add equal values
 	sum_aux = _mm_and_si128(sum_aux, gap1);
 	sum = _mm_add_epi8(sum_aux, sum);
+
+
+	for (int i=0;i<16;i++){
+		char min2 = *((char*)(&min)+i);
+		char value = *((char*)(&sum_aux)+i);
+		printf("%d\n",(int) value);
+	}
 
 	sum_aux = _mm_setzero_si128();
 	gap2 = _mm_set1_epi8(1);
@@ -710,10 +722,12 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	const char* Achar2 = this->A[a]->c_str();
 	const char* Bchar2 = this->A[b]->c_str();
 
+	//printf("----------------------------------\n");
 
 	for (int i=0; i<length; i++){
 		if (this->inv_alph[(int)Achar2[i]] >= 0 && this->inv_alph[(int)Bchar2[i]] >= 0) { // both are characters in the core alphabet
-			printf("SEQ1:%d SEQ2:%d MATCH:%d\n", this->protein_dict[(int)Achar2[i]], this->protein_dict[(int)Bchar2[i]], bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
+			//printf("SEQ1:%d SEQ2:%d MATCH:%d\n", this->protein_dict[(int)Achar2[i]], this->protein_dict[(int)Bchar2[i]], bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
+			//printf("%d\n",bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
 			dist_2 += bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]];
 			count++;
 		}
@@ -776,14 +790,15 @@ double DistanceCalculator::testDifferenceCluster(int a, int b){
 			 {4, 8, 10, 6, 2, 7, 4, 24, 2, 2, 6, 4, 6, 4, 4, 12},
 			 {7, 2, 2, 2, 6, 3, 1, 2, 15, 11, 7, 3, 4, 7, 2, 6},
 			 {6, 4, 2, 0, 6, 3, 0, 2, 11, 16, 8, 2, 4, 6, 4, 6},
-			 {4, 2, 2, 2, 4, 2, 2, 6, 7, 8, 20, 0, 4, 4, 10, 14},
+			 {4, 2, 2, 2, 4, 2, 2, 6, 7, 8, 20, 0, 4, 4, 10, 14},//
 			 {6, 4, 4, 6, 2, 6, 4, 4, 3, 2, 0, 22, 6, 6, 0, 2},
 			 {10, 6, 10, 8, 6, 8, 8, 6, 4, 4, 4, 6, 16, 10, 2, 4},
 			 {8, 6, 8, 6, 6, 6, 4, 4, 7, 6, 4, 6, 10, 18, 4, 4},
 			 {2, 2, 0, 0, 4, 2, 4, 4, 2, 4, 10, 0, 2, 4, 30, 12},
 			 {4, 4, 4, 2, 4, 5, 2, 12, 6, 6, 14, 2, 4, 4, 12, 22}
-	};
 
+
+	};
 
 	float dist = 0.0f;
 	float dist_2 = 0.0f;
@@ -1055,7 +1070,7 @@ void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned 
 	 */
 
 	*seqOut = 0x0;
-	*gapOut = 0xFFFFFFFF;
+	*gapOut = 0x0;
 
 	if(size<=0){//TODO: perhaps remove later?
 		return;
@@ -1068,11 +1083,9 @@ void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned 
 	int i;
 
 	for(i=0;i<*size && i<numCharPerElement;i++){
-		if(seq[i] == '-'){
-			//*seqOut += (0xFF << ((3-i)*8)); This byte will be all zeros
-			*gapOut -= gapValues[i]; //put up the gap in the right place
-		}else{
+		if(seq[i] != '-'){
 			*seqOut += (this->protein_dict[(int)seq[i]]) << (i*8);
+			*gapOut += gapValues[i];
 		}
 	}
 	*size -= i;
@@ -1098,24 +1111,15 @@ void DistanceCalculator::convertAllProtein(){
 	generateProteinClusterDict(this->protein_dict);
 
 	//the values are set in a peculiar way, it is actually the inverse of the expected, right to left
-/*	this->VALUES_0 =_mm_set_epi8(6, 4, 8, 4, 4, 10, 8, 2, 2, 2, 6, 11, 8, 10, 1, 8);
-	this->VALUES_1 =_mm_set_epi8(4, 8, 6, 2, 4, 4, 8, 10, 6, 2, 7, 4, 7, 2, 2, 2);
-	this->VALUES_2 =_mm_set_epi8(6, 3, 1, 2, 6, 4, 2, 0, 6, 3, 0, 2, 11, 4, 2, 2);
-	this->VALUES_3 =_mm_set_epi8(2, 4, 2, 2, 6, 7, 8, 6, 4, 4, 6, 2, 6, 4, 4, 3);
-	this->VALUES_4 =_mm_set_epi8(2, 0, 10, 6, 10, 8, 6, 8, 8, 6, 4, 4, 4, 6, 8, 6);
-	this->VALUES_5 =_mm_set_epi8(8, 6, 6, 6, 4, 4, 7, 6, 4, 6, 10, 2, 2, 0, 0, 4);
-	this->VALUES_6 =_mm_set_epi8(2, 4, 4, 2, 4, 10, 0, 2, 4, 4, 4, 4, 2, 4, 5, 2);
-	this->VALUES_7 =_mm_set_epi8(12, 6, 6, 14, 2, 4, 4, 12, 0, 0, 0, 0, 0, 0, 0, 0);*/
 
-
-	this->VALUES_0 =_mm_set_epi8(8, 1, 10, 8, 11, 6, 2, 2, 2, 8, 10, 4, 4, 8, 4, 6);
-	this->VALUES_1 =_mm_set_epi8(2, 2, 2, 7, 4, 7, 2, 6, 10, 8, 4, 4, 2, 6, 8, 4);
-	this->VALUES_2 =_mm_set_epi8(2, 2, 4, 11, 2, 0, 3, 6, 0, 2, 4,  6, 2, 1, 3, 6);
-	this->VALUES_3 =_mm_set_epi8(3, 4, 4, 6, 2, 6, 4, 4, 6, 8, 7, 6, 2, 2, 4, 2);
-	this->VALUES_4 =_mm_set_epi8(6, 8, 6, 4, 4, 4, 6, 8, 8, 6, 8, 10, 6, 10, 0, 2);
-	this->VALUES_5 =_mm_set_epi8(4, 0, 0, 2, 2, 10, 6, 4, 6, 7, 4, 4, 6, 6, 6, 8);
-	this->VALUES_6 =_mm_set_epi8(2, 5, 4, 2, 4, 4, 4, 4, 2, 0, 10, 4, 2, 4, 4, 2);
-	this->VALUES_7 =_mm_set_epi8(0, 0, 0, 0, 0, 0, 0, 0, 12, 4, 4, 2, 14, 6, 6, 12);
+	this->VALUES_0 =_mm_set_epi8(4 ,2 ,8 ,10 ,6 ,4 ,6 ,7 ,4 ,8 ,6 ,8 ,4 ,4 ,6 ,0);
+	this->VALUES_1 =_mm_set_epi8(2 ,10 ,4 ,2 ,6 ,6 ,4 ,2 ,4 ,2 ,8 ,4 ,11 ,2 ,4 ,8);
+	this->VALUES_2 =_mm_set_epi8(2 ,6 ,6 ,10 ,2 ,4 ,0 ,8 ,10 ,4 ,2 ,2 ,2 ,10 ,8 ,8);
+	this->VALUES_3 =_mm_set_epi8(6 ,6 ,2 ,4 ,6 ,6 ,2 ,2 ,1 ,2 ,0 ,6 ,8 ,6 ,2 ,0);
+	this->VALUES_4 =_mm_set_epi8(2 ,0 ,1 ,4 ,5 ,2 ,6 ,8 ,6 ,2 ,3 ,3 ,7 ,4 ,4 ,4);
+	this->VALUES_5 =_mm_set_epi8(3 ,7 ,11 ,12 ,4 ,4 ,6 ,4 ,6 ,2 ,2 ,2 ,4 ,4 ,8 ,4);
+	this->VALUES_6 =_mm_set_epi8(6 ,14 ,10 ,4 ,4 ,0 ,6 ,4 ,6 ,4 ,2 ,8 ,6 ,2 ,7 ,4);
+	this->VALUES_7 =_mm_set_epi8(0 ,0 ,0 ,0 ,0 ,0 ,0 ,12 ,4 ,4 ,4 ,2 ,10 ,2 ,0 ,6);
 
 
 	//TODO: make sure all of these are aligned, so I can load them faster
