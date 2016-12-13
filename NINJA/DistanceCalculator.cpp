@@ -608,11 +608,11 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	sum = _mm_add_epi8(sum_aux, sum);
 
 
-	for (int i=0;i<16;i++){
+/*	for (int i=0;i<16;i++){
 		char min2 = *((char*)(&min)+i);
 		char value = *((char*)(&sum_aux)+i);
 		printf("%d\n",(int) value);
-	}
+	}*/
 
 	sum_aux = _mm_setzero_si128();
 	gap2 = _mm_set1_epi8(1);
@@ -648,7 +648,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	const unsigned int* Bgap = this->gapInTheSequences[b];
 
 	int sum = 0;
-	int gaps = 0;
+	int gaps = this->additionalGaps;
 
 	int i = 0;
 
@@ -692,7 +692,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 		gaps += _mm_extract_epi16(counts_gaps, 0);
 	}
 	//TEST, DELETE AFTER
-	static const int bl62_clusterized[16][16] = {
+/*	static const int bl62_clusterized[16][16] = {
 			{16, 6, 4, 4, 8, 6, 8, 4, 7, 6, 4, 6, 10, 8, 2, 4},
 			 {6, 18, 8, 4, 2, 11, 4, 8, 2, 4, 2, 4, 6, 6, 2, 4},
 			 {4, 8, 20, 10, 2, 8, 8, 10, 2, 2, 2, 4, 10, 8, 0, 4},
@@ -731,9 +731,19 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 			dist_2 += bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]];
 			count++;
 		}
+	}*/
+
+
+	if(gaps < length){
+		printf("%d\n", sum);
 	}
 
-    return (sum/(length-gaps));
+	int relevant = length-gaps;
+
+	if (relevant == 0)
+		return FLT_MAX;
+
+    return (sum/(relevant));
 }
 double DistanceCalculator::testDifferenceCluster(int a, int b){
 
@@ -1139,7 +1149,9 @@ void DistanceCalculator::convertAllProtein(){
 		}
 
 	}
-	//TODO: free all the unnecessary memory
+
+	this->additionalGaps = this->lengthOfSequences - (allocSize*4);
+	//TODO: free all the unnecessary memhhhory
 
 }
 void DistanceCalculator::convertAllDNA(){
