@@ -608,11 +608,11 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	sum = _mm_add_epi8(sum_aux, sum);
 
 
-/*	for (int i=0;i<16;i++){
+	for (int i=0;i<16;i++){
 		char min2 = *((char*)(&min)+i);
 		char value = *((char*)(&sum_aux)+i);
 		printf("%d\n",(int) value);
-	}*/
+	}
 
 	sum_aux = _mm_setzero_si128();
 	gap2 = _mm_set1_epi8(1);
@@ -692,7 +692,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 		gaps += _mm_extract_epi16(counts_gaps, 0);
 	}
 	//TEST, DELETE AFTER
-/*	static const int bl62_clusterized[16][16] = {
+	static const int bl62_clusterized[16][16] = {
 			{16, 6, 4, 4, 8, 6, 8, 4, 7, 6, 4, 6, 10, 8, 2, 4},
 			 {6, 18, 8, 4, 2, 11, 4, 8, 2, 4, 2, 4, 6, 6, 2, 4},
 			 {4, 8, 20, 10, 2, 8, 8, 10, 2, 2, 2, 4, 10, 8, 0, 4},
@@ -722,23 +722,21 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	const char* Achar2 = this->A[a]->c_str();
 	const char* Bchar2 = this->A[b]->c_str();
 
-	//printf("----------------------------------\n");
+	printf("----------------------------------\n");
 
 	for (int i=0; i<length; i++){
 		if (this->inv_alph[(int)Achar2[i]] >= 0 && this->inv_alph[(int)Bchar2[i]] >= 0) { // both are characters in the core alphabet
-			//printf("SEQ1:%d SEQ2:%d MATCH:%d\n", this->protein_dict[(int)Achar2[i]], this->protein_dict[(int)Bchar2[i]], bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
+			printf("SEQ1:%d SEQ2:%d MATCH:%d\n", this->protein_dict[(int)Achar2[i]], this->protein_dict[(int)Bchar2[i]], bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
 			//printf("%d\n",bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
 			dist_2 += bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]];
 			count++;
 		}
-	}*/
-
-
-	if(gaps < length){
-		printf("%d\n", sum);
 	}
 
 	int relevant = length-gaps;
+
+	if (relevant != 0)
+		printf("%d\n", sum);
 
 	if (relevant == 0)
 		return FLT_MAX;
@@ -811,7 +809,7 @@ double DistanceCalculator::testDifferenceCluster(int a, int b){
 	};
 
 	float dist = 0.0f;
-	float dist_2 = 0.0f;
+	int dist_2 = 0;
 
 	if (this->corr_type != none && this->corr_type != FastTree){
 		fprintf(stderr, "illegal choice of correction method; must be 'n' or 's'");
@@ -827,7 +825,7 @@ double DistanceCalculator::testDifferenceCluster(int a, int b){
 
 	for (int i=0; i<length; i++){
 		if (this->inv_alph[(int)Achar[i]] >= 0 && this->inv_alph[(int)Bchar[i]] >= 0) { // both are characters in the core alphabet
-			dist += bl62[this->protein_dict_original[(int)Achar[i]]][this->protein_dict_original[(int)Bchar[i]]];
+			//dist += bl62[this->protein_dict_original[(int)Achar[i]]][this->protein_dict_original[(int)Bchar[i]]];
 			//printf("%d\n", this->protein_dict[(int)Bchar[i]]);
 			dist_2 += bl62_clusterized[ this->protein_dict[(int)Achar[i]]][this->protein_dict[(int)Bchar[i]]];
 			//printf("%c:%d %c:%d-- ", Achar[i], this->protein_dict_original[(int)Achar[i]], Bchar[i], this->protein_dict[(int)Bchar[i]]);
@@ -846,8 +844,10 @@ double DistanceCalculator::testDifferenceCluster(int a, int b){
 
 	//double dist_d = (dist < maxscore ? dist : maxscore);
 	//printf("%f %f\n", dist, dist_2);
-	if (dist != 0)
-		printf("%f %f %f %f %f\n", dist, dist_2, (dist - dist_2), ((dist - dist_2)/dist), (dist - dist_2)/(float)count);
+	if (count != 0){
+		//printf("%f %f %f %f %f\n", dist, dist_2, (dist - dist_2), ((dist - dist_2)/dist), (dist - dist_2)/(float)count);
+		printf("%d\n", dist_2);
+	}
 	return dist - dist_2;
 }
 double DistanceCalculator::calc (int a, int b){

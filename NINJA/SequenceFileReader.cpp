@@ -132,6 +132,7 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 
 	for (int i=0; i<sequenceSize; i++){
 		//bool good = true;
+		std::transform(sequences[i]->begin(), sequences[i]->end(),sequences[i]->begin(), ::toupper);
 		for (int j=0; j<(signed)sequences[i]->size(); j++) {
 			if (sequences[i]->at(j) == '.'){
 				(*sequences[i])[j] = '-';
