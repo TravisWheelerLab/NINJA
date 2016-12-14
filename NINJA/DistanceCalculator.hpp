@@ -81,7 +81,7 @@ class DistanceCalculator{
 		int additionalGaps; //inverse of the number of gaps added at the end of the sequence in sse calculation
 
 		inline void count128(register __m128i &seq1, register __m128i &seq2, register __m128i &gap1, register __m128i &gap2, register __m128i &tmp, register __m128i &tmp2, register __m128i &tmp3, register __m128i &count_transversions, register __m128i &count_transitions, register __m128i &count_gaps);
-		inline void count128P(register __m128i &seq1, register __m128i &seq2,  register __m128i &gap1,  register __m128i &gap2, register __m128i &VALUES_0,  register __m128i &VALUES_1,  register __m128i &VALUES_2,  register __m128i &VALUES_3,  register __m128i &VALUES_4,  register __m128i &VALUES_5,  register __m128i &VALUES_6,  register __m128i &VALUES_7, register __m128i &sum, register __m128i &gap_count, register __m128i &tmp1, register __m128i &tmp2);
+		inline void count128P(register __m128i &seq1, register __m128i &seq2,  register __m128i &gap1,  register __m128i &gap2, register __m128i &VALUES_0,  register __m128i &VALUES_1,  register __m128i &VALUES_2,  register __m128i &VALUES_3,  register __m128i &VALUES_4,  register __m128i &VALUES_5,  register __m128i &VALUES_6,  register __m128i &VALUES_7, register __m128i &sum, register __m128i &gap_count, register __m128i &tmp1, register __m128i &tmp2, int a, int b);
 
 		double newCalcDNA(int a, int b);
 

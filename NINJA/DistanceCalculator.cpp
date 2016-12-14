@@ -379,7 +379,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
     return dist_d;
 
 }
-inline void DistanceCalculator::count128P(register __m128i &seq1, register __m128i &seq2,  register __m128i &gap1,  register __m128i &gap2, register __m128i &VALUES_0,  register __m128i &VALUES_1,  register __m128i &VALUES_2,  register __m128i &VALUES_3,  register __m128i &VALUES_4,  register __m128i &VALUES_5,  register __m128i &VALUES_6,  register __m128i &VALUES_7, register __m128i &sum, register __m128i &gap_count, register __m128i &tmp1, register __m128i &tmp2){
+inline void DistanceCalculator::count128P(register __m128i &seq1, register __m128i &seq2,  register __m128i &gap1,  register __m128i &gap2, register __m128i &VALUES_0,  register __m128i &VALUES_1,  register __m128i &VALUES_2,  register __m128i &VALUES_3,  register __m128i &VALUES_4,  register __m128i &VALUES_5,  register __m128i &VALUES_6,  register __m128i &VALUES_7, register __m128i &sum, register __m128i &gap_count, register __m128i &tmp1, register __m128i &tmp2, int a, int b){
 
 	tmp1 = _mm_min_epu8(seq1,seq2);
 	tmp2 = _mm_max_epu8(seq1,seq2);
@@ -607,12 +607,13 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	sum_aux = _mm_and_si128(sum_aux, gap1);
 	sum = _mm_add_epi8(sum_aux, sum);
 
-
-	for (int i=0;i<16;i++){
-		char min2 = *((char*)(&min)+i);
-		char value = *((char*)(&sum_aux)+i);
-		printf("%d\n",(int) value);
-	}
+/*	if (a == 264 && b==267){
+		for (int i=0;i<16;i++){
+			char min2 = *((char*)(&min)+i);
+			char value = *((char*)(&sum_aux)+i);
+			printf("%d\n",(int) value);
+		}
+	}*/
 
 	sum_aux = _mm_setzero_si128();
 	gap2 = _mm_set1_epi8(1);
@@ -633,6 +634,10 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	//register __m128i tmp3;
 	register __m128i distance;
 	register __m128i counts_gaps;
+
+/*	if (a == 264 && b==267){
+		printf("found");
+	}*/
 
 
 	int numOfInts = ceil((float)this->lengthOfSequences/4.0);
@@ -665,7 +670,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 				gap1 = *(__m128i*)&Agap[i];
 				gap2 = *(__m128i*)&Bgap[i];
 
-				count128P(seq1, seq2, gap1, gap2, this->VALUES_0, this->VALUES_1, this->VALUES_2, this->VALUES_3, this->VALUES_4, this->VALUES_5, this->VALUES_6, this->VALUES_7, distance, counts_gaps, tmp1, tmp2);
+				count128P(seq1, seq2, gap1, gap2, this->VALUES_0, this->VALUES_1, this->VALUES_2, this->VALUES_3, this->VALUES_4, this->VALUES_5, this->VALUES_6, this->VALUES_7, distance, counts_gaps, tmp1, tmp2, a, b);
 
 				i+=4;
 		}
@@ -711,7 +716,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 			 {4, 4, 4, 2, 4, 5, 2, 12, 6, 6, 14, 2, 4, 4, 12, 22}
 	};
 
-	float dist_2 = 0.0f;
+	int dist_2 = 0;
 
 	if (this->corr_type != none && this->corr_type != FastTree){
 		fprintf(stderr, "illegal choice of correction method; must be 'n' or 's'");
@@ -721,22 +726,31 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	int count = 0;
 	const char* Achar2 = this->A[a]->c_str();
 	const char* Bchar2 = this->A[b]->c_str();
-
-	printf("----------------------------------\n");
+/*	if (a == 264 && b==267){
+		printf("----------------------------------\n");
+	}*/
 
 	for (int i=0; i<length; i++){
 		if (this->inv_alph[(int)Achar2[i]] >= 0 && this->inv_alph[(int)Bchar2[i]] >= 0) { // both are characters in the core alphabet
-			printf("SEQ1:%d SEQ2:%d MATCH:%d\n", this->protein_dict[(int)Achar2[i]], this->protein_dict[(int)Bchar2[i]], bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
+/*			if (a == 264 && b==267){
+				printf("SEQ1:%d SEQ2:%d MATCH:%d\n", this->protein_dict[(int)Achar2[i]], this->protein_dict[(int)Bchar2[i]], bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
+			}*/
+			//printf("SEQ1:%d SEQ2:%d MATCH:%d\n", this->protein_dict[(int)Achar2[i]], this->protein_dict[(int)Bchar2[i]], bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
 			//printf("%d\n",bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]]);
 			dist_2 += bl62_clusterized[ this->protein_dict[(int)Achar2[i]]][this->protein_dict[(int)Bchar2[i]]];
 			count++;
 		}
 	}
 
+
 	int relevant = length-gaps;
 
-	if (relevant != 0)
-		printf("%d\n", sum);
+/*	if (relevant != 0)
+		printf("%d\n", sum);*/
+
+	if (sum != dist_2){
+		printf("SSE:%d dist_2:%d a:%d b:%d\n", sum, dist_2, a, b);
+	}
 
 	if (relevant == 0)
 		return FLT_MAX;
@@ -1093,7 +1107,7 @@ void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned 
 	int i;
 
 	for(i=0;i<*size && i<numCharPerElement;i++){
-		if(seq[i] != '-'){
+		if(seq[i] != '-' && seq[i] != 'X'){
 			*seqOut += (this->protein_dict[(int)seq[i]]) << (i*8);
 			*gapOut += gapValues[i];
 		}
