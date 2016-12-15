@@ -63,9 +63,10 @@ int main(int argc, char *argv[]){
 	ArgumentHandler::AlphabetType alphType = argHandler->getAlphabetType();
 	ArgumentHandler::CorrectionType corrType = argHandler->getCorrectionType();
 	FILE* out = argHandler->getOutpuFile();
+	int threads = argHandler->getNumThreads();
 
 	fprintf(stderr,"Reading...\n");
-	TreeBuilderManager* manager = new TreeBuilderManager(method, njTmpDir, inFile, out, (TreeBuilderManager::InputType) inType,(TreeBuilderManager::OutputType) outType, (TreeBuilderManager::AlphabetType) alphType,(TreeBuilderManager::CorrectionType) corrType);
+	TreeBuilderManager* manager = new TreeBuilderManager(method, njTmpDir, inFile, out, (TreeBuilderManager::InputType) inType,(TreeBuilderManager::OutputType) outType, (TreeBuilderManager::AlphabetType) alphType,(TreeBuilderManager::CorrectionType) corrType, threads);
 
 	std::string treeString = manager->doJob();
 

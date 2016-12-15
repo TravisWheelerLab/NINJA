@@ -593,7 +593,7 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	seq1 = _mm_shuffle_epi8(seq2, min);
 	seq1 = _mm_and_si128(tmp1, seq1);
 	seq2 = _mm_set1_epi8(255);
-	//TODO: this did not work like I envisioned with a nand on itself
+	//this did not work like I envisioned with a nand on itself
 	tmp2 = _mm_xor_si128(seq2, tmp1); // not on equal proteins
 	sum_aux = _mm_and_si128(sum_aux, tmp2);
 	sum_aux = _mm_or_si128(sum_aux, seq1); //add equal values
@@ -875,6 +875,18 @@ double DistanceCalculator::calc (int a, int b){
 
 DistanceCalculator::~DistanceCalculator(){
 	delete[](this->inv_alph);
+	if (this->gapInTheSequences != NULL){
+		for(int i=0;i<this->numberOfSequences;i++){
+			if(this->gapInTheSequences[i] != NULL)
+				delete(this->gapInTheSequences[i]);
+		}
+	}
+	if (this->convertedSequences != NULL){
+		for(int i=0;i<this->numberOfSequences;i++){
+			if(this->convertedSequences[i] != NULL)
+				delete(this->convertedSequences[i]);
+		}
+	}
 }
 void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut){
 	/*
@@ -900,7 +912,7 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 	*seqOut = 0x0;
 	*gapOut = 0xF0F0F0F; // initialize higher 4 bits as 0, and lower 4 bits as one
 
-	if(size<=0){//TODO: perhaps remove later?
+	if(size<=0){
 		return;
 	}
 
@@ -929,33 +941,6 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 
 }
 void DistanceCalculator::generateProteinClusterDict(int* protein_dictionary){
-	/*
-	 *
-	 * [['ala'], ['arg', 'lys'], ['asn'], ['asp'], ['cys'], ['gln', 'glu'], ['gly'], ['his'], ['ile', 'val', 'leu'], ['met'], ['phe'], ['pro'], ['ser'], ['thr'], ['trp'], ['tyr']]
-	 */
-/*
-	char proteins[20] = {'A', 'R', 'K', 'N', 'D', 'C', 'Q', 'E', 'G', 'H', 'I', 'V', 'L', 'M', 'F', 'P', 'S', 'T', 'W', 'Y'};
-	protein_dictionary[(int)proteins[0]] = 0; // {A}
-	protein_dictionary[(int)proteins[1]] = 1; // {R, K}
-	protein_dictionary[(int)proteins[2]] = 1; // {R, K}
-	protein_dictionary[(int)proteins[3]] = 2; // {N}
-	protein_dictionary[(int)proteins[4]] = 3; // {D}
-	protein_dictionary[(int)proteins[5]] = 4; // {C}
-	protein_dictionary[(int)proteins[6]] = 5; // {Q, E}
-	protein_dictionary[(int)proteins[7]] = 5; // {Q, E}
-	protein_dictionary[(int)proteins[8]] = 6; // {G}
-	protein_dictionary[(int)proteins[9]] = 7; // {H}
-	protein_dictionary[(int)proteins[10]] = 8; // {I, V, L}
-	protein_dictionary[(int)proteins[11]] = 8; // {I, V, L}
-	protein_dictionary[(int)proteins[12]] = 8; // I, V, L}
-	protein_dictionary[(int)proteins[13]] = 9; // {M}
-	protein_dictionary[(int)proteins[14]] = 10; // {F}
-	protein_dictionary[(int)proteins[15]] = 11; // {P}
-	protein_dictionary[(int)proteins[16]] = 12; // {S}
-	protein_dictionary[(int)proteins[17]] = 13; // {T}
-	protein_dictionary[(int)proteins[18]] = 14; // {W}
-	protein_dictionary[(int)proteins[19]] = 15; // {Y}
-*/
 
 	//new frequencies clusters
 	//[['A'], ['R'], ['N'], ['D'], ['C'], ['Q', 'E', 'K'], ['G'], ['H'], ['I', 'V', 'M'], ['L'], ['F'], ['P'], ['S'], ['T'], ['W'], ['Y']]
@@ -1011,15 +996,14 @@ void DistanceCalculator::generateProteinOriginalDict(int* protein_dictionary){
 }
 void DistanceCalculator::getBitsProteinClustered(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut){
 	/*
-	 * For now use a vector for the gaps, just to count them and make the whole calculation easier.
-	 *
-	 * I use inverse_alphabet array to set the values of each protein. See DistanceCalculator::getInverseAlphabet.
+	 * The sequence and gap is initialized to zero. If it is not a gap or an undertermined protein, I set the
+	 * gap to 1`s and the sequence according to generateProteinClusterDict.
 	 */
 
 	*seqOut = 0x0;
 	*gapOut = 0x0;
 
-	if(size<=0){//TODO: perhaps remove later?
+	if(size<=0){
 		return;
 	}
 
@@ -1047,10 +1031,6 @@ unsigned int* DistanceCalculator::getProteinDic (std::string alph, int length) {
 }
 
 void DistanceCalculator::convertAllProtein(){
-	/*
-	 * TODO: at first use all 20 proteins, and represent them in 1 byte, although we only need 5 bits. We will also represent gaps with 1 byte in the same array, all 1`s,
-	 *  but later on we can pack at least 3 gaps in one byte (higher 3 bits).
-	 */
 
 	this->x128 = _mm_set1_epi8((int8_t) -128);
 	this->zero = _mm_set1_epi8((int8_t) 0x00);
@@ -1058,7 +1038,6 @@ void DistanceCalculator::convertAllProtein(){
 	generateProteinClusterDict(this->protein_dict);
 
 	//the values are set in a peculiar way, it is actually the inverse of the expected, right to left
-
 	this->VALUES_0 =_mm_set_epi8(4 ,2 ,8 ,10 ,6 ,4 ,6 ,7 ,4 ,8 ,6 ,8 ,4 ,4 ,6 ,0);
 	this->VALUES_1 =_mm_set_epi8(2 ,10 ,4 ,2 ,6 ,6 ,4 ,2 ,4 ,2 ,8 ,4 ,11 ,2 ,4 ,8);
 	this->VALUES_2 =_mm_set_epi8(2 ,6 ,6 ,10 ,2 ,4 ,0 ,8 ,10 ,4 ,2 ,2 ,2 ,10 ,8 ,8);
@@ -1088,7 +1067,13 @@ void DistanceCalculator::convertAllProtein(){
 	}
 
 	this->additionalGaps = this->lengthOfSequences - (allocSize*4);
-	//TODO: free all the unnecessary memhhhory
+
+	if (this->A != NULL){
+		for(int i=0;i<this->numberOfSequences;i++){
+			if(this->A[i] != NULL)
+				delete(this->A[i]);
+		}
+	}
 
 }
 void DistanceCalculator::convertAllDNA(){
@@ -1106,8 +1091,8 @@ void DistanceCalculator::convertAllDNA(){
 		allocSize += 4 - (allocSize % 4);
 	int sizeLeft;
 	for(int i=0;i<this->numberOfSequences;i++){
-		this->convertedSequences[i] = new unsigned int[allocSize]; //min of 128bits, TODO: change later
-		this->gapInTheSequences[i] = new unsigned int[allocSize]; //min of 128bits, TODO: change later
+		this->convertedSequences[i] = new unsigned int[allocSize];
+		this->gapInTheSequences[i] = new unsigned int[allocSize];
 
 		sizeLeft = this->lengthOfSequences;
 		for(int j=0;j<allocSize;j++){
@@ -1115,8 +1100,11 @@ void DistanceCalculator::convertAllDNA(){
 		}
 
 	}
-	//TODO: free all the unnecessary memory
-/*	for(int i=0;i<this->numberOfSequences;i++)
-		delete(this->A[i]);
-	delete[](this->A);*/
+
+	if (this->A != NULL){
+		for(int i=0;i<this->numberOfSequences;i++){
+			if(this->A[i] != NULL)
+				delete(this->A[i]);
+		}
+	}
 }

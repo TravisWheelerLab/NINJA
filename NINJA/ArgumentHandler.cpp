@@ -18,6 +18,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->alphType = amino;
 	this->corrType = not_assigned;
 	this->outFile = stdout;
+	this->threads = 0;
 
 
 	if(argc == 1){
@@ -164,40 +165,36 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			}
 		}else if (!x.compare("--rebuild_step_ratio") || !x.compare("-r")){
 			if (i < argc-1){
-				int r = *argv[i+1] - '0'; //revisit
+				int r = strtol(argv[i+1], NULL, 0);
 				//TreeBuilder.rebuildStepRatio = r;
 				i++;
 			}else{
 				fprintf(stderr,"No rebuild_step_ratio integer specified.\n");
 				Exception::critical();
 			}
+		}else if(!x.compare("--threads")){
+			int r = strtol(argv[i+1], NULL, 0);
+			this->threads = r;
 		}else if (!x.compare("--help")){
 			printf("Arguments: \n");
 			printf("--in (or -i) filename\n--out (or -o) filename\n--method (or -m) meth  [default | inmem]\n");
 			printf("--in_type type [a | d]\n--out_type type [t]\n--alph_type type [a | d]\n--corr_type type [n | j | k | s]\n");
 			printf("--rebuild_step_ratio (or -r)\nFor more information, check the README file.\n");
 			this->abort = true;
-			//print help
-			//revisit
 		}else if (!x.compare("--version")){
-			printf("Version 0.34\n");
+			printf("Version 0.93\n");
 			this->abort = true;
-			//print version
-			//revisit
 		}else{
 			fprintf(stderr,"Invalid argument, ignored.\n");
 		}
 		//cand_heap_decay left out, not mentioned on Manual
 	}
-//revisit
-//	if (inFile == NULL) {
-//		if (argc>0  && g.getOptind()<argc && argv[g.getOptind()] != NULL) {
-//			inFile = argv[g.getOptind()].toString();
-//		}
-//	}
 }
 std::string ArgumentHandler::getMethod() {
 	return this->method;
+}
+int ArgumentHandler::getNumThreads() {
+	return this->threads;
 }
 
 std::string ArgumentHandler::getInFile() {

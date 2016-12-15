@@ -606,7 +606,7 @@ bool ArrayHeapExtMem::mergeSlots (int lvl){
 
 	//LogWriter.stdErrLogln("merging " + slotPairList.size() + " slots in level " + lvl);
 
-	qsort((void*)(&(*slotPairList)[0]),sizeof(SlotPair*),slotPairList->size(),SlotPair::compareTo); //revisit
+	qsort((void*)(&(*slotPairList)[0]),sizeof(SlotPair*),slotPairList->size(),SlotPair::compareTo);
 	//Collections.sort(slotPairList);
 
 	int summedSize = (int)(slotPairList->at(0)->remaining + slotPairList->at(1)->remaining);

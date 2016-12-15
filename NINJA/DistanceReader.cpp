@@ -68,9 +68,10 @@ DistanceReader::DistanceReader(std::string fileName){ //include exception, not r
 
 	this->r = inFile;
 	this->fileSize = size;
+	this->threads = 0;
 }
 
-DistanceReader::DistanceReader(DistanceCalculator* distCalc, int k){
+DistanceReader::DistanceReader(DistanceCalculator* distCalc, int k, int threads){
 	if (distCalc == NULL){
 		fprintf(stderr,"Null distance calculator handed to external matrix reader. Quitting.");
 		Exception::critical();
@@ -80,6 +81,7 @@ DistanceReader::DistanceReader(DistanceCalculator* distCalc, int k){
 	this->K = k;
 	this->fileSize = 0;
 	this->r = NULL;
+	this->threads = threads;
 }
 
 void DistanceReader::read(std::string **names, int** distances){ //possibly wrong, the else part, perhaps the distance calculator class as well
@@ -87,8 +89,11 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
     unsigned int begin = 0, end = 0, numBegin = 0, numEnd = 0;
     int count = 0;
 
-    omp_set_num_threads(omp_get_max_threads());
-    //omp_set_num_threads(1);
+    if (this->threads == 0){
+        omp_set_num_threads(omp_get_max_threads());
+    } else {
+        omp_set_num_threads(this->threads);
+    }
     if (this->distCalc != NULL) {//using distCalc on input alignment
 		#pragma omp parallel for
     	for (int i=0; i<this->K; i++)

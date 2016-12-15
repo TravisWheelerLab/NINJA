@@ -22,6 +22,8 @@ class ArgumentHandler{
 		CorrectionType corrType;
 		FILE* outFile;
 
+		int threads;
+
 		bool abort;
 
 		ArgumentHandler (char* argv[],int argc);
@@ -31,6 +33,7 @@ class ArgumentHandler{
 		InputType getInputType();
 		OutputType getOutputType();
 		FILE* getOutpuFile();
+		int getNumThreads();
 
 		AlphabetType getAlphabetType();
 

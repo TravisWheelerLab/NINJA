@@ -16,7 +16,7 @@
 #endif
 
 //standard constructor
-TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outFile, InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType){
+TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outFile, InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType, int threads){
 	this->method = method;
 	this->njTmpDir = njTmpDir;
 	this->inFile = inFile;
@@ -28,6 +28,7 @@ TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir,
 	this->names = NULL;
 	this->chars = "abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	this->newDistanceMethod = false;
+	this->threads = threads;
 }
 
 
@@ -39,7 +40,6 @@ std::string TreeBuilderManager::doJob(){
 	float** memD = NULL;
 	float* R  = NULL;
 	// all for external memory version
-	int floatSize = 4;
 	int pageBlockSize = 1024; //that many ints = 4096 bytes;
 	FILE* diskD = NULL;
 
@@ -48,13 +48,8 @@ std::string TreeBuilderManager::doJob(){
 
 	int numCols = 0;
 
-
 	//Runtime runtime = Runtime.getRuntime();
-	long maxMemory = -1; //revisit, priority
-
-	#ifdef LINUX //TODO: include support for multiple plataforms
-	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES);
-	#endif
+	long maxMemory = -1;
 
 	bool ok = true;
 	TreeNode** nodes = NULL;
@@ -65,7 +60,7 @@ std::string TreeBuilderManager::doJob(){
 	int K=0;
 
 	#ifdef LINUX
-	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES); //working, should I use all of this, or reduce it? How does the SO handles if I use it all and it does not have all of that anymore?
+	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES);
 	#endif
 
 	//TODO: check if I close all the files
@@ -154,7 +149,7 @@ std::string TreeBuilderManager::doJob(){
 			fprintf(stderr,"Calculating distances....\n");
 			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->seqSize);
 			K = seqReader->seqSize;
-			reader = new DistanceReader(distCalc, K);
+			reader = new DistanceReader(distCalc, K, this->threads);
 		}else {
 			reader = new DistanceReader(this->inFile);
 			K = reader->K;
