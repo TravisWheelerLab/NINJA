@@ -10,16 +10,14 @@
 
 ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->abort = false;
-	this->method.assign("default"); // default should be "bin" for small, "cand" for large.
+	this->method.assign("default");
 	this->njTmpDir = "";
-	//this->inFile; //works?
 	this->inType = alignment;
 	this->outType = tree;
 	this->alphType = amino;
 	this->corrType = not_assigned;
 	this->outFile = stdout;
 	this->threads = 0;
-
 
 	if(argc == 1){
 		printf("Use --help to see possible arguments.\n");
@@ -53,11 +51,11 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 		}else if (!x.compare("--method") || !x.compare("-m")){
 			if (i < argc-1){
 				if(!y.compare("default")){
-					//TreeBuilderExtMem.useCandHeaps = true;
+					//nothing happens, default is inmem
 				}else if(!y.compare("extmem")){
 					this->method.assign("extmem");
 				}else if(!y.compare("inmem")){
-					//nothing happens
+					//nothing happens, default is inmem
 				}else{
 					fprintf(stderr,"Invalid method: available methods are  'default', 'inmem', and 'extmem'.");
 					Exception::critical();
@@ -131,7 +129,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No ut_type specified.\n");
 				Exception::critical();
 			}
-		}else if (!x.compare("--verbose")){
+/*		}else if (!x.compare("--verbose")){
 			if (i < argc-1){
 				int v = *argv[i+1] - '0'; //revisit
 				//TreeBuilder.verbose = v; TODO:
@@ -139,7 +137,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			}else{
 				fprintf(stderr,"No verbose integer specified.\n");
 				Exception::critical();
-			}
+			}*/
 		}else if (!x.compare("--quiet")){
 				//TreeBuilder.verbose = 0;
 		}else if (!x.compare("--tmp_dir") || !x.compare("-t")){
@@ -154,7 +152,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No temporary directory specified.\n");
 				Exception::critical();
 			}
-		}else if (!x.compare("--clust_size") || !x.compare("-s")){
+/*		}else if (!x.compare("--clust_size") || !x.compare("-s")){
 			if (i < argc-1){
 				int s = *argv[i+1] - '0'; //revisit
 				//TreeBuilder.clustCnt = s; TODO:
@@ -171,7 +169,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			}else{
 				fprintf(stderr,"No rebuild_step_ratio integer specified.\n");
 				Exception::critical();
-			}
+			}*/
 		}else if(!x.compare("--threads")){
 			int r = strtol(argv[i+1], NULL, 0);
 			this->threads = r;

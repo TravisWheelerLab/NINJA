@@ -33,9 +33,6 @@ TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir,
 
 
 std::string TreeBuilderManager::doJob(){
-	// do all sorts of file and memory things using java libraries, I have to rewrite everything
-	//it should be different depending on the OS, for system operations such as checking the memory available
-	//I should consider creating a Logger object to handle all sorts of prints and expection throws
 	int** distances = NULL;
 	float** memD = NULL;
 	float* R  = NULL;
@@ -63,8 +60,6 @@ std::string TreeBuilderManager::doJob(){
 	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES);
 	#endif
 
-	//TODO: check if I close all the files
-
 	SequenceFileReader* seqReader = NULL;
 	if (!this->method.compare("extmem")){
 		if (maxMemory < 1900000000) {
@@ -72,7 +67,6 @@ std::string TreeBuilderManager::doJob(){
 			fprintf(stderr,"The data structures of NINJA may not work well if given less than 2GB.\n");
 		}
 		fprintf(stderr,"Using External Memory...\n");
-		FILE* tempFile;
 		njTmpDir += "treeBuilderManager";
 
 	    mkdir(njTmpDir.c_str(), 0700);
@@ -92,7 +86,7 @@ std::string TreeBuilderManager::doJob(){
 			K = seqReader->seqSize;
 			reader = new DistanceReaderExtMem(distCalc, K);
 		}	else {
-			fprintf(stderr,"External memory with distances as input not allowed yet.\n"); //TODO: implement
+			fprintf(stderr,"External memory with distances as input not allowed.\n");
 			Exception::critical();
 			//reader = new DistanceReaderExtMem(this->inFile);
 			K = reader->K;
@@ -134,8 +128,8 @@ std::string TreeBuilderManager::doJob(){
 		firstMemCol = reader->read( names, R, diskD, memD, numCols, rowLength, pageBlockSize);
 
 		if(this->outType == dist){
-			//reader->write(this->outFile,distances);
-			return "";
+			fprintf(stderr,"Output distances with external memory not allowed.\n");
+			Exception::critical();
 		}
 
 	}else{
@@ -166,7 +160,7 @@ std::string TreeBuilderManager::doJob(){
 		reader->read( this->names, distances);
 
 		if(this->outType == dist){
-			//reader->write(this->outFile,distances);
+			reader->write(this->outFile,distances);
 			return "";
 		}
 

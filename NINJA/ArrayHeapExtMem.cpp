@@ -141,7 +141,7 @@ void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
 
 	char num[15];
 
-	sprintf(num, "%d",rand()); //TODO: I might have to improve the randomness of this number, if I receive any occurance of file creation error
+	sprintf(num, "%d",rand());
 	if (dir == "")
 		this->tmpDir = "tmp/";
 	else

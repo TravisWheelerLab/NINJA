@@ -154,7 +154,7 @@ void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 		this->clustAssignments = new int[this->K]();
 
 		long maxT = 0;
-		long minT = FLT_MAX;
+		long minT = INT_MAX;
 
 		i = this->firstActiveNode;
 		while (i<maxIndex) {
@@ -363,7 +363,6 @@ TreeNode** TreeBuilderExtMem::build (){
 
 			minQ = FLT_MAX;
 			minD = FLT_MIN;
-
 			//Go through current list of candidates, and find best so far.
 			min_i = min_j = -1;
 

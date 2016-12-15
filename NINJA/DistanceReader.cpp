@@ -6,41 +6,16 @@
  */
 #include "DistanceReader.hpp"
 #include <iostream>
-/*
-void stringParsing(std::string* s, std::string* delimiter){
-	size_t pos = 0;
-	std::string token;
-	while ((pos = s->find(*delimiter)) != std::string::npos) {
-	    token += s->substr(0, pos);
-	    s->erase(0, pos + delimiter->length());
-	}
-}
-*/
-/*
- * Example of a matrix
- *
-   14
-Mouse
-Bovine      1.7043
-Lemur       2.0235  1.1901
-Tarsier     2.1378  1.3287  1.2905
-Squir Monk  1.5232  1.2423  1.3199  1.7878
- */
+
 
 DistanceReader::DistanceReader(std::string fileName){ //include exception, not ready yet
-	FILE* inFile;
-	size_t size;
+	FILE* inFile = NULL;
+	size_t size = 0;
 	this->distCalc = NULL;
 	this->K = 0;
 	if(&fileName == NULL or fileName.empty()){
-		inFile = stdin;
-		fseek(inFile,0,SEEK_END); //TODO: review that, fseek not supposed to work in stdin
-		size = ftell(inFile);
-		fseek(inFile,0,SEEK_SET);
-		if (size==0) {
-			fprintf(stderr,"Error reading from STDIN.\n");
-			Exception::critical();
-		}
+		fprintf(stderr,"Distances cannot be read from stdin.\n");
+		Exception::critical();
 	}else{
 		inFile = fopen(&fileName.at(0),"r");
 		if (inFile == NULL){
@@ -107,11 +82,6 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
 
     	char *x = new char[this->fileSize];
     	fread(x,1,this->fileSize,this->r);
-/*    	if (this->fileSize != numRead){
-    		printf("File size expected: %d file size read: %d\n",(int)this->fileSize,(int)numRead);
-    		fprintf(stderr,"Reading error. Quitting");
-    		Exception::critical();
-    	}*/
     	fclose(this->r);
 
 
@@ -128,8 +98,6 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
     		int count2 = 0;
     		int offset = 0;
 			names[count]->assign(x,(size_t)begin,(size_t)(end-begin));
-			//std::cout<<*names[count]<<std::endl;
-    		//get nums limit
     		while(x[numEnd] != '\n' && x[numEnd] != '\t' && count2 < this->K){
 				numBegin = numEnd+1;
 				while(x[numBegin] == ' ' || x[numBegin] == '\t' || x[numBegin] == '\n' || x[numBegin] == '\r')
@@ -137,11 +105,6 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
 				numEnd = numBegin+1;
 				while(x[numEnd] != ' ' && x[numEnd] != '\t' && x[numEnd] != '\n' && x[numEnd] != '\r')
 					numEnd++;
-/*
- * 					for (int i=0; i<inD.length-1; i++)
-						for (int j=0; j<inD.length-1-i; j++)
-							distances[i][j] = (int)(inD[i][j+i+1] * 10000000);
- */
 				if(offset < this->K-1-count)
 					if(count2 > count)
 						distances[count][offset++] = 100 * (int)(((100000000*(atoi(&x[numBegin],numEnd-numBegin-1))+50)/100));
@@ -182,7 +145,6 @@ float DistanceReader::atoi (char* in, int end){
 		multiplier *= 10.0;
 		pos--;
 	}
-	//val = roundf(val*1000000)/1000000;
 	if (isNeg)
 		return 0 - val;
 	else
