@@ -20,7 +20,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->threads = 0;
 
 	if(argc == 1){
-		printf("Use --help to see possible arguments.\n");
+		printf("Use --help (or -h) to see possible arguments.\n");
 		Exception::critical();
 	}
 	for(int i=1;i<argc;i++){
@@ -170,14 +170,14 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No rebuild_step_ratio integer specified.\n");
 				Exception::critical();
 			}*/
-		}else if(!x.compare("--threads")){
+		}else if(!x.compare("--threads") | !x.compare("-T")){
 			int r = strtol(argv[i+1], NULL, 0);
 			this->threads = r;
-		}else if (!x.compare("--help")){
+		}else if (!x.compare("--help") || !x.compare("-h")){
 			printf("Arguments: \n");
-			printf("--in (or -i) filename\n--out (or -o) filename\n--method (or -m) meth  [default | inmem]\n");
+			printf("--help (or -h) to display this help\n--in (or -i) filename\n--out (or -o) filename\n--method (or -m) meth  [default | inmem]\n");
 			printf("--in_type type [a | d]\n--out_type type [t]\n--alph_type type [a | d]\n--corr_type type [n | j | k | s]\n");
-			printf("--rebuild_step_ratio (or -r)\nFor more information, check the README file.\n");
+			printf("--threads (or -T) num_threads\nFor more information, check the README file.\n");
 			this->abort = true;
 		}else if (!x.compare("--version")){
 			printf("Version 0.93\n");

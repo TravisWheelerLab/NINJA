@@ -645,7 +645,6 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 
 	int i = 0;
 
-	//TODO: review number of max iterations
 	while(i < numOfInts){ //a maximum of 8 vectors allowed not to overflow things
 		distance = x128;
 		counts_gaps= x128;
@@ -692,7 +691,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 
     return (sum/(relevant));
 }
-double DistanceCalculator::testDifferenceCluster(int a, int b){
+double DistanceCalculator::testDifferenceCluster(int a, int b){ //for test purposes only
 
 	static const int bl62[20][20] = {
 			{16, 6, 4, 4, 8, 6, 6, 8, 4, 6, 6, 6, 6, 4, 6, 10, 8, 2, 4, 8},

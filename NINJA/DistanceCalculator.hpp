@@ -42,7 +42,7 @@ class DistanceCalculator{
 		int lengthOfSequences;
 
 		//TODO: set this as true only if it has support for SSE3
-		const bool newCalculation = true;
+		const bool newCalculation = false;
 
 
 		double calc (int a, int b);
