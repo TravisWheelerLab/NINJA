@@ -21,7 +21,7 @@
 
 
 class DistanceCalculator{
-		const float bl45[20][20];
+		const float bl45[21][21];
 	public:
 
 
@@ -76,8 +76,8 @@ class DistanceCalculator{
 	private:
 		int *inv_alph;
 
-		int protein_dict[128];
-		int protein_dict_original[128];
+		int protein_dict[256];
+		int protein_dict_original[256];
 		int additionalGaps; //inverse of the number of gaps added at the end of the sequence in sse calculation
 
 		inline void count128(register __m128i &seq1, register __m128i &seq2, register __m128i &gap1, register __m128i &gap2, register __m128i &tmp, register __m128i &tmp2, register __m128i &tmp3, register __m128i &count_transversions, register __m128i &count_transitions, register __m128i &count_gaps);

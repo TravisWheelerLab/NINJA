@@ -173,6 +173,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 		}else if(!x.compare("--threads") | !x.compare("-T")){
 			int r = strtol(argv[i+1], NULL, 0);
 			this->threads = r;
+			i++;
 		}else if (!x.compare("--help") || !x.compare("-h")){
 			printf("Arguments: \n");
 			printf("--help (or -h) to display this help\n--in (or -i) filename\n--out (or -o) filename\n--method (or -m) meth  [default | inmem]\n");
