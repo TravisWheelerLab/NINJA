@@ -7,7 +7,7 @@
 #include "DistanceCalculator.hpp"
 #include <iostream>
 
-DistanceCalculator::DistanceCalculator (std::string** A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences) :
+DistanceCalculator::DistanceCalculator (std::string** A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences, bool useSSE) :
 bl45{
 				  {0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
 			      {0.0, 0, 1.31097856, 1.06573001, 1.26827829, 0.90471293, 1.05855446, 1.05232790, 0.76957444, 1.27579668, 0.96460409, 0.98717819, 1.05007594, 1.05464162, 1.19859874, 0.96740447, 0.70049019, 0.88006018, 1.09748548, 1.28141710, 0.80003850},
@@ -60,6 +60,7 @@ bl45{
 	this->aa_chars = "ARNDCQEGHILKMFPSTWYV";
 	this->numberOfSequences = numberOfSequences;
 	this->lengthOfSequences = A[0]->size();
+	this->newCalculation = useSSE;
 
 	if(this->newCalculation && this->alph_type == this->dna)
 		convertAllDNA();
@@ -837,7 +838,7 @@ double DistanceCalculator::calc (int a, int b){
 //				dist += this->bl45[ this->inv_alph[(int)Achar[i]]  ]  [ this->inv_alph[(int)Bchar[i]]  ] ;
 //				count++;
 //			}
-			localDist = this->bl45[Achar[i]][Bchar[i]];
+			localDist = this->bl45[(int)Achar[i]][(int)Bchar[i]];
 			if (localDist != 0){
 				dist += localDist;
 				count++;

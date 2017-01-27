@@ -26,7 +26,7 @@ class TreeBuilderManager {
 		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/};
 		enum OutputType {dist, tree};
 
-		TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outfile, InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType, int threads);
+		TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outfile, InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType, int threads, bool useSSE);
 
 		std::string method;
 		std::string njTmpDir;

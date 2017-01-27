@@ -24,6 +24,8 @@ class ArgumentHandler{
 
 		int threads;
 
+		bool SSE;
+
 		bool abort;
 
 		ArgumentHandler (char* argv[],int argc);
@@ -40,6 +42,8 @@ class ArgumentHandler{
 		CorrectionType getCorrectionType ();
 
 		bool argumentTest();
+
+		bool useSSE();
 };
 
 #endif

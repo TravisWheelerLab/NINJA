@@ -28,7 +28,7 @@ class DistanceCalculator{
 		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/};
 		enum AlphabetType {dna, amino, null};
 
-		DistanceCalculator (std::string** A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences);
+		DistanceCalculator (std::string** A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences, bool useSSE);
 		~DistanceCalculator();
 
 		AlphabetType   alph_type;
@@ -42,7 +42,7 @@ class DistanceCalculator{
 		int lengthOfSequences;
 
 		//TODO: set this as true only if it has support for SSE3
-		const bool newCalculation = false;
+		bool newCalculation;
 
 
 		double calc (int a, int b);

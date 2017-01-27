@@ -18,6 +18,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->corrType = not_assigned;
 	this->outFile = stdout;
 	this->threads = 0;
+	this->SSE = true;
 
 	if(argc == 1){
 		printf("Use --help (or -h) to see possible arguments.\n");
@@ -174,6 +175,8 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			int r = strtol(argv[i+1], NULL, 0);
 			this->threads = r;
 			i++;
+		}else if(!x.compare("--NOSSE")){
+			this->SSE = false;	
 		}else if (!x.compare("--help") || !x.compare("-h")){
 			printf("Arguments: \n");
 			printf("--help (or -h) to display this help\n--in (or -i) filename\n--out (or -o) filename\n--method (or -m) meth  [default | inmem]\n");
@@ -226,4 +229,8 @@ ArgumentHandler::CorrectionType ArgumentHandler::getCorrectionType () {
 
 bool ArgumentHandler::argumentTest(){
 	return true;
+}
+
+bool ArgumentHandler::useSSE(){
+	return this->SSE;
 }

@@ -16,7 +16,7 @@
 #endif
 
 //standard constructor
-TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outFile, InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType, int threads){
+TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outFile, InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType, int threads, bool useSSE){
 	this->method = method;
 	this->njTmpDir = njTmpDir;
 	this->inFile = inFile;
@@ -29,6 +29,7 @@ TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir,
 	this->chars = "abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	this->newDistanceMethod = false;
 	this->threads = threads;
+	this->newDistanceMethod = useSSE;
 }
 
 
@@ -82,10 +83,10 @@ std::string TreeBuilderManager::doJob(){
 			this->names = seqReader->getNames();
 			this->alphType = (TreeBuilderManager::AlphabetType) seqReader->getAlphType();
 			fprintf(stderr,"Calculating distances....\n");
-			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->seqSize);
+			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->seqSize, this->newDistanceMethod);
 			K = seqReader->seqSize;
 			reader = new DistanceReaderExtMem(distCalc, K);
-		}	else {
+		} else {
 			fprintf(stderr,"External memory with distances as input not allowed.\n");
 			Exception::critical();
 			//reader = new DistanceReaderExtMem(this->inFile);
@@ -141,10 +142,10 @@ std::string TreeBuilderManager::doJob(){
 			this->names = seqReader->getNames();
 			this->alphType = (TreeBuilderManager::AlphabetType) seqReader->getAlphType();
 			fprintf(stderr,"Calculating distances....\n");
-			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->seqSize);
+			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->seqSize,newDistanceMethod);
 			K = seqReader->seqSize;
 			reader = new DistanceReader(distCalc, K, this->threads);
-		}else {
+		}else{
 			reader = new DistanceReader(this->inFile);
 			K = reader->K;
 			this->names = new std::string*[K];
