@@ -710,7 +710,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	int relevant = length-gaps;
 
 	if (relevant == 0)
-		return 32; //max value
+		return -1; //max value
 
     return (sum/(relevant));
 }
@@ -816,7 +816,12 @@ double DistanceCalculator::calc (int a, int b){
 	if(this->newCalculation && this->alph_type == this->dna){
 		return newCalcDNA(a,b);
 	}else if(this->newCalculation && this->alph_type == this->amino){
-		return newCalcProtein(a,b);
+		//TODO: I should use a dissimilarity matrix for this
+		dist =  newCalcProtein(a,b);
+		if (dist == -1)
+			dist = maxscore;
+		dist = dist < 0.91 ? (float)(-1.3*log((double)(1.0 - dist))) : maxscore;
+		return 	(double)-(dist < maxscore ? dist : maxscore);		
 	}
 
 
