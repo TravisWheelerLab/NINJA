@@ -126,6 +126,22 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 	else
 		this->alphType = dna;
 
+
+	if (this->alphType == null){
+		for (int i=0; i<sequenceSize; i++){
+			for (int j=0; j<(signed)sequences[i]->size(); j++) {
+				if (sequences[i]->at(j) != 'A' && sequences[i]->at(j) != 'G' && sequences[i]->at(j) != 'C' && sequences[i]->at(j) != 'T'){
+					this->alphType = amino;
+					break;
+				}
+			}
+			if (this->alphType != null)
+				break;
+		}
+		if (this->alphType == null)
+			this->alphType = dna;
+	}
+
 	for (int i=0; i<sequenceSize; i++){
 		//bool good = true;
 		std::transform(sequences[i]->begin(), sequences[i]->end(),sequences[i]->begin(), ::toupper);

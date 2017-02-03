@@ -14,7 +14,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->njTmpDir = "";
 	this->inType = alignment;
 	this->outType = tree;
-	this->alphType = amino;
+	this->alphType = null;
 	this->corrType = not_assigned;
 	this->outFile = stdout;
 	this->threads = 0;
@@ -179,12 +179,12 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			this->SSE = false;	
 		}else if (!x.compare("--help") || !x.compare("-h")){
 			printf("Arguments: \n");
-			printf("--help (or -h) to display this help\n--in (or -i) filename\n--out (or -o) filename\n--method (or -m) meth  [default | inmem]\n");
-			printf("--in_type type [a | d]\n--out_type type [t]\n--alph_type type [a | d]\n--corr_type type [n | j | k | s]\n");
+			printf("--help (or -h) to display this help\n--in (or -i) filename\n--out (or -o) filename\n--method (or -m)  [inmem | extmem] (default inmem)\n");
+			printf("--in_type type [a | d] (default a)\n--out_type type [t | d] (default t)\n--corr_type type [n | j | k | s]\n");
 			printf("--threads (or -T) num_threads\nFor more information, check the README file.\n");
 			this->abort = true;
 		}else if (!x.compare("--version")){
-			printf("Version 0.93\n");
+			printf("Version 0.95\n");
 			this->abort = true;
 		}else{
 			fprintf(stderr,"Invalid argument, ignored.\n");
