@@ -75,10 +75,11 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 	if(this->filetype == stockholm){ //TODO: fix and optimize
 		//try to read as stockholm format file
 		for(int i=0;i<size;i++){
-			if (x[i] == '#'){
-				while(x[++i]!='\n');
-				while(x[i]!=' '&& x[i]!= '\t' && x[i] != '\n'){
-					i++;
+			if (x[i] == '#' || x[i] == '\n' || x[i] == '\t'){
+				if (x[i] != '\n' || x[i+1] == '\n' || x[i+1] == '#'){
+					while(x[i]!='\n'){
+						i++;
+					}
 				}
 			}else{
 				if(x[i]==' ' || x[i] == '\t' || x[i] == '\n') i++;
@@ -91,11 +92,6 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 				if(auxName == "//")
 					break;
 				names.push_back(auxName);
-				i++;
-				while(x[i]!=' '&& x[i]!= '\t' && x[i] != '\n'){
-					i++;
-				}
-				i++;
 				while(x[i]!=' '&& x[i]!= '\t' && x[i] != '\n'){
 					i++;
 				}
