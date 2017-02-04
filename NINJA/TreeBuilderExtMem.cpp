@@ -210,6 +210,7 @@ void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 		for (i=0; i<this->clustCnt; i++) {
 			for (j=i; j<this->clustCnt; j++) {
 				if (this->arrayHeaps[i][j] != NULL) {
+					this->arrayHeaps[i][j]->deleteAll();
 					this->arrayHeaps[i][j]->prepare();
 				} else {
 					this->arrayHeaps[i][j] = new ArrayHeapExtMem(this->njTmpDir, this->redirect, this->maxMemory/666 /*that's about 3MB if mem is 2GB*/);
