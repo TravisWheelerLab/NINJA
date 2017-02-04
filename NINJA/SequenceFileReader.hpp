@@ -18,7 +18,7 @@ class SequenceFileReader{
 		std::string** seqs;
 		std::string** names;
 		AlphabetType alphType;
-		int seqSize;
+		int numSeqs;
 		enum fileType {fasta, stockholm};
 
 		SequenceFileReader (std::string *filename, AlphabetType alphTypeIn);

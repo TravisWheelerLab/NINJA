@@ -68,52 +68,54 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 		}else{
 			this->filetype = stockholm;
 			break;
-			/*fprintf(stderr,"Wrong formatting. Quitting\n");
-			Exception::critical();*/
+			fprintf(stderr,"Wrong formatting. Only fasta files are currently accepted. Quitting\n");
+			Exception::critical();
 		}
 	}
-	if(this->filetype == stockholm){ //TODO: fix and optimize
-		//try to read as stockholm format file
-		for(int i=0;i<size;i++){
-			if (x[i] == '#' || x[i] == '\n' || x[i] == '\t'){
-				if (x[i] != '\n' || x[i+1] == '\n' || x[i+1] == '#'){
-					while(x[i]!='\n'){
-						i++;
-					}
-				}
-			}else{
-				if(x[i]==' ' || x[i] == '\t' || x[i] == '\n') i++;
-				begin = i;
-				while(x[i] != ' ' && x[i] != '\t' && x[i] != '\n')
-					i++;
-				end = i;
-				std::string auxName;
-				auxName.assign(x + begin*charSize,(end-begin)*charSize);
-				if(auxName == "//")
-					break;
-				names.push_back(auxName);
-				while(x[i]!=' '&& x[i]!= '\t' && x[i] != '\n'){
-					i++;
-				}
-				i++;
-				begin = i;
-				while(i<size && x[i] != '\n')
-					i++;
-				end = --i;
-				auxName.assign(x + begin*charSize,(end-begin)*charSize);
-
-				auxName.erase(remove_if(auxName.begin(),auxName.end(),isspace),auxName.end());
-				seq.push_back(auxName);
-				i++;
-			}
-		}
-	}
+//	if(this->filetype == stockholm){ //TODO: fix and optimize
+//		//try to read as stockholm format file
+//		for(int i=0;i<size;i++){
+//			if (x[i] == '#' || x[i] == '\n' || x[i] == '\t'){
+//				if (x[i] != '\n' || x[i+1] == '\n' || x[i+1] == '#'){
+//					while(x[i]!='\n'){
+//						i++;
+//					}
+//				}
+//			}else{
+//				if(x[i]==' ' || x[i] == '\t' || x[i] == '\n') i++;
+//				begin = i;
+//				while(x[i] != ' ' && x[i] != '\t' && x[i] != '\n')
+//					i++;
+//				end = i;
+//				std::string auxName;
+//				auxName.assign(x + begin*charSize,(end-begin)*charSize);
+//				if(auxName == "//")
+//					break;
+//				names.push_back(auxName);
+//				while(x[i]!=' '&& x[i]!= '\t' && x[i] != '\n'){
+//					i++;
+//				}
+//				i++;
+//				begin = i;
+//				while(i<size && x[i] != '\n')
+//					i++;
+//				end = --i;
+//				auxName.assign(x + begin*charSize,(end-begin)*charSize);
+//
+//				auxName.erase(remove_if(auxName.begin(),auxName.end(),isspace),auxName.end());
+//				seq.push_back(auxName);
+//				i++;
+//			}
+//		}
+//	}
 	delete[](x);
-	int sequenceSize = names.size();
-	this->seqSize = sequenceSize;
-	std::string** seqNames = new std::string*[sequenceSize];
-	std::string** sequences = new std::string*[sequenceSize];
-	for (int i=0;i<sequenceSize;i++){ //get strings into a strings array instead of a vector
+	int numSeqs = names.size();
+	this->numSeqs = numSeqs;
+	std::string** seqNames = new std::string*[numSeqs];
+	std::string** sequences = new std::string*[numSeqs];
+	for (int i=0;i<numSeqs;i++){ //get strings into a strings array instead of a vector
+		printf("%s: ",names[i].c_str());
+		printf("%s\n",seq[i].c_str());
 		seqNames[i] = new std::string();
 		seqNames[i]->assign(names[i]);
 		sequences[i] = new std::string();
@@ -127,8 +129,9 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 		this->alphType = dna;
 
 
+	//Detect if it is DNA or AMINO ACID
 	if (this->alphType == null){
-		for (int i=0; i<sequenceSize; i++){
+		for (int i=0; i<numSeqs; i++){
 			for (int j=0; j<(signed)sequences[i]->size(); j++) {
 				if (sequences[i]->at(j) != 'A' && sequences[i]->at(j) != 'G' && sequences[i]->at(j) != 'C' && sequences[i]->at(j) != 'T'){
 					this->alphType = amino;
@@ -142,7 +145,7 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 			this->alphType = dna;
 	}
 
-	for (int i=0; i<sequenceSize; i++){
+	for (int i=0; i<numSeqs; i++){
 		//bool good = true;
 		std::transform(sequences[i]->begin(), sequences[i]->end(),sequences[i]->begin(), ::toupper);
 		for (int j=0; j<(signed)sequences[i]->size(); j++) {
@@ -154,25 +157,6 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 					(*sequences[i])[j] = 'T';
 			}
 		}
-		//TODO
-		//detect whether its dna or amino, if not specified
-/*		if (good) {
-			for (int j=0; j<tmpChars.length; j++) {
-				tmpChars[j][k] = tmpChars[j][i];
-				if ( alphTypeIn == null && tmpChars[j][k] != '-' && alphType == AlphabetType.dna) {
-					boolean match = false;
-					for (int c=0; c<dna_chars.length; c++) {
-						if (tmpChars[j][k] == dna_chars[c]) {
-							match = true;
-							break;
-						}
-					}
-					if (!match)
-						alphType = AlphabetType.amino;
-				}
-			}
-			k++;
-		}*/
 	}
 	this->names = seqNames;
 	this->seqs = sequences;

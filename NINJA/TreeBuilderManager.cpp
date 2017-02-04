@@ -83,8 +83,8 @@ std::string TreeBuilderManager::doJob(){
 			this->names = seqReader->getNames();
 			this->alphType = (TreeBuilderManager::AlphabetType) seqReader->getAlphType();
 			fprintf(stderr,"Calculating distances....\n");
-			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->seqSize, this->newDistanceMethod);
-			K = seqReader->seqSize;
+			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->numSeqs, this->newDistanceMethod);
+			K = seqReader->numSeqs;
 			reader = new DistanceReaderExtMem(distCalc, K);
 		} else {
 			fprintf(stderr,"External memory with distances as input not allowed.\n");
@@ -142,8 +142,8 @@ std::string TreeBuilderManager::doJob(){
 			this->names = seqReader->getNames();
 			this->alphType = (TreeBuilderManager::AlphabetType) seqReader->getAlphType();
 			fprintf(stderr,"Calculating distances....\n");
-			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->seqSize,newDistanceMethod);
-			K = seqReader->seqSize;
+			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->numSeqs,newDistanceMethod);
+			K = seqReader->numSeqs;
 			reader = new DistanceReader(distCalc, K, this->threads);
 		}else{
 			reader = new DistanceReader(this->inFile);
