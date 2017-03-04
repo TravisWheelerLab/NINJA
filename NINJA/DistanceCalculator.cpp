@@ -1155,14 +1155,19 @@ void DistanceCalculator::convertAllDNA(){
 	long int n = this->numberOfSequences;
 	long int res = (k*(n-1)*n)/(long int)2; //number of pairs
 
-	if (res < 0)
-		fprintf(stdout, "Negative: %ld",res);
 	fprintf(stdout, "%ld",res);
-
 
 	this->x128 = _mm_set1_epi8((int8_t) -128);
 	this->zero = _mm_set1_epi8((int8_t) 0x00);
 	this->COUNTS_MASK = _mm_set1_epi8((int8_t) 0xF);
+
+	this->GAPS_COUNT_MASK = _mm_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
+
+	this->DECOMPRESSED_GAPS = _mm_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
+
+	this->TRANSITIONS_MASK = _mm_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
+
+	this->TRANSVERSIONS_MASK = _mm_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
 
 	//TODO: make sure all of these are aligned, so I can load them faster
 	this->convertedSequences = new unsigned int*[this->numberOfSequences];
