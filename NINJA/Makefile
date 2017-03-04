@@ -7,7 +7,7 @@
 # TODO: implement checking which operating system is being used
 # TODO: implement flag for unit test compilation
 
-CXX = g++
+CXX = g++ #must support C++11
 
 # sources in alphabetical order
 SOURCES = ArgumentHandler.cpp
@@ -40,10 +40,10 @@ debug: CXXFLAGS += -O0 -g3 -pg
 all: CXXFLAGS += -O3
 
 all: $(OBJECTS)
-	g++ $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
+	${CXX} $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
 debug: $(OBJECTS)
-	g++ $(DBGFLAGS) $(CXXFLAGS) $(OBJECTS) -o $(debugfile) $(LNFLAGS) 
+	${CXX} $(DBGFLAGS) $(CXXFLAGS) $(OBJECTS) -o $(debugfile) $(LNFLAGS) 
 
 clean:
 	$(RM) count *.o *~
