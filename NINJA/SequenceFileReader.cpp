@@ -114,8 +114,6 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 	std::string** seqNames = new std::string*[numSeqs];
 	std::string** sequences = new std::string*[numSeqs];
 	for (int i=0;i<numSeqs;i++){ //get strings into a strings array instead of a vector
-		printf("%s: ",names[i].c_str());
-		printf("%s\n",seq[i].c_str());
 		seqNames[i] = new std::string();
 		seqNames[i]->assign(names[i]);
 		sequences[i] = new std::string();
