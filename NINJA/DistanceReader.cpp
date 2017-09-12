@@ -78,44 +78,38 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
     			distances[i][j-i-1] = 100 * (int)(((100000000*this->distCalc->calc(i,j))+50)/100) ; // this gets the same rounding I have in the distance writer code
 
     		}
-    } else { //TODO: optimize this, too slow
+    } else {
 
-    	char *x = new char[this->fileSize];
-    	fread(x,1,this->fileSize,this->r);
+	fscanf(this->r, "%d\n", &this->K);
+
+	std::string lineString = "";
+
+	int pos, newPos;
+
+	size_t lineSize;
+
+	char* line = new char[this->K*10 + 100];
+
+	for(int i=0; i< this->K; i++){
+		getline(&line, &lineSize, this->r);
+//		printf(line);
+		lineString = line;
+		pos = lineString.find_first_of(" ");
+		*names[i] = lineString.substr(0,pos);
+//		printf(names[i]->c_str());
+//		printf("-----------");
+		pos++;
+		newPos = lineString.find_first_of(" ", pos); //first space after the first number
+		int length = newPos - pos; //length of the number
+		for (int j=i+1; j<this->K; j++){
+			distances[i][j-i-1] = 100 * (int)((((100000000*std::atof(lineString.substr(pos, length).c_str())))+50)/100);
+//			printf(" %d",distances[i][j]);
+			pos += length + 1;
+		}
+//		printf("\n");
+	}
+
     	fclose(this->r);
-
-
-    	while(end < this->fileSize && count < (signed)this->K){
-    		//get name limits
-    		begin = numEnd;
-    		while(x[begin] == ' ' || x[begin] == '\t' || x[begin] == '\n' || x[begin] == '\r')
-    			begin++;
-    		end=begin+1;
-    		while(x[end] != ' ' && x[end] != '\t' && x[end] != '\n' && x[end] != '\r')
-    			end++;
-
-    		numEnd = end;
-    		int count2 = 0;
-    		int offset = 0;
-			names[count]->assign(x,(size_t)begin,(size_t)(end-begin));
-    		while(x[numEnd] != '\n' && x[numEnd] != '\t' && count2 < this->K){
-				numBegin = numEnd+1;
-				while(x[numBegin] == ' ' || x[numBegin] == '\t' || x[numBegin] == '\n' || x[numBegin] == '\r')
-					numBegin++;
-				numEnd = numBegin+1;
-				while(x[numEnd] != ' ' && x[numEnd] != '\t' && x[numEnd] != '\n' && x[numEnd] != '\r')
-					numEnd++;
-				if(offset < this->K-1-count)
-					if(count2 > count)
-						distances[count][offset++] = 100 * (int)(((100000000*(atoi(&x[numBegin],numEnd-numBegin-1))+50)/100));
-				count2++;
-    		}
-    		count++;
-    	}
-
-    	assert(count  == (signed)this->K);
-
-    	delete[] x;
 
     }
 }
@@ -167,8 +161,8 @@ float DistanceReader::atoi (char* in, int end){
 		} else if(in[pos] == '.'){
 			val /= multiplier;
 			multiplier = 0.1;
-		} else if (in[pos]<'0' || in[pos]>'9') {
-			fprintf(stderr,"Unable to convert integer from invalid char array. Position + %d, char = [%c]",pos,in[pos]);
+		} else if ((in[pos] != ' ') && (in[pos]<'0' || in[pos]>'9')) {
+			fprintf(stderr,"Unable to convert integer from invalid char array. Position + %d, char = '%c', numberString = '%s'",pos,in[pos], in);
 			Exception::critical();
 		}else{
 			val += multiplier * (float)(in[pos]-'0');

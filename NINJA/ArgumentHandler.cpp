@@ -66,7 +66,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No method specified.\n");
 				Exception::critical();
 			}
-		}else if (!x.compare("--in_type")){
+		}else if (!x.compare("--in_type") || !x.compare("-it") ){
 			if (i < argc-1){
 				if(!y.compare("a")){
 					this->inType = alignment;
@@ -81,7 +81,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No input type specified.\n");
 				Exception::critical();
 			}
-		}else if (!x.compare("--out_type")){
+		}else if (!x.compare("--out_type") || !x.compare("-ot") ){
 			if (i < argc-1){
 				if(!y.compare("d")){
 					this->outType = dist;
