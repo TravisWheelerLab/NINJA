@@ -119,11 +119,42 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
 
     }
 }
-void DistanceReader::write(FILE* outFile,int** distances){
-	for (int i=0; i<this->K; i++)
-		for (int j=i+1; j<this->K; j++)
-			fprintf(outFile,"%d\n",distances[i][j-i-1]);
-	fprintf(outFile,"\\\n");
+void DistanceReader::readAndWrite(std::string **names, FILE* outFile){ //possibly wrong, the else part, perhaps the distance calculator class as well
+
+    unsigned int begin = 0, end = 0, numBegin = 0, numEnd = 0;
+    int count = 0;
+    double** distances = new double*[this->K];
+    for(int i = 0; i < this->K; ++i)
+    	distances[i] = new double[this->K];
+
+    if (this->threads == 0){
+        omp_set_num_threads(omp_get_max_threads());
+    } else {
+        omp_set_num_threads(this->threads);
+    }
+    	#pragma omp parallel for
+    	for (int i=0; i<this->K; i++){
+    		for (int j=i+1; j<this->K; j++){
+    			//distances[i][j-i-1] = this->distCalc->testDifferenceCluster(i,j);
+    			distances[i][j-i-1] = this->distCalc->calc(i,j) ; // this gets the same rounding I have in the distance writer code
+    		}
+	}
+    this->write(outFile, distances, names);    
+}
+
+void DistanceReader::write(FILE* outFile,double** distances,std::string** names){
+	fprintf(outFile, "%d\n", this->K); //number of sequences
+	for (int i=0; i<this->K; i++){
+		fprintf(outFile, "%s", names[i]->c_str());
+		for (int j=0; j<i; j++){
+			fprintf(outFile," %.6lf",distances[i][j]);
+		}
+		fprintf(outFile," 0.000000");
+		for (int j=i+1; j<this->K; j++){
+			fprintf(outFile," %.6lf",distances[j][i]);
+		}
+		fprintf(outFile,"\n");
+	}
 }
 float DistanceReader::atoi (char* in, int end){
 	float val = 0.0;

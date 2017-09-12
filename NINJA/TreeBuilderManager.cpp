@@ -57,9 +57,11 @@ std::string TreeBuilderManager::doJob(){
 
 	int K=0;
 
+	/*
 	#ifdef LINUX
 	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES);
 	#endif
+	*/
 
 	SequenceFileReader* seqReader = NULL;
 	if (!this->method.compare("extmem")){
@@ -158,13 +160,17 @@ std::string TreeBuilderManager::doJob(){
 			distances[i] = new int[K - i - 1];
 		}
 
-		reader->read( this->names, distances);
 
 		if(this->outType == dist){
-			reader->write(this->outFile,distances);
+			if(this->inType != alignment){
+				fprintf(stderr,"Input and output distances not allowed. What are you trying to do?\n");
+				Exception::critical();
+			}
+			reader->readAndWrite(this->names,this->outFile);
 			return "";
+		}else{
+			reader->read( this->names, distances);
 		}
-
 	}
 
 	fprintf(stderr,"Generating tree....\n");

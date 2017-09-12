@@ -15,7 +15,8 @@ class DistanceReader{
 		~DistanceReader();
 
 		void read (std::string **names, int** distances);
-		void write(FILE* outFile, int** distances);
+		void readAndWrite(std::string **names, FILE* outFile);
+		void write(FILE* outFile, double** distances,std::string** names );
 
 		int threads;
 		int K;
