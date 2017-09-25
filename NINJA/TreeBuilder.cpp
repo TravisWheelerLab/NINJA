@@ -14,7 +14,7 @@ int TreeBuilder::rebuildSteps  = -1;
 int TreeBuilder::candidateIters = 50;
 int TreeBuilder::verbose = 1;
 
-TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize){ //revisit, kind of complex, possibly bad allocations and or initializations
+TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize){
 /*	bool TreeBuilder::distInMem = false;
 	bool TreeBuilder::rebuildStepsConstant = false; // otherwise, decreasing
 	float TreeBuilder::rebuildStepRatio = (float)0.5;

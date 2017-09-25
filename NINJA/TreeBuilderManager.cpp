@@ -16,7 +16,7 @@
 #endif
 
 //standard constructor
-TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outFile, InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType){
+TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outFile, InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType, int threads, bool useSSE){
 	this->method = method;
 	this->njTmpDir = njTmpDir;
 	this->inFile = inFile;
@@ -28,18 +28,16 @@ TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir,
 	this->names = NULL;
 	this->chars = "abcdefghijklmonpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	this->newDistanceMethod = false;
+	this->threads = threads;
+	this->newDistanceMethod = useSSE;
 }
 
 
 std::string TreeBuilderManager::doJob(){
-	// do all sorts of file and memory things using java libraries, I have to rewrite everything
-	//it should be different depending on the OS, for system operations such as checking the memory available
-	//I should consider creating a Logger object to handle all sorts of prints and expection throws
 	int** distances = NULL;
 	float** memD = NULL;
 	float* R  = NULL;
 	// all for external memory version
-	int floatSize = 4;
 	int pageBlockSize = 1024; //that many ints = 4096 bytes;
 	FILE* diskD = NULL;
 
@@ -48,13 +46,8 @@ std::string TreeBuilderManager::doJob(){
 
 	int numCols = 0;
 
-
 	//Runtime runtime = Runtime.getRuntime();
-	long maxMemory = -1; //revisit, priority
-
-	#ifdef LINUX //TODO: include support for multiple plataforms
-	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES);
-	#endif
+	long maxMemory = -1;
 
 	bool ok = true;
 	TreeNode** nodes = NULL;
@@ -64,22 +57,19 @@ std::string TreeBuilderManager::doJob(){
 
 	int K=0;
 
+	/*
 	#ifdef LINUX
-	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES); //working, should I use all of this, or reduce it? How does the SO handles if I use it all and it does not have all of that anymore?
+	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES);
 	#endif
-
-	//TODO: check if I close all the files
+	*/
 
 	SequenceFileReader* seqReader = NULL;
-	if (!this->method.compare("extmem")){ //The external memory if currently in debugging, therefore it is unabled.
-/*		fprintf(stderr,"External memory not allowed yet.\n");
-		Exception::critical();*/
+	if (!this->method.compare("extmem")){
 		if (maxMemory < 1900000000) {
 			fprintf(stderr,"Warning: using an external-memory variant of NINJA with less than 2GB allocated RAM.\n");
 			fprintf(stderr,"The data structures of NINJA may not work well if given less than 2GB.\n");
 		}
 		fprintf(stderr,"Using External Memory...\n");
-		FILE* tempFile;
 		njTmpDir += "treeBuilderManager";
 
 	    mkdir(njTmpDir.c_str(), 0700);
@@ -95,11 +85,11 @@ std::string TreeBuilderManager::doJob(){
 			this->names = seqReader->getNames();
 			this->alphType = (TreeBuilderManager::AlphabetType) seqReader->getAlphType();
 			fprintf(stderr,"Calculating distances....\n");
-			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->seqSize);
-			K = seqReader->seqSize;
+			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->numSeqs, this->newDistanceMethod);
+			K = seqReader->numSeqs;
 			reader = new DistanceReaderExtMem(distCalc, K);
-		}	else {
-			fprintf(stderr,"External memory with distances as input not allowed yet.\n"); //TODO: implement
+		} else {
+			fprintf(stderr,"External memory with distances as input not allowed.\n");
 			Exception::critical();
 			//reader = new DistanceReaderExtMem(this->inFile);
 			K = reader->K;
@@ -140,6 +130,11 @@ std::string TreeBuilderManager::doJob(){
 		}
 		firstMemCol = reader->read( names, R, diskD, memD, numCols, rowLength, pageBlockSize);
 
+		if(this->outType == dist){
+			fprintf(stderr,"Output distances with external memory not allowed.\n");
+			Exception::critical();
+		}
+
 	}else{
 		DistanceReader* reader = NULL;
 
@@ -149,10 +144,10 @@ std::string TreeBuilderManager::doJob(){
 			this->names = seqReader->getNames();
 			this->alphType = (TreeBuilderManager::AlphabetType) seqReader->getAlphType();
 			fprintf(stderr,"Calculating distances....\n");
-			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->seqSize);
-			K = seqReader->seqSize;
-			reader = new DistanceReader(distCalc, K);
-		}else {
+			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->numSeqs,newDistanceMethod);
+			K = seqReader->numSeqs;
+			reader = new DistanceReader(distCalc, K, this->threads);
+		}else{
 			reader = new DistanceReader(this->inFile);
 			K = reader->K;
 			this->names = new std::string*[K];
@@ -165,13 +160,17 @@ std::string TreeBuilderManager::doJob(){
 			distances[i] = new int[K - i - 1];
 		}
 
-		reader->read( this->names, distances);
 
 		if(this->outType == dist){
-			reader->write(this->outFile,distances);
+			if(this->inType != alignment){
+				fprintf(stderr,"Input and output distances not allowed. What are you trying to do?\n");
+				Exception::critical();
+			}
+			reader->readAndWrite(this->names,this->outFile);
 			return "";
+		}else{
+			reader->read( this->names, distances);
 		}
-
 	}
 
 	fprintf(stderr,"Generating tree....\n");

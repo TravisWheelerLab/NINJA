@@ -141,7 +141,7 @@ void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
 
 	char num[15];
 
-	sprintf(num, "%d",rand()); //TODO: I might have to improve the randomness of this number, if I receive any occurance of file creation error
+	sprintf(num, "%d",rand());
 	if (dir == "")
 		this->tmpDir = "tmp/";
 	else
@@ -168,6 +168,9 @@ void ArrayHeapExtMem::initialize(std::string dir, int* activeIJs, long sizeExp){
 }
 void ArrayHeapExtMem::prepare(){
 	clearAndInitialize();
+
+	this->cntMax = new long[maxLevels];
+
 	if (this->H1 == NULL) this->H1 = new BinaryHeap_TwoInts(this->cM*2);
 	if (this->H2 == NULL) this->H2 = new BinaryHeap_FourInts();
 	if (this->perSlotIntBuffer== NULL){
@@ -243,7 +246,6 @@ void ArrayHeapExtMem::clearAndInitialize(){
 		this->freeSlots = new std::vector<std::list<int>*>();
 	}
 
-
 	for (int i=0; i<this->maxLevels; i++) {
 		std::list<int> *l = new std::list<int>();
 		for (int j=0; j<this->numSlots; j++) {
@@ -251,6 +253,18 @@ void ArrayHeapExtMem::clearAndInitialize(){
 		}
 		this->freeSlots->push_back(l);
 	}
+
+	if(this->bigBuffB == NULL){
+		delete[] this->bigBuffB;
+		this->bigBuffB = NULL;
+	}
+
+	if(this->bigBuffI == NULL){
+		delete[] this->bigBuffI;
+		this->bigBuffI = NULL;
+	}
+
+
 }
 void ArrayHeapExtMem::insert(int i, int j, float key){
 	//too many problems
@@ -606,7 +620,7 @@ bool ArrayHeapExtMem::mergeSlots (int lvl){
 
 	//LogWriter.stdErrLogln("merging " + slotPairList.size() + " slots in level " + lvl);
 
-	qsort((void*)(&(*slotPairList)[0]),sizeof(SlotPair*),slotPairList->size(),SlotPair::compareTo); //revisit
+	qsort((void*)(&(*slotPairList)[0]),sizeof(SlotPair*),slotPairList->size(),SlotPair::compareTo);
 	//Collections.sort(slotPairList);
 
 	int summedSize = (int)(slotPairList->at(0)->remaining + slotPairList->at(1)->remaining);

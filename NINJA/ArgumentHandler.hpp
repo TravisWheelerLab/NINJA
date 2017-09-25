@@ -22,6 +22,10 @@ class ArgumentHandler{
 		CorrectionType corrType;
 		FILE* outFile;
 
+		int threads;
+
+		bool SSE;
+
 		bool abort;
 
 		ArgumentHandler (char* argv[],int argc);
@@ -31,12 +35,15 @@ class ArgumentHandler{
 		InputType getInputType();
 		OutputType getOutputType();
 		FILE* getOutpuFile();
+		int getNumThreads();
 
 		AlphabetType getAlphabetType();
 
 		CorrectionType getCorrectionType ();
 
 		bool argumentTest();
+
+		bool useSSE();
 };
 
 #endif

@@ -154,7 +154,7 @@ void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 		this->clustAssignments = new int[this->K]();
 
 		long maxT = 0;
-		long minT = FLT_MAX;
+		long minT = INT_MAX;
 
 		i = this->firstActiveNode;
 		while (i<maxIndex) {
@@ -210,6 +210,7 @@ void TreeBuilderExtMem::clusterAndHeap (int maxIndex ){
 		for (i=0; i<this->clustCnt; i++) {
 			for (j=i; j<this->clustCnt; j++) {
 				if (this->arrayHeaps[i][j] != NULL) {
+					this->arrayHeaps[i][j]->deleteAll();
 					this->arrayHeaps[i][j]->prepare();
 				} else {
 					this->arrayHeaps[i][j] = new ArrayHeapExtMem(this->njTmpDir, this->redirect, this->maxMemory/666 /*that's about 3MB if mem is 2GB*/);
@@ -363,7 +364,6 @@ TreeNode** TreeBuilderExtMem::build (){
 
 			minQ = FLT_MAX;
 			minD = FLT_MIN;
-
 			//Go through current list of candidates, and find best so far.
 			min_i = min_j = -1;
 

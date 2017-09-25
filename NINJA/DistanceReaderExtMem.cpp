@@ -39,7 +39,6 @@ int DistanceReaderExtMem::read (std::string** names, float* R, FILE* diskD, floa
 
     int buffPtr=0;
 
-	float d;
 	long diskPos;
 
 	float* fBuff = new float[numColsToDisk];
@@ -51,12 +50,12 @@ int DistanceReaderExtMem::read (std::string** names, float* R, FILE* diskD, floa
     	while (row != K && buffPtr<buffSize) {
 
     		//interleave columns in the
-			//#pragma omp parallel for private(d)
+			#pragma omp parallel for
 			for (int col=0; col<numColsToDisk; col++) {
 
-				d = ((float)ceil((float)(10000000 * distCalc->calc(row, col))))/10000000;
+				float d = ((float)ceil((float)(10000000 * distCalc->calc(row, col))))/10000000;
 
-				//#pragma omp atomic
+				#pragma omp atomic
 				R[row] += d;
 
 				fBuff[col] = d;
@@ -69,12 +68,14 @@ int DistanceReaderExtMem::read (std::string** names, float* R, FILE* diskD, floa
 				fwrite(fBuff,sizeof(float),numColsToDisk,diskD);
 
 			}
-			//#pragma omp parallel for
+			#pragma omp parallel for
 			for (int col=numColsToDisk; col<this->K; col++) {
-
+				#ifdef TEST_DIFF
+				float d = this->distCalc->testDifferenceCluster(row,col);
+				#endif
 				float d = ((float)ceil((float)(10000000 * distCalc->calc(row, col))))/10000000;
 
-				//#pragma omp atomic
+				#pragma omp atomic
 				R[row] += d;
 
 				memD[row][col-numColsToDisk] = d;

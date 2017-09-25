@@ -19,7 +19,6 @@ class TreeBuilder{
 		~TreeBuilder();
 		TreeNode* build ();
 
-		//revisit this, it is static in the java program
 		static bool distInMem;
 		static bool rebuildStepsConstant;
 		static float rebuildStepRatio;

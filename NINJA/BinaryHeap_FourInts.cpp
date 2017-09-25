@@ -124,13 +124,12 @@ bool BinaryHeap_FourInts::binHeapFourTest(bool verbose){
 			if (verbose) printf("Default initializing...\n");
 			aux = new BinaryHeap_FourInts();
 
-
 			if (verbose) printf("Inserting...\n");
 			for(int i=0;i<10000;i++){
-
-				int_aux[i].key = rand()%100000;
-				int_aux[i].key = rand()%100000;
-				int_aux[i].key = rand()%100000;
+				int_aux[i].first = rand()%100000;
+				int_aux[i].second = rand()%100000;
+				int_aux[i].third = rand()%100000;
+				int_aux[i].fourth = rand()%100000;
 				int_aux[i].key = rand()%100000;
 				aux->insert(int_aux[i].first,int_aux[i].second,int_aux[i].third, int_aux[i].fourth,int_aux[i].key);
 			}
@@ -148,9 +147,10 @@ bool BinaryHeap_FourInts::binHeapFourTest(bool verbose){
 
 			if (verbose) printf("Inserting...\n");
 			for(int i=0;i<5000;i++){
-				int_aux[i].key = rand()%100000;
-				int_aux[i].key = rand()%100000;
-				int_aux[i].key = rand()%100000;
+				int_aux[i].first = rand()%100000;
+				int_aux[i].second = rand()%100000;
+				int_aux[i].third = rand()%100000;
+				int_aux[i].fourth = rand()%100000;
 				int_aux[i].key = rand()%100000;
 				aux->insert(int_aux[i].first,int_aux[i].second,int_aux[i].third, int_aux[i].fourth,int_aux[i].key);
 			}

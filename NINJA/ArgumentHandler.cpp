@@ -10,18 +10,18 @@
 
 ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->abort = false;
-	this->method.assign("default"); // default should be "bin" for small, "cand" for large.
+	this->method.assign("default");
 	this->njTmpDir = "";
-	//this->inFile; //works?
 	this->inType = alignment;
 	this->outType = tree;
-	this->alphType = amino;
+	this->alphType = null;
 	this->corrType = not_assigned;
 	this->outFile = stdout;
-
+	this->threads = 0;
+	this->SSE = true;
 
 	if(argc == 1){
-		printf("Use --help to see possible arguments.\n");
+		printf("Use --help (or -h) to see possible arguments.\n");
 		Exception::critical();
 	}
 	for(int i=1;i<argc;i++){
@@ -52,11 +52,11 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 		}else if (!x.compare("--method") || !x.compare("-m")){
 			if (i < argc-1){
 				if(!y.compare("default")){
-					//TreeBuilderExtMem.useCandHeaps = true;
+					//nothing happens, default is inmem
 				}else if(!y.compare("extmem")){
 					this->method.assign("extmem");
 				}else if(!y.compare("inmem")){
-					//nothing happens
+					//nothing happens, default is inmem
 				}else{
 					fprintf(stderr,"Invalid method: available methods are  'default', 'inmem', and 'extmem'.");
 					Exception::critical();
@@ -66,7 +66,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No method specified.\n");
 				Exception::critical();
 			}
-		}else if (!x.compare("--in_type")){
+		}else if (!x.compare("--in_type") || !x.compare("-it") ){
 			if (i < argc-1){
 				if(!y.compare("a")){
 					this->inType = alignment;
@@ -81,7 +81,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No input type specified.\n");
 				Exception::critical();
 			}
-		}else if (!x.compare("--out_type")){
+		}else if (!x.compare("--out_type") || !x.compare("-ot") ){
 			if (i < argc-1){
 				if(!y.compare("d")){
 					this->outType = dist;
@@ -130,7 +130,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No ut_type specified.\n");
 				Exception::critical();
 			}
-		}else if (!x.compare("--verbose")){
+/*		}else if (!x.compare("--verbose")){
 			if (i < argc-1){
 				int v = *argv[i+1] - '0'; //revisit
 				//TreeBuilder.verbose = v; TODO:
@@ -138,7 +138,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			}else{
 				fprintf(stderr,"No verbose integer specified.\n");
 				Exception::critical();
-			}
+			}*/
 		}else if (!x.compare("--quiet")){
 				//TreeBuilder.verbose = 0;
 		}else if (!x.compare("--tmp_dir") || !x.compare("-t")){
@@ -153,7 +153,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No temporary directory specified.\n");
 				Exception::critical();
 			}
-		}else if (!x.compare("--clust_size") || !x.compare("-s")){
+/*		}else if (!x.compare("--clust_size") || !x.compare("-s")){
 			if (i < argc-1){
 				int s = *argv[i+1] - '0'; //revisit
 				//TreeBuilder.clustCnt = s; TODO:
@@ -164,40 +164,39 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			}
 		}else if (!x.compare("--rebuild_step_ratio") || !x.compare("-r")){
 			if (i < argc-1){
-				int r = *argv[i+1] - '0'; //revisit
+				int r = strtol(argv[i+1], NULL, 0);
 				//TreeBuilder.rebuildStepRatio = r;
 				i++;
 			}else{
 				fprintf(stderr,"No rebuild_step_ratio integer specified.\n");
 				Exception::critical();
-			}
-		}else if (!x.compare("--help")){
+			}*/
+		}else if(!x.compare("--threads") | !x.compare("-T")){
+			int r = strtol(argv[i+1], NULL, 0);
+			this->threads = r;
+			i++;
+		}else if(!x.compare("--NOSSE")){
+			this->SSE = false;	
+		}else if (!x.compare("--help") || !x.compare("-h")){
 			printf("Arguments: \n");
-			printf("--in (or -i) filename\n--out (or -o) filename\n--method (or -m) meth  [default | inmem]\n");
-			printf("--in_type type [a | d]\n--out_type type [t]\n--alph_type type [a | d]\n--corr_type type [n | j | k | s]\n");
-			printf("--rebuild_step_ratio (or -r)\nFor more information, check the README file.\n");
+			printf("--help (or -h) to display this help\n--in (or -i) filename\n--out (or -o) filename\n--method (or -m)  [inmem | extmem] (default inmem)\n");
+			printf("--in_type type [a | d] (default a)\n--out_type type [t | d] (default t)\n--corr_type type [n | j | k | s]\n");
+			printf("--threads (or -T) num_threads\nFor more information, check the README file.\n");
 			this->abort = true;
-			//print help
-			//revisit
 		}else if (!x.compare("--version")){
-			printf("Version 0.34\n");
+			printf("Version 0.95\n");
 			this->abort = true;
-			//print version
-			//revisit
 		}else{
 			fprintf(stderr,"Invalid argument, ignored.\n");
 		}
 		//cand_heap_decay left out, not mentioned on Manual
 	}
-//revisit
-//	if (inFile == NULL) {
-//		if (argc>0  && g.getOptind()<argc && argv[g.getOptind()] != NULL) {
-//			inFile = argv[g.getOptind()].toString();
-//		}
-//	}
 }
 std::string ArgumentHandler::getMethod() {
 	return this->method;
+}
+int ArgumentHandler::getNumThreads() {
+	return this->threads;
 }
 
 std::string ArgumentHandler::getInFile() {
@@ -230,4 +229,8 @@ ArgumentHandler::CorrectionType ArgumentHandler::getCorrectionType () {
 
 bool ArgumentHandler::argumentTest(){
 	return true;
+}
+
+bool ArgumentHandler::useSSE(){
+	return this->SSE;
 }
