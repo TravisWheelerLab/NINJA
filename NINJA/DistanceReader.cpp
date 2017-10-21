@@ -90,19 +90,19 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
 
 	char* line = new char[this->K*10 + 100];
 
-	for(int i=0; i< this->K; i++){
+	for(int cnt=0; cnt< this->K; cnt++){
 		getline(&line, &lineSize, this->r);
 //		printf(line);
 		lineString = line;
 		pos = lineString.find_first_of(" ");
-		*names[i] = lineString.substr(0,pos);
+		*names[cnt] = lineString.substr(0,pos);
 //		printf(names[i]->c_str());
 //		printf("-----------");
 		pos++;
 		newPos = lineString.find_first_of(" ", pos); //first space after the first number
 		int length = newPos - pos; //length of the number
-		for (int j=i+1; j<this->K; j++){
-			distances[i][j-i-1] = 100 * (int)((((100000000*std::atof(lineString.substr(pos, length).c_str())))+50)/100);
+		for (int i=0; i<cnt; i++){
+			distances[i][cnt-i-1] = 100 * (int)((((100000000*std::atof(lineString.substr(pos, length).c_str())))+50)/100);
 //			printf(" %d",distances[i][j]);
 			pos += length + 1;
 		}
@@ -141,11 +141,11 @@ void DistanceReader::write(FILE* outFile,double** distances,std::string** names)
 	for (int i=0; i<this->K; i++){
 		fprintf(outFile, "%s", names[i]->c_str());
 		for (int j=0; j<i; j++){
-			fprintf(outFile," %.6lf",distances[i][j]);
+			fprintf(outFile," %.6lf",distances[j][i-j-1]);
 		}
 		fprintf(outFile," 0.000000");
 		for (int j=i+1; j<this->K; j++){
-			fprintf(outFile," %.6lf",distances[j][i]);
+			fprintf(outFile," %.6lf",distances[i][j-i-1]);
 		}
 		fprintf(outFile,"\n");
 	}
