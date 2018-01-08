@@ -14,6 +14,7 @@
 #include <unistd.h>
 #endif
 
+#ifdef TESTCASE
 
 //main unit test
 void test_case(int argc, char *argv[]){
@@ -45,6 +46,8 @@ void test_case(int argc, char *argv[]){
 		printf("Array Heap External Memorytest failed");
 
 }
+
+#endif
 
 int main(int argc, char *argv[]){
 #ifdef TEST_CASE

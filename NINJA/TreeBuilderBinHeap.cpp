@@ -188,10 +188,10 @@ TreeNode** TreeBuilderBinHeap::build (){
 
 	long minQ, q, qLimit, minD;
 
-	int* maxT1 = new int[this->clustCnt];
-	int* maxT2 = new int[this->clustCnt];
-	long* maxT1val = new long[this->clustCnt];
-	long* maxT2val = new long[this->clustCnt];
+	int maxT1[this->clustCnt];
+	int maxT2[this->clustCnt];
+	long maxT1val[this->clustCnt];
+	long maxT2val[this->clustCnt];
 
 	int stepsUntilRebuild = TreeBuilder::rebuildSteps;
 

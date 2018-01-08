@@ -894,7 +894,7 @@ double DistanceCalculator::calc (int a, int b){
 			else if (this->corr_type == JukesCantor)
 				dist = (float)(-(0.75)*log((double)(1.0-(4.0/3.0)*(p_f+q_f))));
 			else if (this->corr_type == Kimura2){
-				dist = (float)(-0.5 * log(1.0 - 2*p_f - q_f) - 0.25 * log( 1.0-2*q_f ));
+				dist = (float)(-0.5 * log(1.0 - 2*p_f - q_f) - 0.25 * sqrt( 1.0-2*q_f ));
 			}else if (this->corr_type == none)
 				dist = p_f + q_f;
 		}
@@ -1155,7 +1155,7 @@ void DistanceCalculator::convertAllDNA(){
 	long int n = this->numberOfSequences;
 	long int res = (k*(n-1)*n)/(long int)2; //number of pairs
 
-	fprintf(stdout, "%ld",res);
+	//fprintf(stdout, "%ld",res);
 
 	this->x128 = _mm_set1_epi8((int8_t) -128);
 	this->zero = _mm_set1_epi8((int8_t) 0x00);
