@@ -1155,7 +1155,7 @@ void DistanceCalculator::convertAllDNA(){
 	long int n = this->numberOfSequences;
 	long int res = (k*(n-1)*n)/(long int)2; //number of pairs
 
-	fprintf(stdout, "%ld",res);
+	//fprintf(stdout, "%ld",res);
 
 	this->x128 = _mm_set1_epi8((int8_t) -128);
 	this->zero = _mm_set1_epi8((int8_t) 0x00);
