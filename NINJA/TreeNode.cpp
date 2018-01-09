@@ -27,6 +27,8 @@ TreeNode::~TreeNode(){
 }
 void TreeNode::buildTreeString (std::string *sb){
 	std::string len;
+	//printf("name: %s ", this->name);
+	//printf("%.5f\n",this->length);
 	if (this->length == FLT_MAX){
 		len.assign("");
 	}else{
@@ -35,8 +37,8 @@ void TreeNode::buildTreeString (std::string *sb){
 		len.assign(":");
 		len.append(x);
 	}
-	if (this->leftChild == NULL) {
-		sb->append(*this->name  + len);
+	if (this->leftChild == NULL) { //|| this->rightChild == NULL
+			sb->append(*this->name  + len);
 	} else {
 		sb->append("(");
 		this->leftChild->buildTreeString(sb);

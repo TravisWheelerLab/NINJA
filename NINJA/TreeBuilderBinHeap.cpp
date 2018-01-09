@@ -174,6 +174,11 @@ TreeNode** TreeBuilderBinHeap::build (){
 
 	int nextInternalNode = this->K;
 
+//	this->nextActiveNode[3]++;
+//	this->prevActiveNode[5]--;
+//	this->candidatesActive[4] = false;
+//	nextInternalNode++;
+
 	int cand_cnt = 0;
 	int defunct_cnt = 0;
 
@@ -202,6 +207,8 @@ TreeNode** TreeBuilderBinHeap::build (){
 
 
 	newK = this->K;
+
+
 
 	while (nextInternalNode<2*this->K-1) {// until there are 3 left ... at which point the merging is obvious
 
@@ -561,12 +568,6 @@ TreeNode** TreeBuilderBinHeap::build (){
 				} else {
 					crb = this->clustAssignments[ra];
 					cra = this->clustAssignments[rb];
-				}
-				if (cra >= this->clustCnt || crb >= this->clustCnt){
-					printf("really???\n");
-				}else if(heaps[cra][crb] == NULL){
-					printf("heaps NULL\n");
-					this->heaps[cra][crb] = new BinaryHeap_IntKey_TwoInts();
 				}
 				this->heaps[cra][crb]->insert(a, b, D[ra][rb-ra-1]);
 

@@ -7,7 +7,7 @@
 # TODO: implement checking which operating system is being used
 # TODO: implement flag for unit test compilation
 
-CXX = /usr/local/bin/g++-6 #must support C++11
+CXX = g++ #must support C++11
 
 # sources in alphabetical order
 SOURCES = ArgumentHandler.cpp
