@@ -55,6 +55,8 @@ TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize){
 	for (i=0; i<this->K; i++) {
 		foundEqual = false;
 		numLeft[i] = 0;
+		if (clustersEqual[i] != -1) //if this is linked to some cluster already, ignore it. this is necessary because if A == B and B == C, A ?= C.
+			continue;
 		for (j=i+1; j<this->K; j++) {
 			if (this->D[i][j-i-1] == 0 && clustersEqual[j] == -1){ //equal sequences and cluster not assigned yet
 				clustersEqual[j] = i;
@@ -203,7 +205,7 @@ TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize){
 TreeBuilder::~TreeBuilder(){
 	delete[](this->R);
 	delete[](this->redirect);
-	delete[](this->nodes);
+	//delete[](this->nodes); TODO: delete it according to new clustered nodes
 
 }
 void TreeBuilder::finishMerging(){ //did not change anything expect the ->`s instead of the .`s
