@@ -809,6 +809,10 @@ double DistanceCalculator::testDifferenceCluster(int a, int b){ //for test purpo
 	}
 	return dist - dist_2;
 }
+double DistanceCalculator::getMaxScore(){
+	return (this->corr_type == none ? 1.0f : 3.0f);
+}
+
 double DistanceCalculator::calc (int a, int b){
 	float dist = 0.0f;
 	float maxscore =  (this->corr_type == none ? 1.0f : 3.0f);
@@ -1141,12 +1145,12 @@ void DistanceCalculator::convertAllProtein(){
 
 	this->additionalGaps = this->lengthOfSequences - (allocSize*4);
 
-	if (this->A != NULL){
-		for(int i=0;i<this->numberOfSequences;i++){
-			if(this->A[i] != NULL)
-				delete(this->A[i]);
-		}
-	}
+//	if (this->A != NULL){
+//		for(int i=0;i<this->numberOfSequences;i++){
+//			if(this->A[i] != NULL)
+//				delete(this->A[i]);
+//		}
+//	}
 
 }
 void DistanceCalculator::convertAllDNA(){
@@ -1188,10 +1192,10 @@ void DistanceCalculator::convertAllDNA(){
 
 	}
 
-	if (this->A != NULL){
-		for(int i=0;i<this->numberOfSequences;i++){
-			if(this->A[i] != NULL)
-				delete(this->A[i]);
-		}
-	}
+//	if (this->A != NULL){
+//		for(int i=0;i<this->numberOfSequences;i++){
+//			if(this->A[i] != NULL)
+//				delete(this->A[i]);
+//		}
+//	}
 }

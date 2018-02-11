@@ -6,6 +6,35 @@
  */
 #include "TreeBuilderBinHeap.hpp"
 
+TreeBuilderBinHeap::TreeBuilderBinHeap(std::string** names, int** distances, int namesSize, int* clusterEqual) : TreeBuilder(names, distances, namesSize, clusterEqual){
+
+	this->firstActiveNode = 0;
+	this->nextActiveNode = new int[(this->K*2)-1];
+	this->prevActiveNode = new int[(this->K*2)-1];
+	for (int i=0; i<2*this->K-1; i++) {
+		this->nextActiveNode[i] = i+1;
+		this->prevActiveNode[i] = i-1;
+	}
+
+	this->candidateCountPerLoop = new int[(this->K)-1];
+	this->heaps = NULL;
+
+	this->candidatesD.pointer = NULL;
+	this->candidatesI.pointer = NULL;
+	this->candidatesJ.pointer = NULL;
+	this->freeCandidates = NULL;
+	this->candidatesActive = NULL;
+
+
+	clusterAndHeap(this->K);
+
+/*	} catch (Exception e){
+		LogWriter.stdErrLogln("Error in Binary Heap Tree Builder");
+		LogWriter.stdErrLogln(e.getMessage());
+	}*/
+}
+
+
 TreeBuilderBinHeap::TreeBuilderBinHeap(std::string** names, int** distances, int namesSize) : TreeBuilder(names, distances, namesSize){
 
 	this->firstActiveNode = 0;

@@ -23,6 +23,8 @@ class DistanceReader{
 		FILE* r;
 		size_t fileSize;
 		DistanceCalculator *distCalc;
+
+		int *clustersEqual;
 	private:
 		float atoi(char* in, int end);
 };

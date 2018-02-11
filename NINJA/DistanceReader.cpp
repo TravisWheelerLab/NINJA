@@ -70,46 +70,68 @@ void DistanceReader::read(std::string **names, int** distances){ //possibly wron
         omp_set_num_threads(this->threads);
     }
     if (this->distCalc != NULL) {//using distCalc on input alignment
-		#pragma omp parallel for
+    	//int clustersEqual[this->K];
+    	this->clustersEqual = new int[this->K];
+
     	for (int i=0; i<this->K; i++)
+    		this->clustersEqual[i] = -1;
+
+		//#pragma omp parallel for
+    	for (int i=0; i<this->K; i++){
+			//#pragma omp critical
+    		if (this->clustersEqual[i] != -1){ //if this sequence is clustered, its distance to everyone else is maxed out
+    			for (int j=i+1; j<this->K; j++)
+    				distances[i][j-i-1] = this->distCalc->getMaxScore();
+    			continue;
+    		}
+			#pragma omp parallel for
     		for (int j=i+1; j<this->K; j++)
     		{
-    			//distances[i][j-i-1] = this->distCalc->testDifferenceCluster(i,j);
-    			distances[i][j-i-1] = 100 * (int)(((100000000*this->distCalc->calc(i,j))+50)/100) ; // this gets the same rounding I have in the distance writer code
-
+				//#pragma omp critical
+        		if (this->clustersEqual[j] != -1){
+        			distances[i][j-i-1] = this->distCalc->getMaxScore(); //seq j is already clustered to another one, therefore every sequence will have maximum score to it.
+        			continue;
+        		}
+				//distances[i][j-i-1] = this->distCalc->testDifferenceCluster(i,j);
+				distances[i][j-i-1] = 100 * (int)(((100000000*this->distCalc->calc(i,j))+50)/100) ; // this gets the same rounding I have in the distance writer code
+				if (distances[i][j-i-1] == 0 && (*this->distCalc->A[i]) == (*this->distCalc->A[j])){
+					#pragma omp critical
+					this->clustersEqual[j] = i; //because I do not check again for this->clustersEqual[j], this could cluster it to a sequence that is not the first one to show up. however, it should get the same result.
+				}
     		}
+    	}
     } else {
 
-	fscanf(this->r, "%d\n", &this->K);
+		fscanf(this->r, "%d\n", &this->K);
 
-	std::string lineString = "";
+		std::string lineString = "";
 
-	int pos, newPos;
+		int pos, newPos;
 
-	size_t lineSize;
+		size_t lineSize;
 
-	char* line = new char[this->K*10 + 100];
+		char* line = new char[this->K*10 + 100];
 
-	for(int cnt=0; cnt< this->K; cnt++){
-		getline(&line, &lineSize, this->r);
-//		printf(line);
-		lineString = line;
-		pos = lineString.find_first_of(" ");
-		*names[cnt] = lineString.substr(0,pos);
-//		printf(names[i]->c_str());
-//		printf("-----------");
-		pos++;
-		newPos = lineString.find_first_of(" ", pos); //first space after the first number
-		int length = newPos - pos; //length of the number
-		for (int i=0; i<cnt; i++){
-			distances[i][cnt-i-1] = 100 * (int)((((100000000*std::atof(lineString.substr(pos, length).c_str())))+50)/100);
-//			printf(" %d",distances[i][j]);
-			pos += length + 1;
+		for(int cnt=0; cnt< this->K; cnt++){
+			getline(&line, &lineSize, this->r);
+	//		printf(line);
+			lineString = line;
+			pos = lineString.find_first_of(" ");
+			*names[cnt] = lineString.substr(0,pos);
+	//		printf(names[i]->c_str());
+	//		printf("-----------");
+			pos++;
+			newPos = lineString.find_first_of(" ", pos); //first space after the first number
+			int length = newPos - pos; //length of the number
+			for (int i=0; i<cnt; i++){
+				distances[i][cnt-i-1] = 100 * (int)((((100000000*std::atof(lineString.substr(pos, length).c_str())))+50)/100);
+	//			printf(" %d",distances[i][j]);
+				pos += length + 1;
+			}
+	//		printf("\n");
 		}
-//		printf("\n");
-	}
 
-    	fclose(this->r);
+			fclose(this->r);
 
     }
 }

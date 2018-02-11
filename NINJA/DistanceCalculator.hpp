@@ -48,6 +48,8 @@ class DistanceCalculator{
 		double calc (int a, int b);
 		int* getInverseAlphabet (std::string alph, int length);
 
+		double getMaxScore();
+
 		double testDifferenceCluster(int a, int b);
 
 		unsigned int** convertedSequences;

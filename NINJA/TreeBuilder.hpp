@@ -9,13 +9,14 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "TreeNode.hpp"
-
 
 
 class TreeBuilder{
 	public:
 		TreeBuilder (std::string** names, int** distances, int namesSize);
+		TreeBuilder (std::string** names, int** distances, int namesSize, int* clusterEqual);
 		~TreeBuilder();
 		TreeNode* build ();
 

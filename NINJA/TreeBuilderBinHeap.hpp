@@ -11,6 +11,7 @@
 
 class TreeBuilderBinHeap: public TreeBuilder{
 	public:
+		TreeBuilderBinHeap(std::string** names, int** distances, int namesSIze, int* clusterEqual);
 		TreeBuilderBinHeap(std::string** names, int** distances, int namesSIze);
 		~TreeBuilderBinHeap();
 

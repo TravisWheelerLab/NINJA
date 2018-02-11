@@ -15,7 +15,45 @@ int TreeBuilder::rebuildSteps  = -1;
 int TreeBuilder::candidateIters = 50;
 int TreeBuilder::verbose = 1;
 
-TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize){
+TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize){ //standard constructor
+	this->firstActiveNode = 0;
+
+	this->nextActiveNode = NULL;
+	this->prevActiveNode = NULL;
+
+
+	this->names = names;
+	this->D = distances;
+	this->K = namesSize;
+
+	int i,j;
+
+	this->R = new long[this->K]();
+
+	this->redirect = new int[(this->K*2)-1];
+
+	this->nodes = new TreeNode*[(this->K*2)-1];
+
+	for (i=0; i<this->K; i++) {
+			this->redirect[i] = i;
+			this->nodes[i] = new TreeNode();
+	}
+
+	//initialize the internal nodes that will be used in the clustering
+	for (i=this->K; i<2*this->K-1; i++) {
+		this->redirect[i] = -1;
+		this->nodes[i] = new TreeNode();
+	}
+
+	for (i=0; i<this->K-1; i++) {
+		for (j=i+1; j<this->K; j++) {
+			this->R[i] += (long)this->D[i][j-i-1];
+			this->R[j] += (long)this->D[i][j-i-1];
+		}
+	}
+}
+
+TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize, int* clustersEqual){ //constructor that takes uses equal-clusters to speed-up clustering
 
 	this->firstActiveNode = 0;
 
@@ -38,38 +76,53 @@ TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize){
 
 	//find the equal clusters
 
-	int clustersEqual[this->K];
-
-	for (j=0; j<this->K; j++) {
-		clustersEqual[j] = -1;
-	}
+//	int clustersEqual[this->K];
+//
+//	for (j=0; j<this->K; j++) {
+//		clustersEqual[j] = -1;
+//	}
 
 	int countClustered = 0;
 	int numClusters = 0;
-	bool foundEqual;
 
 	std::vector<int> clusterRoots;
 
 	int numLeft[this->K];
+	for (i=0; i<this->K; i++) {
+		numLeft[i] = 0;
+	}
 
 	for (i=0; i<this->K; i++) {
-		foundEqual = false;
-		numLeft[i] = 0;
-		if (clustersEqual[i] != -1) //if this is linked to some cluster already, ignore it. this is necessary because if A == B and B == C, A ?= C.
-			continue;
-		for (j=i+1; j<this->K; j++) {
-			if (this->D[i][j-i-1] == 0 && clustersEqual[j] == -1){ //equal sequences and cluster not assigned yet
-				clustersEqual[j] = i;
-				countClustered++;
-				if (!foundEqual){
-					numClusters++;
-					clusterRoots.push_back(i);
-				}
-				numLeft[i]++;
-				foundEqual = true;
+		if (clustersEqual[i] != -1){
+			countClustered++;
+			if (numLeft[clustersEqual[i]] == 0){
+				numClusters++;
+				clusterRoots.push_back(clustersEqual[i]);
 			}
+			numLeft[clustersEqual[i]]++;
 		}
 	}
+
+//	for (i=0; i<this->K; i++) {
+//		foundEqual = false;
+//		numLeft[i] = 0;
+////		if (clustersEqual[i] != -1) //if this is linked to some cluster already, ignore it. this is necessary because if A == B and B == C, A ?= C.
+////			continue;
+//		for (j=i+1; j<this->K; j++) {
+//			if (this->D[i][j-i-1] == 0 && clustersEqual[j] == -1){ //equal sequences and cluster not assigned yet
+//				if ((*this->seq[i]) == (*this->seq[j])){ //if the two sequences are exactly equal (necessary due to non-transitivity of the relation)
+//					clustersEqual[j] = i;
+//					countClustered++;
+//					if (!foundEqual){
+//						numClusters++;
+//						clusterRoots.push_back(i);
+//					}
+//					numLeft[i]++;
+//					foundEqual = true;
+//				}
+//			}
+//		}
+//	}
 
 	if (numClusters > 0){ //there are equal sequences
 
@@ -85,6 +138,8 @@ TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize){
 		int rootsAdded = 0;
 		//int countExclusion = 0;
 		std::vector<int> nodesPos;
+
+		std::sort(clusterRoots.begin(), clusterRoots.end());
 
 		//initialize sequence nodes
 		for (i=0; i<this->K; i++) {
@@ -176,6 +231,8 @@ TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize){
 				numLeft[clustersEqual[i]]--;
 			}
 		}
+
+		//printf("Percentage of nodes taken due to by equality: %d", countClustered*100/this->K);
 
 		this->K -= countClustered;
 

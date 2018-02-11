@@ -57,6 +57,8 @@ std::string TreeBuilderManager::doJob(){
 
 	int K=0;
 
+	int* equalCluster;
+
 	/*
 	#ifdef LINUX
 	maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES);
@@ -171,6 +173,7 @@ std::string TreeBuilderManager::doJob(){
 		}else{
 			reader->read( this->names, distances);
 		}
+		equalCluster = reader->clustersEqual;
 	}
 
 	fprintf(stderr,"Generating tree....\n");
