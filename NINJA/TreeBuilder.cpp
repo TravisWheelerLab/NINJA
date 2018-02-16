@@ -126,7 +126,7 @@ TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize, i
 
 	if (numClusters > 0){ //there are equal sequences
 
-		TreeNode** equalNodes = new TreeNode*[numClusters+(countClustered*2)];
+		TreeNode** equalNodes = new TreeNode*[this->K];
 
 		//initialize equal sequence root nodes
 		for (i=0; i<this->K; i++) {
@@ -145,7 +145,7 @@ TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize, i
 		for (i=0; i<this->K; i++) {
 			this->redirect[i] = i;
 			TreeNode* newTree = new TreeNode(names[i]);
-			if (clusterRoots[rootsAdded] == i){ //if it is the root of an equal subtree I will put the subtree instead
+			if (rootsAdded < numClusters && clusterRoots[rootsAdded] == i){ //if it is the root of an equal subtree I will put the subtree instead
 				//this->nodes[i] = equalNodes[nodesAdded];
 				this->nodes[nodesAdded] = equalNodes[i];
 				newTree->length = 0;

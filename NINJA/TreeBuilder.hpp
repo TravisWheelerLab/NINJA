@@ -32,7 +32,7 @@ class TreeBuilder{
 	protected:
 		std::string** names;
 		int** D;
-		long int *R;
+		long *R;
 		TreeNode **nodes;
 		int *redirect;
 		int *nextActiveNode;

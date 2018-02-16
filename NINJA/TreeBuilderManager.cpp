@@ -181,7 +181,8 @@ std::string TreeBuilderManager::doJob(){
 	TreeBuilderBinHeap* tb = NULL;
 	TreeBuilderExtMem *tb_extmem = NULL;
 	if (!this->method.compare("inmem") or !this->method.compare("default")) {
-		tb = new TreeBuilderBinHeap(this->names, distances, K);
+		//tb = new TreeBuilderBinHeap(this->names, distances, K);
+		tb = new TreeBuilderBinHeap(this->names, distances, K, equalCluster);
 		nodes = tb->build();
 		nodesSize = (tb->K*2)-1;
 
