@@ -10,13 +10,16 @@
 #define LINUX 1
 
 #ifdef LINUX
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #endif
 
 //standard constructor
-TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outFile, InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType, int threads, bool useSSE){
+TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outFile,
+InputType inType, OutputType outType, AlphabetType alphType, CorrectionType corrType, int threads, bool useSSE, bool
+printTime){
 	this->method = method;
 	this->njTmpDir = njTmpDir;
 	this->inFile = inFile;
@@ -30,8 +33,13 @@ TreeBuilderManager::TreeBuilderManager(std::string method, std::string njTmpDir,
 	this->newDistanceMethod = false;
 	this->threads = threads;
 	this->newDistanceMethod = useSSE;
+	this->printTime = printTime;
 }
 
+int64_t timespecDiff(struct timespec *timeA_p, struct timespec *timeB_p){
+return ((timeA_p->tv_sec * 1000000000) + timeA_p->tv_nsec) -
+        ((timeB_p->tv_sec * 1000000000) + timeB_p->tv_nsec);
+}
 
 std::string TreeBuilderManager::doJob(){
 	int** distances = NULL;
@@ -58,6 +66,9 @@ std::string TreeBuilderManager::doJob(){
 	int K=0;
 
 	int* equalCluster;
+
+    struct timespec start, afterRead, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
 
 	/*
 	#ifdef LINUX
@@ -144,6 +155,9 @@ std::string TreeBuilderManager::doJob(){
 			seqReader = new SequenceFileReader(&(this->inFile),(SequenceFileReader::AlphabetType) this->alphType);
 			std::string** seqs = seqReader->getSeqs();
 			this->names = seqReader->getNames();
+
+            clock_gettime(CLOCK_MONOTONIC, &afterRead); 
+
 			this->alphType = (TreeBuilderManager::AlphabetType) seqReader->getAlphType();
 			fprintf(stderr,"Calculating distances....\n");
 			DistanceCalculator* distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->numSeqs,newDistanceMethod);
@@ -164,6 +178,12 @@ std::string TreeBuilderManager::doJob(){
 
 
 		if(this->outType == dist){
+            if (this->printTime){
+                clock_gettime(CLOCK_MONOTONIC, &end);
+                fprintf(stderr,"Read Time: %lu ns\n",timespecDiff(&afterRead, &start));
+                fprintf(stderr,"Distance Time: %lu ns\n",timespecDiff(&end, &afterRead));
+                fprintf(stderr,"Total Time: %lu ns\n",timespecDiff(&end, &start));
+            }
 			if(this->inType != alignment){
 				fprintf(stderr,"Input and output distances not allowed. What are you trying to do?\n");
 				Exception::critical();

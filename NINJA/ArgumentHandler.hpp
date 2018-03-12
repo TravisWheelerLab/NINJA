@@ -22,6 +22,8 @@ class ArgumentHandler{
 		CorrectionType corrType;
 		FILE* outFile;
 
+        bool printTime;
+
 		int threads;
 
 		bool SSE;
@@ -44,6 +46,8 @@ class ArgumentHandler{
 		bool argumentTest();
 
 		bool useSSE();
+
+        bool getPrintTime();
 };
 
 #endif

@@ -19,6 +19,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->outFile = stdout;
 	this->threads = 0;
 	this->SSE = true;
+    this->printTime = false;
 
 	if(argc == 1){
 		printf("Use --help (or -h) to see possible arguments.\n");
@@ -49,6 +50,8 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No file specified.\n");
 				Exception::critical();
 			}
+		}else if (!x.compare("--print-times")){
+            this->printTime = true;
 		}else if (!x.compare("--method") || !x.compare("-m")){
 			if (i < argc-1){
 				if(!y.compare("default")){
@@ -233,4 +236,8 @@ bool ArgumentHandler::argumentTest(){
 
 bool ArgumentHandler::useSSE(){
 	return this->SSE;
+}
+
+bool ArgumentHandler::getPrintTime(){
+	return this->printTime;
 }
