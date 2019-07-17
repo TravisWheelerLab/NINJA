@@ -28,6 +28,7 @@ SOURCES += TreeBuilder.cpp
 SOURCES += TreeBuilderBinHeap.cpp
 SOURCES += TreeBuilderExtMem.cpp
 SOURCES += TreeBuilderManager.cpp
+SOURCES += ClusterManager.cpp
 SOURCES += TreeNode.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)

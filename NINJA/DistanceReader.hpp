@@ -7,6 +7,9 @@
 #include "ExceptionHandler.hpp"
 #include "DistanceCalculator.hpp"
 
+#ifndef Included_DistanceReader_H
+#define Included_DistanceReader_H
+
 class DistanceReader{
 	public:
 		static const int numPages = 10;
@@ -29,4 +32,4 @@ class DistanceReader{
 		float atoi(char* in, int end);
 };
 
-
+#endif

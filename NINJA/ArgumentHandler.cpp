@@ -18,6 +18,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->corrType = not_assigned;
 	this->outFile = stdout;
 	this->threads = 0;
+        this->clusterCutoff = 0.03; // RMH: cluster distance cutoff
 	this->SSE = true;
     this->printTime = false;
 
@@ -90,8 +91,10 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 					this->outType = dist;
 				}else if(!y.compare("t")){
 					this->outType = tree;
+				}else if(!y.compare("c")){
+					this->outType = cluster;
 				}else{
-					fprintf(stderr,"Invalid out_type:  try  'd' or 't'.");
+					fprintf(stderr,"Invalid out_type:  try  'd', 't' or 'c'.");
 					Exception::critical();
 				}
 				i++;
@@ -124,6 +127,8 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 					corrType = Kimura2;
 				}else if(!y.compare("s")){
 					corrType = FastTree;
+                                }else if(!y.compare("m")){ //RMH
+                                        corrType = MismatchesOneGap;
 				}else{
 					fprintf(stderr,"Invalid ut_type:  try  'n', 'j', 'k', or 's'.");
 					Exception::critical();
@@ -178,13 +183,17 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			int r = strtol(argv[i+1], NULL, 0);
 			this->threads = r;
 			i++;
+                }else if(!x.compare("--cluster_cutoff")) {
+                        float rr = strtof(argv[i+1], NULL);
+                        this->clusterCutoff = rr;
+                        i++;
 		}else if(!x.compare("--NOSSE")){
 			this->SSE = false;	
 		}else if (!x.compare("--help") || !x.compare("-h")){
 			printf("Arguments: \n");
 			printf("--help (or -h) to display this help\n--in (or -i) filename\n--out (or -o) filename\n--method (or -m)  [inmem | extmem] (default inmem)\n");
-			printf("--in_type type [a | d] (default a)\n--out_type type [t | d] (default t)\n--corr_type type [n | j | k | s]\n");
-			printf("--threads (or -T) num_threads\nFor more information, check the README file.\n");
+			printf("--in_type type [a | d] (default a)\n--out_type type [t | d | c] (default t)\n--corr_type type [n | j | k | s]\n");
+			printf("--threads (or -T) num_threads\n--cluster_cutoff dist_cutoff (default 0.03)\nFor more information, check the README file.\n");
 			this->abort = true;
 		}else if (!x.compare("--version")){
 			printf("Version 0.95\n");
@@ -200,6 +209,11 @@ std::string ArgumentHandler::getMethod() {
 }
 int ArgumentHandler::getNumThreads() {
 	return this->threads;
+}
+
+// RMH
+float ArgumentHandler::getClusterCutoff() {
+	return this->clusterCutoff;
 }
 
 std::string ArgumentHandler::getInFile() {

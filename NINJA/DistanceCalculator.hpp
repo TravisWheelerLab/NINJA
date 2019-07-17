@@ -25,7 +25,7 @@ class DistanceCalculator{
 	public:
 
 
-		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/};
+		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/, MismatchesOneGap /*mismatches + 1 for each gap*/};
 		enum AlphabetType {dna, amino, null};
 
 		DistanceCalculator (std::string** A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences, bool useSSE);

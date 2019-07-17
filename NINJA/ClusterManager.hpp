@@ -1,20 +1,17 @@
 /*
- * TreeBuilderManager.hpp
+ * ClusterManager.hpp
  *
- *  Created on: Feb 7, 2016
- *      Author: michel
+ *  Created on: Jul 12, 2019
+ *      Author: robert
  */
 
 #include "ExceptionHandler.hpp"
-#include "TreeNode.hpp"
 #include "DistanceReader.hpp"
 #include "SequenceFileReader.hpp"
-#include "TreeBuilderBinHeap.hpp"
 #include <stdlib.h>
-#include "TreeBuilderExtMem.hpp"
-#include "DistanceReaderExtMem.hpp"
+//#include "DistanceReaderExtMem.hpp"
 
-class TreeBuilderManager {
+class ClusterManager {
 	struct Float{
 		float* pointer;
 		int length;
@@ -26,17 +23,15 @@ class TreeBuilderManager {
 		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/, MismatchesOneGap /*mismatches + 1 for each gap*/};
 		enum OutputType {dist, tree, cluster};
 
-		TreeBuilderManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outfile, InputType
+		ClusterManager(std::string method, std::string njTmpDir, std::string inFile, FILE* outfile, InputType
         inType, OutputType outType, AlphabetType alphType, CorrectionType corrType, int threads, bool useSSE, bool
-        printTime);
+        printTime, float clusterCutoff);
 
 		std::string method;
 		std::string njTmpDir;
 		std::string inFile;
 		FILE* outFile;
 		std::string** names;
-		//Float** inD;
-		//int inDsize;
 		InputType inType;
 		OutputType outType;
 		AlphabetType alphType;
@@ -44,6 +39,7 @@ class TreeBuilderManager {
 		const static int NUM_RAND_DIR_CHARS = 6;
 		std::string chars;
 		int threads;
+                float clusterCutoff;
         bool printTime;
 
 		bool newDistanceMethod;

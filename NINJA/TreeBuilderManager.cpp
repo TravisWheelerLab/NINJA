@@ -196,6 +196,7 @@ std::string TreeBuilderManager::doJob(){
 		equalCluster = reader->clustersEqual;
 	}
 
+
 	fprintf(stderr,"Generating tree....\n");
 	int nodesSize = 0;
 	TreeBuilderBinHeap* tb = NULL;

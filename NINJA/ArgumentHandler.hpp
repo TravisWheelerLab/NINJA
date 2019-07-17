@@ -9,9 +9,9 @@
 class ArgumentHandler{
 	public:
 		enum InputType {alignment, distance};
-		enum OutputType {dist, tree};
+		enum OutputType {dist, tree, cluster};
 		enum AlphabetType {dna, amino, null};
-		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/};
+		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/, MismatchesOneGap /*mismatches + 1 for each gap*/};
 
 		std::string method; // default should be "bin" for small, "cand" for large.
 		std::string njTmpDir;
@@ -25,6 +25,8 @@ class ArgumentHandler{
         bool printTime;
 
 		int threads;
+      
+                float clusterCutoff;
 
 		bool SSE;
 
@@ -38,6 +40,7 @@ class ArgumentHandler{
 		OutputType getOutputType();
 		FILE* getOutpuFile();
 		int getNumThreads();
+                float getClusterCutoff();
 
 		AlphabetType getAlphabetType();
 

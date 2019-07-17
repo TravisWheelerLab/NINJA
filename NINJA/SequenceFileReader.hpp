@@ -12,6 +12,9 @@
 #include "ExceptionHandler.hpp"
 
 
+#ifndef Included_SequenceFileReader_H
+#define Included_SequenceFileReader_H
+
 class SequenceFileReader{
 	public:
 		enum AlphabetType {dna, amino, null};
@@ -31,4 +34,4 @@ class SequenceFileReader{
 		AlphabetType getAlphType();
 };
 
-
+#endif

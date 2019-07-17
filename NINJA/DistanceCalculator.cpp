@@ -216,6 +216,72 @@ inline void DistanceCalculator::count128(register __m128i &seq1, register __m128
 
 
 }
+
+// RMH
+// I got sick and tired of the inconsistent results
+// when casting m128i to int arrays so I bit the bullet
+// and just did it the right(?) way. 
+//
+// There are two functions here.  The first one,
+// print_m128i_bits() prints the register in big
+// endian order (MSB to LSB).  This not the natural
+// order of the register but makes more sense for 
+// standered bit shifting functions ( e.g. right shift
+// does actually shift things right ).
+//
+// The print_m128i_bits_le() function prints the 
+// register in little endian order (LSB to MSB).
+//
+void print_m128i_bits( __m128i value, char * prefix ) {
+  alignas(16) uint32_t arr[4];
+
+  fprintf(stderr, prefix);
+  fprintf(stderr, " msb[127] ");
+  _mm_store_si128((__m128i*)arr, value);
+  for ( int m=3; m >= 0; m-- ) 
+      for ( int k = 0; k < 32; k++ ) 
+        fprintf(stderr,"%d",(arr[m] & (1<<(31-k)))>>(31-k));
+  fprintf(stderr," lsb[ 0 ]\n");
+}
+
+void print_m128i_bits_le( __m128i value, char * prefix ) {
+  alignas(16) uint32_t arr[4];
+
+  fprintf(stderr, prefix);
+  fprintf(stderr, " lsb[ 0 ] ");
+  _mm_store_si128((__m128i*)arr, value);
+  // One little, two little, three little endians
+  for ( int m=0; m < 4; m++ ) 
+    for ( int k = 0; k < 32; k++ ) 
+      fprintf(stderr,"%d",(arr[m] & (1<<(31-k)))>>(31-k));
+  fprintf(stderr," msb[127]\n");
+}
+
+// Bit Counting
+// Borrowed quickly from https://stackoverflow.com/questions/17354971/fast-counting-the-number-of-set-bits-in-m128i-register
+// to make some progress.  This could be streamlined for SSSE3/AMD if there is a desire to support specific processors or
+// SSE versions.  Also, I am not sure if somewhere in this codebase a basic bit counter is already coded.
+static const __m128i popcount_mask = _mm_set1_epi8(0x0F);
+static const __m128i popcount_table = _mm_setr_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
+static inline __m128i popcnt8(__m128i n) {
+  const __m128i pcnt0 = _mm_shuffle_epi8(popcount_table, _mm_and_si128(n, popcount_mask));
+  const __m128i pcnt1 = _mm_shuffle_epi8(popcount_table, _mm_and_si128(_mm_srli_epi16(n, 4), popcount_mask));
+  return _mm_add_epi8(pcnt0, pcnt1);
+}
+static inline __m128i popcnt64(__m128i n) {
+  const __m128i cnt8 = popcnt8(n);
+  return _mm_sad_epu8(cnt8, _mm_setzero_si128());
+}
+static inline int popcnt128(__m128i n) {
+  const __m128i cnt64 = popcnt64(n);
+  const __m128i cnt64_hi = _mm_unpackhi_epi64(cnt64, cnt64);
+  const __m128i cnt128 = _mm_add_epi32(cnt64, cnt64_hi);
+  return _mm_cvtsi128_si32(cnt128);
+}
+// END RMH
+
+
+
 double DistanceCalculator::newCalcDNA(int a, int b){
 	/*
 	 * A = 00
@@ -289,7 +355,6 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 	 *
 	 */
 
-
 	register __m128i seq1;
 	register __m128i seq2;
 	register __m128i gap1;
@@ -300,7 +365,6 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 	register __m128i counts_transversions;
 	register __m128i counts_gaps;
 	register __m128i counts_transitions;
-
 
 	int numOfInts = ceil((float)this->lengthOfSequences/16.0);
 	if(numOfInts % 4 != 0)
@@ -322,11 +386,15 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 	int i = 0;
 
+        // RMH: For gap initiation counting
+        int inGap = 0;
+        int gap1Cnt = 0;
+        int gap2Cnt = 0;
+ 
 	while(i < numOfInts){
 		counts_transversions = x128;
 		counts_gaps= x128;
 		counts_transitions = x128;
-
 
 		//TODO: review number of max iterations
 		for(int j = 0;i<numOfInts && j < 31;i += 4){ //a maximum of 32 vectors allowed not to overflow things
@@ -337,10 +405,41 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 				gap1 = *(__m128i*)&Agap[i];
 				gap2 = *(__m128i*)&Bgap[i];
 
-				count128(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
+                                // RMH: Brute-force gap initiation counting.  This is not
+                                //      as elegant as an SSE implementation but it does
+                                //      serve as a benchmark for improvement should one
+                                //      be implemented.  This is only necessary ( for now )
+                                //      if we are calculating the "MismatchesOneGap" 
+                                //      distance metric.
+                                if (this->corr_type == MismatchesOneGap)
+                                  for ( int k = 0; k < 4; k++ ) // 32 bit words
+                                    for ( int l = 3; l >= 0; l-- ) // 4 bytes each
+                                      for ( int m = 3; m >= 0; m-- ){ // Only 4 bits of data used
+                                        unsigned int bitmask = 1<<((l*8)+m);
+                                        unsigned int Abit = Agap[i+k] & bitmask;
+                                        unsigned int Bbit = Bgap[i+k] & bitmask;
+                                        if ( Abit && Bbit ) 
+                                        {
+                                           inGap = 0;
+                                        // Gap in B
+                                        }else if ( Abit && !Bbit )
+                                        {
+                                          if ( inGap != 1 ) {
+                                            gap1Cnt++;
+                                          }  
+                                          inGap = 1;
+                                        // Gap in A
+                                        }else if ( !Abit && Bbit )
+                                        {
+                                          if ( inGap != 2 ) {
+                                            gap2Cnt++;
+                                          }  
+                                          inGap = 2;
+                                        }
+                                      }
 
-
-				j+=4;
+			      count128(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
+		 	      j+=4;
 		}
 
 		/*gather transversion counts*/
@@ -373,10 +472,10 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 		counts_gaps = _mm_add_epi16(counts_gaps, tmp);
 
 		gaps += _mm_extract_epi16(counts_gaps, 0);
+               
 	}
 
 	length -= gaps;
-
 
 	float dist = 0.0f;
 	float maxscore =  (this->corr_type == none ? 1.0f : 3.0f);
@@ -387,21 +486,26 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 		float p_f = (float)((float)num_transitions / (float)length);
 		float q_f = (float)((float)num_transversions / (float)length);
 
-		if ( p_f+q_f == 0)
-			dist = 0;
-		else if (this->corr_type == JukesCantor)
+		if (this->corr_type == JukesCantor)
 			dist = (float)(-(0.75)*log((double)(1.0-(4.0/3.0)*(p_f+q_f))));
-		else if (this->corr_type == Kimura2){
+		else if (this->corr_type == Kimura2)
 			dist = (float)(-0.5 * log(1.0 - 2*p_f - q_f) - 0.25 * log( 1.0-2*q_f ));
-		}else if (this->corr_type == none)
+                else if (this->corr_type == MismatchesOneGap)// RMH 
+                        dist = (float)(num_transitions + num_transversions + gap1Cnt + gap2Cnt) / (float)( length + gap1Cnt + gap2Cnt ); 
+                else if (this->corr_type == none)
 			dist = p_f + q_f;
 	}
+
+        //  NOTE: Here gaplen includes spacer gaps   
+        //printf("RMH [ a=%d vs b=%d ]: transI = %d, transV = %d, len = %d (minus gaps), gaplen = %d, AGapCnt = %d, BGapCnt = %d, dist = %lf\n", a, b, num_transitions, num_transversions, length, gaps, gap2Cnt, gap1Cnt, dist); 
 
 	double dist_d = (dist < maxscore ? dist : maxscore);
 
     return dist_d;
 
 }
+
+
 inline void DistanceCalculator::count128P(register __m128i &seq1, register __m128i &seq2,  register __m128i &gap1,  register __m128i &gap2, register __m128i &VALUES_0,  register __m128i &VALUES_1,  register __m128i &VALUES_2,  register __m128i &VALUES_3,  register __m128i &VALUES_4,  register __m128i &VALUES_5,  register __m128i &VALUES_6,  register __m128i &VALUES_7, register __m128i &sum, register __m128i &gap_count, register __m128i &tmp1, register __m128i &tmp2, int a, int b){
 
 	tmp1 = _mm_min_epu8(seq1,seq2);
@@ -944,7 +1048,6 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 	 * In each byte, the higher four bits are 0, and the lower 4 bits are either 1 or 0 if there is a gap or not, respectively.
 	 *
 	 */
-
 	*seqOut = 0x0;
 	*gapOut = 0xF0F0F0F; // initialize higher 4 bits as 0, and lower 4 bits as one
 
@@ -973,6 +1076,7 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 			*gapOut -= powersOfTwo[whereToGo[i/4]-(i%4)]; //get the right place to add and and the powers of 2 correspondent
 		}
 	}
+
 	*size -= i;
 
 }
@@ -1187,7 +1291,8 @@ void DistanceCalculator::convertAllDNA(){
 
 		sizeLeft = this->lengthOfSequences;
 		for(int j=0;j<allocSize;j++){
-			getBitsDNA((char*)(this->A[i]->c_str()+(this->lengthOfSequences-sizeLeft)),&sizeLeft, &(this->convertedSequences[i][j]), &(this->gapInTheSequences[i][j]));
+			getBitsDNA((char*)(this->A[i]->c_str()+(this->lengthOfSequences-sizeLeft)),&sizeLeft, 
+                                    &(this->convertedSequences[i][j]), &(this->gapInTheSequences[i][j]));
 		}
 
 	}

@@ -5,6 +5,7 @@
  *      Author: michel
  */
 #include "TreeBuilderManager.hpp"
+#include "ClusterManager.hpp"
 #include "ArgumentHandler.hpp"
 #include "BinaryHeap.hpp"
 #include <iostream>
@@ -65,35 +66,49 @@ int main(int argc, char *argv[]){
 	ArgumentHandler::OutputType outType = argHandler->getOutputType();
 	ArgumentHandler::AlphabetType alphType = argHandler->getAlphabetType();
 	ArgumentHandler::CorrectionType corrType = argHandler->getCorrectionType();
+	float clusterCutoff = argHandler->getClusterCutoff();
 	FILE* out = argHandler->getOutpuFile();
 	int threads = argHandler->getNumThreads();
 	bool useSSE = argHandler->useSSE();
-    bool printTime = argHandler->getPrintTime();
+        bool printTime = argHandler->getPrintTime();
 
 	fprintf(stderr,"Reading...\n");
-	TreeBuilderManager* manager = new TreeBuilderManager(method, njTmpDir, inFile, out, (TreeBuilderManager::InputType)
-    inType,(TreeBuilderManager::OutputType) outType, (TreeBuilderManager::AlphabetType)
-    alphType,(TreeBuilderManager::CorrectionType) corrType, threads, useSSE, printTime);
 
-	std::string treeString = manager->doJob();
+        if ( outType == ArgumentHandler::cluster ) {
+          // RMH: Cluster sequences by nearest neighbor rather than build
+          //      a tree.
+	  ClusterManager* manager = new ClusterManager(method, njTmpDir, inFile, out, (ClusterManager::InputType)
+                                           inType,(ClusterManager::OutputType) outType, (ClusterManager::AlphabetType)
+                                           alphType,(ClusterManager::CorrectionType) corrType, threads, useSSE, printTime, 
+                                           clusterCutoff);
 
-	if(outType == ArgumentHandler::dist){
+	  std::string clusterString = manager->doJob();
+
+        }else {
+	  TreeBuilderManager* manager = new TreeBuilderManager(method, njTmpDir, inFile, out, (TreeBuilderManager::InputType)
+                                                inType,(TreeBuilderManager::OutputType) outType, (TreeBuilderManager::AlphabetType)
+                                                alphType,(TreeBuilderManager::CorrectionType) corrType, threads, useSSE, printTime);
+
+	  std::string treeString = manager->doJob();
+
+  	  if(outType == ArgumentHandler::dist){
 		fprintf(stderr,"Distances successfully generated.\n");
 		fclose(out);
 		return 0;
-	}
-	//printf("String: %s \n",treeString.c_str());
-	//return 0;
-	if (!treeString.empty()) {
-		fprintf(out,"%s",treeString.c_str() );
+	  }
+	  //printf("String: %s \n",treeString.c_str());
+	  //return 0;
+	  if (!treeString.empty()) {
+  		fprintf(out,"%s",treeString.c_str() );
 		fprintf(stderr,"Tree successfully generated.\n");
-	} else {
+	  } else {
 		fprintf(stderr,"\n\nTree string not generated for some unknown reason. Aborting.");
 		Exception::critical();
-	}
+	  }
 
-	fclose(out);
-	return 0;
+	  fclose(out);
+  	  return 0;
+        }
 #endif
 }
 
