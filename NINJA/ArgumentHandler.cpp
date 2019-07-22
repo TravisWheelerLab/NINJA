@@ -192,7 +192,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 		}else if (!x.compare("--help") || !x.compare("-h")){
 			printf("Arguments: \n");
 			printf("--help (or -h) to display this help\n--in (or -i) filename\n--out (or -o) filename\n--method (or -m)  [inmem | extmem] (default inmem)\n");
-			printf("--in_type type [a | d] (default a)\n--out_type type [t | d | c] (default t)\n--corr_type type [n | j | k | s]\n");
+			printf("--in_type type [a | d] (default a)\n--out_type type [t | d | c] (default t)\n--corr_type type [n | j | k | s | m]\n");
 			printf("--threads (or -T) num_threads\n--cluster_cutoff dist_cutoff (default 0.03)\nFor more information, check the README file.\n");
 			this->abort = true;
 		}else if (!x.compare("--version")){
