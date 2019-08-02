@@ -59,6 +59,76 @@ DistanceReader::DistanceReader(DistanceCalculator* distCalc, int k, int threads)
 	this->threads = threads;
 }
 
+void DistanceReader::readDoubles(std::string **names, double** distances){
+    unsigned int begin = 0, end = 0, numBegin = 0, numEnd = 0;
+    int count = 0;
+
+    if (this->threads == 0){
+        omp_set_num_threads(omp_get_max_threads());
+    } else {
+        omp_set_num_threads(this->threads);
+    }
+    if (this->distCalc != NULL) {//using distCalc on input alignment
+    	this->clustersEqual = new int[this->K];
+
+    	for (int i=0; i<this->K; i++)
+    		this->clustersEqual[i] = -1;
+
+        //#pragma omp parallel for
+    	for (int i=0; i<this->K; i++){
+	        //#pragma omp critical
+    		if (this->clustersEqual[i] != -1){ //if this sequence is clustered, its distance to everyone else is maxed out
+    			for (int j=i+1; j<this->K; j++)
+    				distances[i][j-i-1] = this->distCalc->getMaxScore();
+    			continue;
+    		}
+		#pragma omp parallel for
+    		for (int j=i+1; j<this->K; j++)
+    		{
+		        //#pragma omp critical
+        		if (this->clustersEqual[j] != -1){
+        			distances[i][j-i-1] = this->distCalc->getMaxScore(); //seq j is already clustered to another one, therefore every sequence will have maximum score to it.
+        			continue;
+        		}
+			distances[i][j-i-1] = this->distCalc->calc(i,j);
+			if (distances[i][j-i-1] == 0 && (*this->distCalc->A[i]) == (*this->distCalc->A[j])){
+			  #pragma omp critical
+		   	  this->clustersEqual[j] = i; //because I do not check again for this->clustersEqual[j], this could cluster it to a sequence that is not the first one to show up. however, it should get the same result.
+			}
+    		}
+    	}
+    } else {
+
+		fscanf(this->r, "%d\n", &this->K);
+
+		std::string lineString = "";
+
+		int pos, newPos;
+
+		size_t lineSize;
+
+		char* line = new char[this->K*10 + 100];
+
+		for(int cnt=0; cnt< this->K; cnt++){
+			getline(&line, &lineSize, this->r);
+			lineString = line;
+			pos = lineString.find_first_of(" ");
+			*names[cnt] = lineString.substr(0,pos);
+			pos++;
+			newPos = lineString.find_first_of(" ", pos); //first space after the first number
+			int length = newPos - pos; //length of the number
+			for (int i=0; i<cnt; i++){
+				distances[i][cnt-i-1] = std::atof(lineString.substr(pos, length).c_str());
+				pos += length + 1;
+			}
+		}
+
+			fclose(this->r);
+
+    }
+
+}  
+
 void DistanceReader::read(std::string **names, int** distances){ //possibly wrong, the else part, perhaps the distance calculator class as well
 
     unsigned int begin = 0, end = 0, numBegin = 0, numEnd = 0;

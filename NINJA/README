@@ -27,13 +27,14 @@ Arguments:
     precomputed pairwise distances.
     Default = a
     
---out_type type [t | c]   
+--out_type type [t | c | d]   
     Type of output, tree or distance matrix
     't' type computes the tree from the input file (whether an alignment
          or a distance matrix), and writes a tree to the file specified with
          the --out flag
     'c' type calculates a Nearest-Neighbor clustering of the sequences,
         and writes a table including a cluster identifier to a file.
+    'd' type just computes the distances and outputs them.
     Default = t           
          
 --alph_type type [a | d]
@@ -41,7 +42,7 @@ Arguments:
     'd' if input consists of dna sequence
     Default = amino. 
     
---corr_type type [n | j | k | s]
+--corr_type type [n | j | k | s | m]
     Correction for multiple same-site substitutions.
     'n' no correction
     'j' jukes-cantor correction  { dist = -3/4 * ln (1 - 4/3 * dist ) }

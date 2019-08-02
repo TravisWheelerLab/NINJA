@@ -45,7 +45,7 @@ return ((timeA_p->tv_sec * 1000000000) + timeA_p->tv_nsec) -
 */
 
 std::string ClusterManager::doJob(){
-	int** distances = NULL;
+	double** distances = NULL;
 	float** memD = NULL;
 	float* R  = NULL;
 	// all for external memory version
@@ -99,12 +99,12 @@ std::string ClusterManager::doJob(){
 				this->names[i] = new std::string();
 		}
 
-		distances = new int*[K];
+		distances = new double*[K];
 		for (int i=0; i<K; i++) {
-			distances[i] = new int[K - i - 1];
+			distances[i] = new double[K - i - 1];
 		}
 
-		reader->read( this->names, distances);
+		reader->readDoubles( this->names, distances);
 
                 //
                 // Nearest neighbor clustering
@@ -113,25 +113,27 @@ std::string ClusterManager::doJob(){
                 printf("Calculating clusters....\n");
                 typedef std::vector<int> ClusterMembers;
                 std::vector<ClusterMembers> clusters{ { 0 } };
-                int dist;
+                double dist;
                 int cluster;
                 int cseq;
-                int scaledThresh = 100 * (int)(((100000000*clusterCutoff)+50)/100);
+                double scaledThresh = (double)clusterCutoff;
+                //printf("scaledThresh = %.6lf\n", scaledThresh);
              
                 for( int i = 1; i < K; i++ ) {
                   cluster = -1;
+                  //printf("Where does %d go?\n", i);
                   for( int j = 0; j < clusters.size(); j++ ) {
                     for( int k = 0; k < clusters[j].size(); k++ ) {
                       cseq = clusters[j][k];
                       //printf("cseq = %d\n", cseq);
                       if ( i < cseq ){
-                        //printf("Considering: seq %d vs cluster %d, seq %d distances[%d][%d]", i, j, cseq, i, cseq-i-1);
+                        //printf("Considering: seq %s vs cluster %d, seq %s distances[%d][%d]", this->names[i]->c_str(), j, this->names[cseq]->c_str(), i, cseq-i-1);
                         dist = distances[i][cseq-i-1];
                       }else {
-                        //printf("Considering: seq %d vs cluster %d, seq %d distances[%d][%d]", i, j, cseq, cseq, i);
+                        //printf("Considering: seq %s vs cluster %d, seq %s distances[%d][%d]", this->names[i]->c_str(), j, this->names[cseq]->c_str(), cseq, i-cseq-1);
                         dist = distances[cseq][i-cseq-1];
                       }
-                      //printf("dist = %d\n", dist);
+                      //printf("=%.6lf\n", dist);
                       if ( dist < scaledThresh){
                         cluster = j;
                         break;
