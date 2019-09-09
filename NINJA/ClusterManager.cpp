@@ -1,6 +1,10 @@
 /*
  * ClusterManager.cpp
  *
+ * A naive agglomerative implemenation of single-linkage 
+ * clustering ( a.k.a. nearest-neighbor clustering or
+ * heirarchical clustering ).
+ * 
  *  Created on: Jul 12, 2019
  *      Author: robert
  */
@@ -69,8 +73,8 @@ std::string ClusterManager::doJob(){
 
 	int* equalCluster;
 
-    struct timespec start, afterRead, end;
-    clock_gettime(CLOCK_MONOTONIC, &start);
+        struct timespec start, afterRead, end;
+        clock_gettime(CLOCK_MONOTONIC, &start);
 
 	SequenceFileReader* seqReader = NULL;
 	if (!this->method.compare("extmem")){
@@ -99,67 +103,158 @@ std::string ClusterManager::doJob(){
 				this->names[i] = new std::string();
 		}
 
+                // 
+                //  Distance matrix occupancy:
+                //   
+                //          s1 s2 s3 s4    [
+                //      s1   0  #  #  #  =>  [ #, #, # ], 
+                //      s2   0  0  #  #  =>  [ #, # ],
+                //      s3   0  0  0  #  =>  [ # ]
+                //                         ]
+                //
 		distances = new double*[K];
 		for (int i=0; i<K; i++) {
 			distances[i] = new double[K - i - 1];
 		}
-
 		reader->readDoubles( this->names, distances);
 
-                //
-                // Nearest neighbor clustering
-                //
-                //   - Initialize starting cluster with sequence 0
-                printf("Calculating clusters....\n");
                 typedef std::vector<int> ClusterMembers;
-                std::vector<ClusterMembers> clusters{ { 0 } };
-                double dist;
-                int cluster;
-                int cseq;
-                double scaledThresh = (double)clusterCutoff;
-                //printf("scaledThresh = %.6lf\n", scaledThresh);
-             
-                for( int i = 1; i < K; i++ ) {
-                  cluster = -1;
-                  //printf("Where does %d go?\n", i);
+                std::vector<ClusterMembers> clusters;
+
+                // Heirarchical
+
+                // The sparsified index to the nearest-then-first seq/cluster.
+                //   Sparsified means that for seq/cluster s1, if the nearest
+                //   cluster is s3 then min_dist[0] = 1;  To get back to the
+                //   true index simply: min_dist[m] + m + 1 
+                int min_dist[K];
+                for (int i=0; i<K-1; i++) {
+                  min_dist[i] = 0;
+              
+                  // Initialize clusters
+                  clusters.push_back( std::vector<int>{ i } );
+               
+                  //printf("Looking at row %d...\n", i);
+                  for ( int j=0; j<(K-i-1); j++ ) {
+                    //printf("  col %d distance = %f\n", j, distances[i][j]);
+                    if ( distances[i][j] < distances[i][min_dist[i]]  ) {
+                      min_dist[i] = j;
+                      //printf("min_dist[%d] = %d\n", i, j);
+                    }
+                  }
+                }
+                clusters.push_back( std::vector<int>{ K-1 } );
+              
+                if ( 0 ) {
+                  // DEBUGING
+                  printf("Initialized %d clusters...\n",clusters.size());
                   for( int j = 0; j < clusters.size(); j++ ) {
                     for( int k = 0; k < clusters[j].size(); k++ ) {
-                      cseq = clusters[j][k];
-                      //printf("cseq = %d\n", cseq);
-                      if ( i < cseq ){
-                        //printf("Considering: seq %s vs cluster %d, seq %s distances[%d][%d]", this->names[i]->c_str(), j, this->names[cseq]->c_str(), i, cseq-i-1);
-                        dist = distances[i][cseq-i-1];
-                      }else {
-                        //printf("Considering: seq %s vs cluster %d, seq %s distances[%d][%d]", this->names[i]->c_str(), j, this->names[cseq]->c_str(), cseq, i-cseq-1);
-                        dist = distances[cseq][i-cseq-1];
-                      }
-                      //printf("=%.6lf\n", dist);
-                      if ( dist < scaledThresh){
-                        cluster = j;
-                        break;
-                      }
+                      printf("%d\t%s\n", j, this->names[clusters[j][k]]->c_str());
                     }
-                    if ( cluster >= 0 )
-                      break;
                   }
-                  if ( cluster >= 0 ){
-                    clusters[cluster].push_back(i);
-                    //printf(" - adding to existing cluster %d\n", cluster);
-                  }else {
-                    clusters.push_back( std::vector<int>{ i } );
-                    //printf(" - creating new cluster for this sequence\n");
+                  printf("Distance matrix:\n");
+                  for (int i=0; i<K-1; i++){
+                    for ( int j=0; j<K; j++ )
+                      if ( j <= i ) 
+                        printf("  -- ");
+                      else
+                        printf(" %0.2f", distances[i][j-i-1]);
+                    printf("\n");
                   }
                 }
-                if ( clusters.size() == 1 ) 
+              
+                // Cluster
+                //printf("clustering started...\n");
+                for ( int m=0; m<K-1; m++ ) {
+              
+                  int clust1 = 0;
+                  for ( int i = 0; i<K-1; i++ ) {
+                    //printf("Iterating i = %d, min_dist[%d] = %d, distances[i][min_dist[i]] = %f\n", i, i, min_dist[i], distances[i][min_dist[i]]);
+                    if ( distances[i][min_dist[i]] < distances[clust1][min_dist[clust1]] )
+                      clust1 = i;
+                  }
+                  int clust2 = min_dist[clust1] + clust1 + 1;
+                  //printf("  Minimum %f @ clust1 = %d, clust2 = %d\n", distances[clust1][min_dist[clust1]], clust1, clust2 );
+                  
+                  // Are we done?
+                  if ( distances[clust1][min_dist[clust1]] > (double)clusterCutoff ) 
+                    break;
+              
+                  // merge minimums from row=clust2 into row=clust1 and
+                  // max-out values in row=clust2
+                  for ( int c2col = 0; c2col < K-clust2-1; c2col++ ) {
+                    // This is iterating over row=clust2
+                    int c1col = c2col+(clust2-clust1);
+                    if ( distances[clust1][c1col] > distances[clust2][c2col] ){ 
+                      //printf("RowUpd: Setting distance [%d][%d] to %f\n", clust1, c1col, distances[clust2][c2col] );
+                      distances[clust1][c1col] = distances[clust2][c2col];
+                    }
+                    distances[clust2][c2col] = (double)3.0;
+                  }
+                  for ( int i = 0; i < clust1; i++ ){
+                    int c1col = clust1 - i - 1;
+                    int c2col = clust2 - i - 1;
+                    if ( distances[i][c1col] > distances[i][c2col] ) 
+                    {
+                      //printf("ColUpd: Setting distance [%d][%d] to %f\n", i, c1col, distances[i][c2col] );
+                      distances[i][c1col] = distances[i][c2col];
+                    }
+                  }
+                  // max out the column
+                  for ( int i = 0; i < clust2 ; i++ ) {
+                    distances[i][clust2-i-1] = (double)3.0;
+                  }
+              
+                  if ( 0 ) {
+                    printf("Distance matrix:\n");
+                    for (int i=0; i<K-1; i++){
+                      for ( int j=0; j<K; j++ )
+                        if ( j <= i ) 
+                          printf("  -- ");
+                        else
+                          printf(" %0.2f", distances[i][j-i-1]);
+                      printf("\n");
+                    }
+                  }
+              
+                  //printf("Fixing clusters\n");
+                  //printf("  Moving clst %d to clst %d\n", clust2, clust1 );
+                  for( int k = 0; k < clusters[clust2].size(); k++ )
+                    clusters[clust1].push_back(clusters[clust2][k]);
+                  clusters[clust2].clear();
+                    
+                  //printf("Fixing min_dist clust2-clust1-1 = %d\n", clust2-clust1-1);
+                  for ( int i = 0; i < clust1; i++ ) 
+                    if ( min_dist[i] == clust2-i-1 ) 
+                       min_dist[i] = clust1-i-1;
+                  for ( int j = 0; j < K - clust1 - 1; j++ ) 
+                    if ( distances[clust1][j] < distances[clust1][min_dist[clust1]] )
+                      min_dist[clust1] = j;
+              
+                  if ( 0 ) {
+                    printf("Mindist now:\n");
+                    for( int i = 0; i < K-1; i++ ) 
+                      printf(" min_dist[%d] = %d\n", i, min_dist[i]);
+                    }
+                  }
+
+                int cidx = 0;
+                for( int j = 0; j < clusters.size(); j++ ) {
+                  if ( clusters[j].size() > 0 )  {
+                    for( int k = 0; k < clusters[j].size(); k++ ) {
+                      fprintf(outFile,"%d\t%s\n", cidx, this->names[clusters[j][k]]->c_str());
+                      printf("%d\t%s\n", cidx, this->names[clusters[j][k]]->c_str());
+                    }
+                    cidx++;
+                  }
+                }
+                if ( cidx == 1 ) 
                   printf("There is 1 cluster\n");
                 else
-                  printf("There are %d clusters\n", clusters.size());
-                for( int j = 0; j < clusters.size(); j++ ) {
-                  for( int k = 0; k < clusters[j].size(); k++ ) {
-                    fprintf(outFile,"%d\t%s\n", j, this->names[clusters[j][k]]->c_str());
-                  }
-                }
-	}
+                  printf("There are %d clusters\n", cidx);
+
+        }
 
 
 	if (seqReader != NULL)
