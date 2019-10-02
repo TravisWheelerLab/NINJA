@@ -175,8 +175,8 @@ TreeBuilder::TreeBuilder (std::string** names, int** distances, int namesSize, i
 
 		//change distances accordingly
 
-		for (i=0; i<nodesPos.size()-1; i++) {
-			for (j=0; j<nodesPos.size()-i-1; j++) {
+		for (size_t i=0; i<nodesPos.size()-1; i++) {
+			for (size_t j=0; j<nodesPos.size()-i-1; j++) {
 				//printf("%d,%d = %d, %d\n", i, j, nodesPos[i], nodesPos[i+j+1]-i-1);
 				this->D[i][j] = this->D[nodesPos[i]][nodesPos[i+j+1]-nodesPos[i]-1];
 			}

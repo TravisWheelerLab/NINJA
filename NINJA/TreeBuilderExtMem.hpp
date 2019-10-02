@@ -13,7 +13,6 @@
 #include "ArrayHeapExtMem.hpp"
 #include <float.h>
 #include "TreeBuilder.hpp"
-#include <tr1/unordered_set>
 
 class CandidateHeap;
 

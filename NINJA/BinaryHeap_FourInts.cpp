@@ -116,7 +116,7 @@ bool BinaryHeap_FourInts::binHeapFourTest(bool verbose){
 	printf("Binary Heap Four Ints Test (Float Key)...\n");
 
 	srand (time(NULL));
-	ints4float int_aux[1000];
+	ints4float int_aux[10000];
 	for(int l=1;l<6;l++){
 		BinaryHeap_FourInts *aux;
 		for(int k=1;k<6;k++){
