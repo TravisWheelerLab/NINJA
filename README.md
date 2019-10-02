@@ -1,3 +1,5 @@
+## This pre-release "cluster" branch of the code only performs sequence distance calculations and nearest-neighbor clustering at this time.
+
 # NINJA
 Nearly Infinite Neighbor Joining Application
 
@@ -12,8 +14,6 @@ The Java version of NINJA was the fastest available tool computing neighbor-join
 
 In addition to generating phylogenies, Ninja can be used to output pairwise distances using several
 common sequence distance measures, and cluster sequences using a nearest-neighbor approach.
-
-## This pre-release "cluster" branch of the code only performs sequence distance calculations and nearest-neighbor clustering at this time.
  
 We use a "git flow" workflow. We have two active branches:
  * **master** is to become the stable NINJA release branch. 
