@@ -1,4 +1,4 @@
-Quick NINJA README pre-release (05/14)
+Quick NINJA README pre-release clustering only ( 0.95-cluster_only ) 
 
 Compilation:
     Tested only on linux using g++, with the "make all" command.
@@ -13,13 +13,6 @@ Arguments:
 --out (or -o) filename 
     Specify file to which the tree will be written (default = stdout)
 
---method (or -m) meth  [default | inmem]
-    'inmem' method uses in-memory algorithm, which is roughly 3x faster, but 
-         will fail for large inputs. For example, with -Xmx2G (the default
-         in the ninja shell script), inmem will work for up to around 7,000 
-         sequences.      
-    'default' inmem.
-
 --in_type type [a | d]
     Type of input, alignment or distance matrix
     'a' type causes NINJA to accept an alignment in fasta format
@@ -27,15 +20,12 @@ Arguments:
     precomputed pairwise distances.
     Default = a
     
---out_type type [t | c | d]   
+--out_type type [c | d]   
     Type of output, tree or distance matrix
-    't' type computes the tree from the input file (whether an alignment
-         or a distance matrix), and writes a tree to the file specified with
-         the --out flag
     'c' type calculates a Nearest-Neighbor clustering of the sequences,
         and writes a table including a cluster identifier to a file.
     'd' type just computes the distances and outputs them.
-    Default = t           
+    Default = c           
          
 --alph_type type [a | d]
     'a' if input consists of amino acid sequence
@@ -67,12 +57,5 @@ Execution:
 
 Example:
 
-./NINJA -m inmem --in_type a --out_type t -i e_coli_1000.fa -o out.txt
-
-Notes:
-
-It currently does not support stockholm files and external memory. The behaviour for stockholm files 
-is unpredictable, only fasta format works. The use of the extmem argument has not been thoroughly tested.
-It currently uses SSE and multiple threads: the behaviour in the case one of these is not available 
-is unpredictable.
+./NINJA --out_type c -i e_coli_1000.fa -o out.txt
 

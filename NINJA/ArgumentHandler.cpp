@@ -13,18 +13,20 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 	this->method.assign("default");
 	this->njTmpDir = "";
 	this->inType = alignment;
-	this->outType = tree;
+        // Disable tree default for now
+	//this->outType = tree;
+	this->outType = cluster;
 	this->alphType = null;
 	this->corrType = not_assigned;
 	this->outFile = stdout;
 	this->threads = 0;
         this->clusterCutoff = 0.03; // RMH: cluster distance cutoff
 	this->SSE = true;
-    this->printTime = false;
+        this->printTime = false;
 
 	if(argc == 1){
 		printf("Use --help (or -h) to see possible arguments.\n");
-		Exception::critical();
+	        this->abort = true;
 	}
 	for(int i=1;i<argc;i++){
 		std::string x,y;
@@ -54,6 +56,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 		}else if (!x.compare("--print-times")){
             this->printTime = true;
 		}else if (!x.compare("--method") || !x.compare("-m")){
+                        /* Disable for now 
 			if (i < argc-1){
 				if(!y.compare("default")){
 					//nothing happens, default is inmem
@@ -69,7 +72,8 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			}else{
 				fprintf(stderr,"No method specified.\n");
 				Exception::critical();
-			}
+			} */
+                        printf("Option --method is not implemented in this version of Ninja.\n");
 		}else if (!x.compare("--in_type") || !x.compare("-it") ){
 			if (i < argc-1){
 				if(!y.compare("a")){
@@ -89,12 +93,15 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 			if (i < argc-1){
 				if(!y.compare("d")){
 					this->outType = dist;
-				}else if(!y.compare("t")){
-					this->outType = tree;
+                                // Disable "t" option for now
+				//}else if(!y.compare("t")){
+				//	this->outType = tree;
 				}else if(!y.compare("c")){
 					this->outType = cluster;
 				}else{
-					fprintf(stderr,"Invalid out_type:  try  'd', 't' or 'c'.");
+                                        // Disable "t" option for now
+					//fprintf(stderr,"Invalid out_type:  try  'd', 't' or 'c'.");
+					fprintf(stderr,"Invalid out_type:  try  'd' or 'c'.");
 					Exception::critical();
 				}
 				i++;
@@ -179,7 +186,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 				fprintf(stderr,"No rebuild_step_ratio integer specified.\n");
 				Exception::critical();
 			}*/
-		}else if(!x.compare("--threads") | !x.compare("-T")){
+		}else if(!x.compare("--threads") || !x.compare("-T")){
 			int r = strtol(argv[i+1], NULL, 0);
 			this->threads = r;
 			i++;
@@ -190,13 +197,26 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 		}else if(!x.compare("--NOSSE")){
 			this->SSE = false;	
 		}else if (!x.compare("--help") || !x.compare("-h")){
+			printf("Ninja - Version 0.95-cluster_only\n\n");
+                        printf("  ./Ninja --in file.fa --out file.out\n\n");
 			printf("Arguments: \n");
-			printf("--help (or -h) to display this help\n--in (or -i) filename\n--out (or -o) filename\n--method (or -m)  [inmem | extmem] (default inmem)\n");
-			printf("--in_type type [a | d] (default a)\n--out_type type [t | d | c] (default t)\n--corr_type type [n | j | k | s | m]\n");
-			printf("--threads (or -T) num_threads\n--cluster_cutoff dist_cutoff (default 0.03)\nFor more information, check the README file.\n");
+			printf("--help (or -h) to display this help\n");
+                        printf("--in (or -i) filename\n");
+                        printf("--out (or -o) filename\n");
+			printf("--in_type type [a | d] (default a)\n");
+                        // Disabling tree-building for now
+                        //printf("--out_type type [t | d | c] (default t)\n");
+                        printf("--out_type type [d | c] (default c)\n");
+                        // Only providing inmem behavior for now
+                        //printf("--method (or -m)  [inmem | extmem] (default inmem)\n");
+                        printf("--corr_type type [n | j | k | s | m]\n");
+                        printf("--cluster_cutoff dist_cutoff (default 0.03)\n");
+			printf("--threads (or -T) num_threads\n");
+			printf("--version (or -v) print the software version\n");
+                        printf("For more information, check the README file.\n");
 			this->abort = true;
-		}else if (!x.compare("--version")){
-			printf("Version 0.95\n");
+		}else if (!x.compare("--version") || !x.compare("-v")){
+			printf("Version 0.95-cluster_only\n");
 			this->abort = true;
 		}else{
 			fprintf(stderr,"Invalid argument, ignored.\n");
