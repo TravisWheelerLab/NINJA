@@ -1,8 +1,8 @@
 /*
  * DistanceCalculator.hpp
  *
- *  Created on: Feb 13, 2016
- *      Author: michel
+ *  Created on: Oct 8, 2019
+ *      Author: Sarah
  */
 
 #ifndef DISTANCECALCULATOR_HPP
@@ -15,6 +15,9 @@
 #include <xmmintrin.h>		/* SSE  */
 #include <emmintrin.h>		/* SSE2 */
 #include <tmmintrin.h>      /* SSE3 */
+#include <x86intrin.h>      // all SSE/AVX headers which are enabled according to compiler switches
+#include <immintrin.h>      //avx
+#include <nmmintrin.h>      //other?
 #include <stdint.h>
 
 #include <omp.h> /* openmp */
@@ -63,14 +66,14 @@ class DistanceCalculator{
         __m256i TRANSITIONS_MASK;
         __m256i TRANSVERSIONS_MASK;
 
-        __m256i VALUES_0;
-        __m256i VALUES_1;
-        __m256i VALUES_2;
-        __m256i VALUES_3;
-        __m256i VALUES_4;
-        __m256i VALUES_5;
-        __m256i VALUES_6;
-        __m256i VALUES_7;
+        __m128i VALUES_0;
+        __m128i VALUES_1;
+        __m128i VALUES_2;
+        __m128i VALUES_3;
+        __m128i VALUES_4;
+        __m128i VALUES_5;
+        __m128i VALUES_6;
+        __m128i VALUES_7;
 
 
 	private:

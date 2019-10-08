@@ -1,9 +1,10 @@
 /*
- * DistanceCalculator.cpp
+ * DistanceCalculator.hpp
  *
- *  Created on: Feb 13, 2016
- *      Author: michel
+ *  Created on: Oct 8, 2019
+ *      Author: Sarah
  */
+
 #include "DistanceCalculator.hpp"
 #include <iostream>
 
@@ -31,27 +32,7 @@ bl45{
 			      {0.0, 1.28141710, 0.96321690, 1.24297493, 1.17404948, 1.32944171, 0.97990742, 1.22734387, 1.42479529, 0.46868384, 0.70872476, 0.72531066, 0.97205882, 0.77487815, 0.34948536, 1.42156458, 1.29689226, 1.02642577, 0.32000293, 0, 0.93309543},
 			      {0.0, 0.80003850, 1.20274751, 1.55207513, 1.46600946, 0.83002214, 1.54162503, 1.53255698, 1.41208067, 1.47469999, 0.35120011, 0.57054219, 1.21378822, 0.60953285, 0.69273324, 1.40887880, 1.02015839, 0.80740466, 1.26858915, 0.93309543, 0}
 				}
-//				      {0, 1.31097856, 1.06573001, 1.26827829, 0.90471293, 1.05855446, 1.05232790, 0.76957444, 1.27579668, 0.96460409, 0.98717819, 1.05007594, 1.05464162, 1.19859874, 0.96740447, 0.70049019, 0.88006018, 1.09748548, 1.28141710, 0.80003850},
-//				      {1.31097856, 0, 0.80108902, 0.95334071, 1.36011107, 0.63154377, 0.79101490, 1.15694899, 0.76115257, 1.45014917, 1.17792001, 0.39466107, 0.99880755, 1.13514340, 1.15432562, 1.05309036, 1.05010474, 1.03938321, 0.96321690, 1.20274751},
-//				      {1.06573001, 0.80108902, 0, 0.48821721, 1.10567116, 0.81497020, 0.81017644, 0.74648741, 0.61876156, 1.17886558, 1.52003670, 0.80844267, 1.28890258, 1.16264109, 1.18228799, 0.67947568, 0.85365861, 1.68988558, 1.24297493, 1.55207513},
-//				      {1.26827829, 0.95334071, 0.48821721, 0, 1.31581050, 0.76977847, 0.48207762, 0.88836175, 0.73636084, 1.76756333, 1.43574761, 0.76361291, 1.53386612, 1.74323672, 0.88634740, 0.80861404, 1.01590147, 1.59617804, 1.17404948, 1.46600946},
-//				      {0.90471293, 1.36011107, 1.10567116, 1.31581050, 0, 1.38367893, 1.37553994, 1.26740695, 1.32361065, 1.26087264, 1.02417540, 1.37259631, 1.09416720, 0.98698208, 1.59321190, 0.91563878, 0.91304285, 1.80744143, 1.32944171, 0.83002214},
-//				      {1.05855446, 0.63154377, 0.81497020, 0.76977847, 1.38367893, 0, 0.50694279, 1.17699648, 0.61459544, 1.17092829, 1.19833088, 0.63734107, 0.80649084, 1.83315144, 0.93206447, 0.85032169, 1.06830084, 1.05739353, 0.97990742, 1.54162503},
-//				      {1.05232790, 0.79101490, 0.81017644, 0.48207762, 1.37553994, 0.50694279, 0, 1.17007322, 0.76978695, 1.46659942, 1.19128214, 0.63359215, 1.27269395, 1.44641491, 0.73542857, 0.84531998, 1.06201695, 1.32439599, 1.22734387, 1.53255698},
-//				      {0.76957444, 1.15694899, 0.74648741, 0.88836175, 1.26740695, 1.17699648, 1.17007322, 0, 1.12590070, 1.70254155, 1.38293205, 1.16756929, 1.17264582, 1.33271035, 1.07564768, 0.77886828, 1.23287107, 0.96853965, 1.42479529, 1.41208067},
-//				      {1.27579668, 0.76115257, 0.61876156, 0.73636084, 1.32361065, 0.61459544, 0.76978695, 1.12590070, 0, 1.41123246, 1.14630894, 0.96779528, 0.77147945, 1.10468029, 1.12334774, 1.02482926, 1.28754326, 1.27439749, 0.46868384, 1.47469999},
-//				      {0.96460409, 1.45014917, 1.17886558, 1.76756333, 1.26087264, 1.17092829, 1.46659942, 1.70254155, 1.41123246, 0, 0.43335051, 1.46346092, 0.46296554, 0.66291968, 1.07010201, 1.23000200, 0.97348545, 0.96354620, 0.70872476, 0.35120011},
-//				      {0.98717819, 1.17792001, 1.52003670, 1.43574761, 1.02417540, 1.19833088, 1.19128214, 1.38293205, 1.14630894, 0.43335051, 0, 1.49770950, 0.47380007, 0.53847312, 1.37979627, 1.58597231, 0.99626739, 0.98609554, 0.72531066, 0.57054219},
-//				      {1.05007594, 0.39466107, 0.80844267, 0.76361291, 1.37259631, 0.63734107, 0.63359215, 1.16756929, 0.96779528, 1.46346092, 1.49770950, 0, 1.00797618, 1.44331961, 0.92459908, 1.06275728, 1.05974425, 1.04892430, 0.97205882, 1.21378822},
-//				      {1.05464162, 0.99880755, 1.28890258, 1.53386612, 1.09416720, 0.80649084, 1.27269395, 1.17264582, 0.77147945, 0.46296554, 0.47380007, 1.00797618, 0, 0.72479754, 1.16998686, 1.34481214, 1.06435197, 1.05348497, 0.77487815, 0.60953285},
-//				      {1.19859874, 1.13514340, 1.16264109, 1.74323672, 0.98698208, 1.83315144, 1.44641491, 1.33271035, 1.10468029, 0.66291968, 0.53847312, 1.44331961, 0.72479754, 0, 1.32968844, 1.21307373, 0.96008757, 0.47514255, 0.34948536, 0.69273324},
-//				      {0.96740447, 1.15432562, 1.18228799, 0.88634740, 1.59321190, 0.93206447, 0.73542857, 1.07564768, 1.12334774, 1.07010201, 1.37979627, 0.92459908, 1.16998686, 1.32968844, 0, 0.97908742, 0.97631161, 1.21751652, 1.42156458, 1.40887880},
-//				      {0.70049019, 1.05309036, 0.67947568, 0.80861404, 0.91563878, 0.85032169, 0.84531998, 0.77886828, 1.02482926, 1.23000200, 1.58597231, 1.06275728, 1.34481214, 1.21307373, 0.97908742, 0, 0.56109848, 1.76318885, 1.29689226, 1.02015839},
-//				      {0.88006018, 1.05010474, 0.85365861, 1.01590147, 0.91304285, 1.06830084, 1.06201695, 1.23287107, 1.28754326, 0.97348545, 0.99626739, 1.05974425, 1.06435197, 0.96008757, 0.97631161, 0.56109848, 0, 1.39547634, 1.02642577, 0.80740466},
-//				      {1.09748548, 1.03938321, 1.68988558, 1.59617804, 1.80744143, 1.05739353, 1.32439599, 0.96853965, 1.27439749, 0.96354620, 0.98609554, 1.04892430, 1.05348497, 0.47514255, 1.21751652, 1.76318885, 1.39547634, 0, 0.32000293, 1.26858915},
-//				      {1.28141710, 0.96321690, 1.24297493, 1.17404948, 1.32944171, 0.97990742, 1.22734387, 1.42479529, 0.46868384, 0.70872476, 0.72531066, 0.97205882, 0.77487815, 0.34948536, 1.42156458, 1.29689226, 1.02642577, 0.32000293, 0, 0.93309543},
-//				      {0.80003850, 1.20274751, 1.55207513, 1.46600946, 0.83002214, 1.54162503, 1.53255698, 1.41208067, 1.47469999, 0.35120011, 0.57054219, 1.21378822, 0.60953285, 0.69273324, 1.40887880, 1.02015839, 0.80740466, 1.26858915, 0.93309543, 0}
-//					}
+
 {
 	this->A  = A;
 	this->corr_type = corrType;
@@ -93,6 +74,11 @@ int* DistanceCalculator::getInverseAlphabet (std::string alph, int length) {
 inline void DistanceCalculator::count256(register __m256i &seq1, register __m256i &seq2, register __m256i &gap1, register __m256i &gap2, register __m256i &tmp, register __m256i &tmp2, register __m256i &tmp3, register __m256i &count_transversions, register __m256i &count_transitions, register __m256i &count_gaps){
     /*
      * Maps and their description:
+     * DNA encoded as
+     * A = 00
+	 * C = 01
+	 * G = 10
+	 * T = 11
      *
      * GAPS_COUNT_MASK (count for gaps, basically how many 0`s there are)
      * 	0000	4
@@ -174,122 +160,67 @@ inline void DistanceCalculator::count256(register __m256i &seq1, register __m256
      * 	1111	2
      */
 
-    tmp = _mm_xor_si128(seq1, seq2);
-    tmp2  = _mm_and_si128(gap1,gap2);
+    //Begin by doing an xor seq1 and seq1, although this isn't used yet
+    tmp = _mm256_xor_si256(seq1, seq2);
+    /* After the XOR we can see the following pattern: Transition = 10	Transversion = 11,01
+    However, there might be some misleading counts because of gaps (currently encoded the same way as A, which is 00), which forces us to use
+    a mask which accounts for place where there are gaps and places where there are not. To account for that we do the following:
+    AND gap1 and gap2 together: */
+    tmp2  = _mm256_and_si256(gap1,gap2);
 
-    tmp3 = _mm_shuffle_epi8(GAPS_COUNT_MASK, tmp2);
+    //We can now use a count process based on SHUFFLE to figure out how many gaps there are, with 0s being gaps and 1s not a gap:
+    /* gaps_count_mask = {0	   1    1    2    1    2    2    3    1    2    2    3    2    3    3    4}
+                       = 1111 1110 1101 1100 1011 1010 1001 1000 0111 0110 0101 0100 0011 0010 0001 0000*/
+    tmp3 = _mm256_shuffle_epi8(GAPS_COUNT_MASK, tmp2);
 
-    count_gaps = _mm_add_epi8(count_gaps, tmp3);
+    //add this to count_gaps to accumulate the number of gaps with each iteration
+    count_gaps = _mm256_add_epi8(count_gaps, tmp3);
 
-    tmp3 = _mm_shuffle_epi8(DECOMPRESSED_GAPS, tmp2);
+   /* Now we have added the 8-bit count bins to COUNTS_GAP. We can then proceed to calculate the transitions and transversions:
+    we use the 0000 - 1 bit representation per gap, and map it to a 2 bit representation of the gaps, with 00 as gap, and 11 as not-gap:
+    DECOMPRESSED_GAPS = {255  252  243  240  207  204  195  192  63   60   51   48   15   12   3    0}
+                      = 1111 1110 1101 1100 1011 1010 1001 1000 0111 0110 0101 0100 0011 0010 0001 0000 */
+    tmp3 = _mm256_shuffle_epi8(DECOMPRESSED_GAPS, tmp2);
+
+    //Now that we have the right mask we AND the mask and the result of the XOR:
+    tmp  = _mm256_and_si256(tmp,tmp3);
+
+    //With the right vector in hands we will calculate transitions using a shuffle count approach:
+    //COUNTS_MASK is 0000 1111, and it ignores the higher 4 bits
+    tmp2  = _mm256_and_si256(tmp,COUNTS_MASK);
+    //now shift right by four
+    tmp3 = _mm256_srli_epi64(tmp,4); //Shift packed 64-bit integers in a right by imm8 while shifting in zeros, and store the results in dst.
+    //COUNTS_MASK now masks what were the lower four bits and allows you to look at the higher 4 bits
+    tmp3 = _mm256_and_si256(tmp3,COUNTS_MASK);
+
+    /*Now use shuffle to look at the lower 4 bit representation with the transitions mask, which looks for the 10 transition pattern
+    this will give you the number of transitions in the lower 4 bits
+    transitions_mask = 0    1    0    0    1    2    1    1    0    1    0    0    0    1    0    0
+                     = 1111 1110 1101 1100 1011 1010 1001 1000 0111 0110 0101 0100 0011 0010 0001 0000*/
+    tmp = _mm256_shuffle_epi8(TRANSITIONS_MASK, tmp2);
+    //accumulate that number in the count_transitions vector
+    count_transitions = _mm256_add_epi8(count_transitions, tmp);
+    //now use shuffle to look at the higher 4 bits and count the number of 10 patterns
+    tmp = _mm256_shuffle_epi8(TRANSITIONS_MASK, tmp3);
+    //once again add that number in to count_transitions to accumulate in each iteration
+    count_transitions = _mm256_add_epi8(count_transitions, tmp);
 
 
-
-    tmp  = _mm_and_si128(tmp,tmp3);
-
-
-    tmp2  = _mm_and_si128(tmp,COUNTS_MASK);
-
-    tmp3 = _mm_srli_epi64(tmp,4);
-
-    tmp3 = _mm_and_si128(tmp3,COUNTS_MASK);
-
-
-    tmp = _mm_shuffle_epi8(TRANSITIONS_MASK, tmp2);
-
-    count_transitions = _mm_add_epi8(count_transitions, tmp);
-
-    tmp = _mm_shuffle_epi8(TRANSITIONS_MASK, tmp3);
-
-    count_transitions = _mm_add_epi8(count_transitions, tmp);
-
-
-
-
-	tmp = _mm_shuffle_epi8(TRANSVERSIONS_MASK, tmp2);
-
+    /*Now do the same process to get transversion counts!
+    transversions_mask = 2    1    2    1    1    0    1    0    2    1    2    1    1    0    1    0
+                       = 1111 1110 1101 1100 1011 1010 1001 1000 0111 0110 0101 0100 0011 0010 0001 0000
+    Once again, this mask is looking in the lower four bits for the tranversion patterns = 11, 01 */
+    tmp = _mm_shuffle_epi8(TRANSVERSIONS_MASK, tmp2);
+    //accumulate number in count_transversions vector
 	count_transversions = _mm_add_epi8(count_transversions, tmp);
-
+    //now counting tranversions in higher four bits
 	tmp = _mm_shuffle_epi8(TRANSVERSIONS_MASK, tmp3);
-
+    //add to vector
 	count_transversions = _mm_add_epi8(count_transversions, tmp);
 
-
+    //Done! 128 characters counted in 17 operations, not counting the gather/extract portion done in newCalcDNA
 }
 double DistanceCalculator::newCalcDNA(int a, int b){
-	/*
-	 * A = 00
-	 * C = 01
-	 * G = 10
-	 * T = 11
-	 *
-	 *
-	 * Explanation of what`s coded below:
-	 *
-	 *
-	 *
-	 * TMP = XOR (Seq1, Seq2)
-	 *
-	 * After the XOR we can see the following pattern
-	 *
-	 * Transition = 10
-	 * Transversion = 11,01
-	 *
-	 * However, there might be some misleading counts because of gaps (currently encoded the same way as A, which is 00), which forces us to use
-	 * a mask which accounts for place where there are gaps and places where there are not. To account for that we do the following:
-	 *
-	 * TMP2 = AND(Gap1, Gap2)
-	 *
-	 * We can now use a count process based on SHUFFLE to figure out how many gaps there are:
-	 *
-	 * TMP3 = SHUFFLE(GAPS_COUNT_MASK, TMP2)
-	 *
-	 * COUNTS_GAP = ADD(COUNTS_GAP, TMP3)
-	 *
-	 * Now we have added the 8-bit count bins to COUNTS_GAP. We can then proceed to calculate the transitions and transversions:
-	 *
-	 * TMP3 = SHUFFLE(DECOMPRESSED_GAPS, TPM2) //we use the 0000 - 1 bit representation per gap, and map it to a 2 bit representation of the gaps, with 11 as gap, and 00 as not-gap
-	 *
-	 * Now that we have the right mask we AND the mask and the result of the XOR:
-	 *
-	 * TMP = AND(TMP, TMP3)
-	 *
-	 * With the right vector in hands we will calculate transitions using the SHUFFLE count approach:
-	 *
-	 * TMP2 = AND(TMP, COUNTS_MASK) //the mask is 0000 1111 , and it basically removes the higher 4 bits
-	 *
-	 * TMP3 = SHIFT_RIGHT(TMP, 4)
-	 *
-	 * TMP3 = AND(TMP3, COUNTS_MASK) // same here, but then we have the higher 4 bits, originally, in the lower 4 bits now
-	 *
-	 * Finally get the transitions count:
-	 *
-	 * TMP = SHUFFLE(TRANSITIONS_MASK, TMP2) //get the counts
-	 *
-	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
-	 *
-	 * TMP = SHUFFLE(TRANSITIONS_MASK, TMP3) //get the counts
-	 *
-	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
-	 *
-	 *
-	 * And then the same happens to transversions:
-	 *
-	 * TMP = SHUFFLE(TRANSVERSIONS_MASK, TMP2) //get the counts
-	 *
-	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
-	 *
-	 * TMP = SHUFFLE(TRANSVERSIONS_MASK, TMP3) //get the counts
-	 *
-	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
-	 *
-	 *
-	 * And that`s it. We can calculate 64 characters in 17 operations. There is also a gather/extract part after all vectors which is 5 instructions
-	 * for each count, which equals 15.
-	 *
-	 */
-
-
 	register __m256i seq1;
 	register __m256i seq2;
 	register __m256i gap1;
@@ -328,8 +259,8 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 		counts_transitions = x256;
 
 
-		//TODO: review number of max iterations
-		for(int j = 0;i<numOfInts && j < 31;i += 4){ //a maximum of 32 vectors allowed not to overflow things
+		for(int j = 0;i<numOfInts && j < 31;i += 8){ //a maximum of 32 vectors allowed not to overflow things
+		    //TODO: changed i += 4 to i += 8; j < 31 stayed the same
 
 				seq1 = *(__m256i*)&Achar[i];
 				seq2 = *(__m256i*)&Bchar[i];
@@ -340,39 +271,39 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 				count256(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
 
 
-				j+=4;
+				j+=8;
+				//increased from +=4 to +=8
 		}
 
 		/*gather transversion counts*/
 
-		counts_transversions = _mm_xor_si128(counts_transversions, x128);
+		counts_transversions = _mm256_xor_si256(counts_transversions, x256);
+		counts_transversions = _mm256_sad_epu8 (counts_transversions, zero);
 
-		counts_transversions = _mm_sad_epu8 (counts_transversions, zero);
-		tmp = _mm_shuffle_epi32(counts_transversions, _MM_SHUFFLE(1, 1, 1, 2));
-		counts_transversions = _mm_add_epi16(counts_transversions, tmp);
+		//tmp = _mm_shuffle_epi32(counts_transversions, _MM_SHUFFLE(1, 1, 1, 2));
+		// keeping - does _MM_SHUFFLE need to be doubled?
+        tmp = _mm256_shuffle_epi32(counts_transversions, _MM_SHUFFLE(1, 1, 1, 2));
+		counts_transversions = _mm256_add_epi16 (counts_transversions, tmp);
 
-		num_transversions +=  _mm_extract_epi16(counts_transversions, 0);
+		num_transversions +=  _mm256_extract_epi16(counts_transversions, 0);
 
 
 		/*gather transition counts*/
+		counts_transitions = _mm256_xor_si256(counts_transitions, x128);
+		counts_transitions = _mm256_sad_epu8 (counts_transitions, zero);
+		tmp = _mm256_shuffle_epi32(counts_transitions, _MM_SHUFFLE(1, 1, 1, 2));
+		counts_transitions = _mm256_add_epi16 (counts_transitions, tmp);
 
-		counts_transitions = _mm_xor_si128(counts_transitions, x128);
+		num_transitions += _mm256_extract_epi16(counts_transitions, 0);
 
-		counts_transitions = _mm_sad_epu8 (counts_transitions, zero);
-		tmp = _mm_shuffle_epi32(counts_transitions, _MM_SHUFFLE(1, 1, 1, 2));
-		counts_transitions = _mm_add_epi16(counts_transitions, tmp);
-
-		num_transitions += _mm_extract_epi16(counts_transitions, 0);
 
 		/*gather gaps counts*/
+		counts_gaps = _mm256_xor_si256(counts_gaps, x128);
+		counts_gaps = _mm256_sad_epu8 (counts_gaps, zero);
+		tmp = _mm256_shuffle_epi32(counts_gaps, _MM_SHUFFLE(1, 1, 1, 2));
+		counts_gaps = _mm256_add_epi16 (counts_gaps, tmp);
 
-		counts_gaps = _mm_xor_si128(counts_gaps, x128);
-
-		counts_gaps = _mm_sad_epu8 (counts_gaps, zero);
-		tmp = _mm_shuffle_epi32(counts_gaps, _MM_SHUFFLE(1, 1, 1, 2));
-		counts_gaps = _mm_add_epi16(counts_gaps, tmp);
-
-		gaps += _mm_extract_epi16(counts_gaps, 0);
+		gaps += _mm256_extract_epi16(counts_gaps, 0);
 	}
 
 	length -= gaps;
@@ -816,7 +747,6 @@ double DistanceCalculator::calc (int a, int b){
 	if(this->newCalculation && this->alph_type == this->dna){
 		return newCalcDNA(a,b);
 	}else if(this->newCalculation && this->alph_type == this->amino){
-		//TODO: I should use a dissimilarity matrix for this
 		dist =  newCalcProtein(a,b);
 		if (dist == -1)
 			dist = maxscore;
@@ -937,7 +867,8 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 	 *
 	 * The gaps (represented in ASCII as '-' ) are stored in gapOut, in the following manner:
 	 *
-	 * In each byte, the higher four bits are 0, and the lower 4 bits are either 1 or 0 if there is a gap or not, respectively.
+	 * In each byte, the higher four bits are 0, and the lower 4 bits are either 0 or 1 if there is a gap or not, respectively.
+	 * i.e. gaps are encoded as 0, everything else is 1
 	 *
 	 */
 
@@ -948,17 +879,23 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 		return;
 	}
 
-	const static int numCharPerElement = 32;
+	const static int numCharPerElement = 32; //doubled from 16
+	//TODO: should it be doubled though?
 
 	const static int whereToGo[] = {27,19,11,3}; //lookup table to figure where should one add the gap value
+        //27       19        11        3
+        //00011011 00010011 00001011 00000011
+    //TODO: won't this lookup table need something added to it?
 
 	const unsigned int powersOfTwo[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,
 			65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432,
 			67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648};
-
+	//TODO: if numCharPerElement is to be doubled, this probably also has to be doubled? Currently goes up to 2^31
+    //10000000 00000000 00000000 00000000
 	int i;
 
 	for(i=0;i<*size && i<numCharPerElement;i++){ //goes until the sequence ends or 16 characters are converted
+	    //TODO: needs to be changed to 32 characters converted
 		if(seq[i] == 'C'){ //01
 			*seqOut += powersOfTwo[((numCharPerElement-i)*2)-2];
 		}else if(seq[i] == 'G'){ //10
@@ -1157,19 +1094,19 @@ void DistanceCalculator::convertAllDNA(){
 
 	//fprintf(stdout, "%ld",res);
 
-	this->x256 = _mm_set1_epi8((int8_t) -128);
-	this->zero = _mm_set1_epi8((int8_t) 0x00);
-	this->COUNTS_MASK = _mm_set1_epi8((int8_t) 0xF);
+	this->x256 = _mm256_set1_epi8((int8_t) -128);
+	this->zero = _mm256_set1_epi8((int8_t) 0x00);
+	this->COUNTS_MASK = _mm256_set1_epi8((int8_t) 0xF);
 
-	this->GAPS_COUNT_MASK = _mm_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
+	//TODO: double the size of all four of these!
+	this->GAPS_COUNT_MASK = _mm256_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
 
-	this->DECOMPRESSED_GAPS = _mm_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
+	this->DECOMPRESSED_GAPS = _mm256_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
 
-	this->TRANSITIONS_MASK = _mm_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
+	this->TRANSITIONS_MASK = _mm256_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
 
-	this->TRANSVERSIONS_MASK = _mm_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
+	this->TRANSVERSIONS_MASK = _mm256_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
 
-	//TODO: make sure all of these are aligned, so I can load them faster
 	this->convertedSequences = new unsigned int*[this->numberOfSequences];
 	this->gapInTheSequences = new unsigned int*[this->numberOfSequences];
 
