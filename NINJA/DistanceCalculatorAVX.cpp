@@ -255,11 +255,10 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 	while(i < numOfInts){
 		counts_transversions = x256;
-		counts_gaps= x256;
+		counts_gaps = x256;
 		counts_transitions = x256;
 
-
-		for(int j = 0;i<numOfInts && j < 31;i += 8){ //a maximum of 32 vectors allowed not to overflow things
+		for(int j = 0;i<numOfInts && j < 32; i += 4){ //a maximum of 32 vectors allowed not to overflow things
 		    //TODO: changed i += 4 to i += 8; j < 31 stayed the same
 
 				seq1 = *(__m256i*)&Achar[i];
@@ -270,8 +269,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 				count256(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
 
-
-				j+=8;
+				j+=4;
 				//increased from +=4 to +=8
 		}
 
@@ -289,7 +287,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 
 		/*gather transition counts*/
-		counts_transitions = _mm256_xor_si256(counts_transitions, x128);
+		counts_transitions = _mm256_xor_si256(counts_transitions, x256);
 		counts_transitions = _mm256_sad_epu8 (counts_transitions, zero);
 		tmp = _mm256_shuffle_epi32(counts_transitions, _MM_SHUFFLE(1, 1, 1, 2));
 		counts_transitions = _mm256_add_epi16 (counts_transitions, tmp);
@@ -298,7 +296,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 
 		/*gather gaps counts*/
-		counts_gaps = _mm256_xor_si256(counts_gaps, x128);
+		counts_gaps = _mm256_xor_si256(counts_gaps, x256);
 		counts_gaps = _mm256_sad_epu8 (counts_gaps, zero);
 		tmp = _mm256_shuffle_epi32(counts_gaps, _MM_SHUFFLE(1, 1, 1, 2));
 		counts_gaps = _mm256_add_epi16 (counts_gaps, tmp);

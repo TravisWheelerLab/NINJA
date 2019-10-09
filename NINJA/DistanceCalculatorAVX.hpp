@@ -57,7 +57,7 @@ class DistanceCalculator{
 		unsigned int** gapInTheSequences;
 
 
-		__m256i x128;
+		__m256i x256;
         __m256i zero;
         __m256i GAPS_COUNT_MASK;
 
