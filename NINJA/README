@@ -1,4 +1,4 @@
-Quick NINJA README pre-release clustering only ( 0.95-cluster_only ) 
+Quick NINJA README pre-release clustering only ( 0.97-cluster_only ) 
 
 Compilation:
     Tested only on linux using g++, with the "make all" command.
