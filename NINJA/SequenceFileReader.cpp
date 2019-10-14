@@ -12,7 +12,7 @@
 SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphTypeIn){
 	//char dna_chars[] = {'A','G','C','T','U'};
 	FILE* inFile = NULL;
-	long int size = 0;
+	long size = 0;
 	if(filename == NULL or filename->empty()){
 		inFile = stdin;
 		fseek(inFile,0,SEEK_END);
@@ -32,7 +32,7 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 		Exception::critical();
 	}
 	char *x = new char[size];
-	long int numRead = (long int)fread(x,1,size,inFile);
+	size_t numRead = fread(x,1,size,inFile);
 	if (size != numRead){
 		Exception::criticalErrno((const char*)NULL);
 	}
@@ -40,13 +40,13 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 
 	std::vector<std::string> names;
 	std::vector<std::string> seq;
-	int begin = 0;
-	int end = 0;
+	long begin = 0;
+	long end = 0;
 	size_t charSize = sizeof(char);
 	this->filetype = fasta;
 	//TODO: If I assume a constant length throughout the sequences, it`s easy to increase the performance of this read
 	//reads x and format the names and sequences
-	for(int i=0;i<size;i++){ //try to read as a fasta format file
+	for(long i=0;i<size;i++){ //try to read as a fasta format file
 		if (x[i] == '>'){
 			i++;
 			begin = i;
@@ -109,11 +109,11 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 //		}
 //	}
 	delete[](x);
-	int numSeqs = names.size();
+	size_t numSeqs = names.size();
 	this->numSeqs = numSeqs;
 	std::string** seqNames = new std::string*[numSeqs];
 	std::string** sequences = new std::string*[numSeqs];
-	for (int i=0;i<numSeqs;i++){ //get strings into a strings array instead of a vector
+	for (size_t i=0;i<numSeqs;i++){ //get strings into a strings array instead of a vector
 		seqNames[i] = new std::string();
 		seqNames[i]->assign(names[i]);
 		sequences[i] = new std::string();
@@ -129,8 +129,8 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 
 	//Detect if it is DNA or AMINO ACID
 	if (this->alphType == null){
-		for (int i=0; i<numSeqs; i++){
-			for (int j=0; j<(signed)sequences[i]->size(); j++) {
+		for (size_t i=0; i<numSeqs; i++){
+			for (size_t j=0; j<sequences[i]->size(); j++) {
 				if (sequences[i]->at(j) != 'A' && sequences[i]->at(j) != 'G' && sequences[i]->at(j) != 'C' && sequences[i]->at(j) != 'T'){
 					this->alphType = amino;
 					break;
@@ -143,10 +143,10 @@ SequenceFileReader::SequenceFileReader(std::string *filename, AlphabetType alphT
 			this->alphType = dna;
 	}
 
-	for (int i=0; i<numSeqs; i++){
+	for (size_t i=0; i<numSeqs; i++){
 		//bool good = true;
 		std::transform(sequences[i]->begin(), sequences[i]->end(),sequences[i]->begin(), ::toupper);
-		for (int j=0; j<(signed)sequences[i]->size(); j++) {
+		for (size_t j=0; j<sequences[i]->size(); j++) {
 			if (sequences[i]->at(j) == '.'){
 				(*sequences[i])[j] = '-';
 				//good = false;
