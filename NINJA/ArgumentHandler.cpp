@@ -197,7 +197,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
 		}else if(!x.compare("--NOSSE")){
 			this->SSE = false;	
 		}else if (!x.compare("--help") || !x.compare("-h")){
-			printf("Ninja - Version 0.95-cluster_only\n\n");
+			printf("Ninja - Version 0.97-cluster_only\n\n");
                         printf("  ./Ninja --in file.fa --out file.out\n\n");
 			printf("Arguments: \n");
 			printf("--help (or -h) to display this help\n");
@@ -216,7 +216,7 @@ ArgumentHandler::ArgumentHandler (char* argv[],int argc){
                         printf("For more information, check the README file.\n");
 			this->abort = true;
 		}else if (!x.compare("--version") || !x.compare("-v")){
-			printf("Version 0.95-cluster_only\n");
+			printf("Version 0.97-cluster_only\n");
 			this->abort = true;
 		}else{
 			fprintf(stderr,"Invalid argument, ignored.\n");
