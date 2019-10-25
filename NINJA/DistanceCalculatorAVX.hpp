@@ -44,7 +44,7 @@ class DistanceCalculator{
 		int numberOfSequences;
 		int lengthOfSequences;
 
-		//TODO: set this as true only if it has support for SSE3
+		//TODO: change up this bool sitch
 		bool newCalculation;
 
 

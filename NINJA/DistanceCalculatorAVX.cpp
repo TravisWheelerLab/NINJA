@@ -246,11 +246,8 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 	const unsigned int* Bgap = this->gapInTheSequences[b];
 
 	int num_transversions = 0;
-
 	int num_transitions = 0;
-
 	int gaps = 0;
-
 	int i = 0;
 
 	while(i < numOfInts){
@@ -258,9 +255,8 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 		counts_gaps = x256;
 		counts_transitions = x256;
 
+		//TODO: How does this loop (i & j) need to change? What is the overflow problem?
 		for(int j = 0;i<numOfInts && j < 32; i += 4){ //a maximum of 32 vectors allowed not to overflow things
-		    //TODO: changed i += 4 to i += 8; j < 31 stayed the same
-
 				seq1 = *(__m256i*)&Achar[i];
 				seq2 = *(__m256i*)&Bchar[i];
 
@@ -270,7 +266,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 				count256(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
 
 				j+=4;
-				//increased from +=4 to +=8
+				//increase from +=4 to +=8?
 		}
 
 		/*gather transversion counts*/
@@ -849,8 +845,7 @@ DistanceCalculator::~DistanceCalculator(){
 	}
 }
 void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut){
-	/*
-	 * transform the sequence of files into 2-bit-packed characters
+	/* transform the sequence of files into 2-bit-packed characters
 	 *
 	 * A = 00
 	 * C = 01
@@ -867,7 +862,6 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 	 *
 	 * In each byte, the higher four bits are 0, and the lower 4 bits are either 0 or 1 if there is a gap or not, respectively.
 	 * i.e. gaps are encoded as 0, everything else is 1
-	 *
 	 */
 
 	*seqOut = 0x0;
@@ -878,18 +872,23 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 	}
 
 	const static int numCharPerElement = 32; //doubled from 16
-	//TODO: should it be doubled though?
 
 	const static int whereToGo[] = {27,19,11,3}; //lookup table to figure where should one add the gap value
         //27       19        11        3
         //00011011 00010011 00001011 00000011
     //TODO: won't this lookup table need something added to it?
 
-	const unsigned int powersOfTwo[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,
-			65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432,
-			67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648};
-	//TODO: if numCharPerElement is to be doubled, this probably also has to be doubled? Currently goes up to 2^31
-    //10000000 00000000 00000000 00000000
+
+    //TODO: This had to be changed from unsigned int to unsigned long. Will need to trace through and see if anything else needs changed
+    const unsigned long powersOfTwo[] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,
+                                         65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432,
+                                         67108864, 134217728, 268435456, 536870912, 1073741824, 2147483648, 4294967296, 8589934592,
+                                         17179869184, 34359738368, 68719476736, 137438953472, 274877906944, 549755813888, 1099511627776,
+                                         2199023255552, 4398046511104, 8796093022208, 17592186044416, 35184372088832, 70368744177664,
+                                         140737488355328, 281474976710656, 562949953421312, 1125899906842624, 2251799813685248,
+                                         4503599627370496, 9007199254740992, 18014398509481984, 36028797018963968, 72057594037927936,
+                                         144115188075855872, 288230376151711744, 576460752303423488, 1152921504606846976,
+                                         2305843009213693952, 4611686018427387904, 9223372036854775808};
 	int i;
 
 	for(i=0;i<*size && i<numCharPerElement;i++){ //goes until the sequence ends or 16 characters are converted
@@ -1090,26 +1089,26 @@ void DistanceCalculator::convertAllDNA(){
 	long int n = this->numberOfSequences;
 	long int res = (k*(n-1)*n)/(long int)2; //number of pairs
 
-	//fprintf(stdout, "%ld",res);
-
 	this->x256 = _mm256_set1_epi8((int8_t) -128);
 	this->zero = _mm256_set1_epi8((int8_t) 0x00);
 	this->COUNTS_MASK = _mm256_set1_epi8((int8_t) 0xF);
 
-	//TODO: double the size of all four of these!
-	this->GAPS_COUNT_MASK = _mm256_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
+	//TODO: These were all doubled in length, but should it be done differently than just repeating the existing numbers?
+	this->GAPS_COUNT_MASK = _mm256_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
 
-	this->DECOMPRESSED_GAPS = _mm256_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
+	this->DECOMPRESSED_GAPS = _mm256_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0, 255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
 
-	this->TRANSITIONS_MASK = _mm256_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
+	this->TRANSITIONS_MASK = _mm256_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
 
-	this->TRANSVERSIONS_MASK = _mm256_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
+	this->TRANSVERSIONS_MASK = _mm256_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
 
 	this->convertedSequences = new unsigned int*[this->numberOfSequences];
 	this->gapInTheSequences = new unsigned int*[this->numberOfSequences];
 
+	//TODO: I think this calculation needs to change from 16 to 32 - or 8?
+	//TODO trace through this loop and make sure it is correct for doubled size
 	int allocSize = ceil((float)this->lengthOfSequences/16.0);
-	if(allocSize % 4 != 0) //min size of 128bits
+	if(allocSize % 4 != 0) //min size of 128bits TODO: change to min size 256bits
 		allocSize += 4 - (allocSize % 4);
 	int sizeLeft;
 	for(int i=0;i<this->numberOfSequences;i++){
