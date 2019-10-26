@@ -345,6 +345,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 		/*gather transversion counts*/
 
+
 		counts_transversions = _mm_xor_si128(counts_transversions, x128);
 
 		counts_transversions = _mm_sad_epu8 (counts_transversions, zero);

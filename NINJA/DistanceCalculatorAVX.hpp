@@ -12,9 +12,9 @@
 #include <math.h>
 #include <float.h>
 
-#include <xmmintrin.h>		/* SSE  */
-#include <emmintrin.h>		/* SSE2 */
-#include <tmmintrin.h>      /* SSE3 */
+/*#include <xmmintrin.h>		*//* SSE  *//*
+#include <emmintrin.h>		*//* SSE2 *//*
+#include <tmmintrin.h>      *//* SSE3 */
 #include <x86intrin.h>      // all SSE/AVX headers which are enabled according to compiler switches
 #include <immintrin.h>      //avx
 #include <nmmintrin.h>      //other?
@@ -66,6 +66,8 @@ class DistanceCalculator{
         __m256i TRANSITIONS_MASK;
         __m256i TRANSVERSIONS_MASK;
 
+        __m128i zero128;
+        __m128i x128;
         __m128i VALUES_0;
         __m128i VALUES_1;
         __m128i VALUES_2;

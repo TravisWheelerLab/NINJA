@@ -5,7 +5,7 @@
  *      Author: Sarah
  */
 
-#include "DistanceCalculator.hpp"
+#include "DistanceCalculatorAVX.hpp"
 #include <iostream>
 
 DistanceCalculator::DistanceCalculator (std::string** A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences, bool useSSE) :
@@ -210,13 +210,13 @@ inline void DistanceCalculator::count256(register __m256i &seq1, register __m256
     transversions_mask = 2    1    2    1    1    0    1    0    2    1    2    1    1    0    1    0
                        = 1111 1110 1101 1100 1011 1010 1001 1000 0111 0110 0101 0100 0011 0010 0001 0000
     Once again, this mask is looking in the lower four bits for the tranversion patterns = 11, 01 */
-    tmp = _mm_shuffle_epi8(TRANSVERSIONS_MASK, tmp2);
+    tmp = _mm256_shuffle_epi8(TRANSVERSIONS_MASK, tmp2);
     //accumulate number in count_transversions vector
-	count_transversions = _mm_add_epi8(count_transversions, tmp);
+	count_transversions = _mm256_add_epi8(count_transversions, tmp);
     //now counting tranversions in higher four bits
-	tmp = _mm_shuffle_epi8(TRANSVERSIONS_MASK, tmp3);
+	tmp = _mm256_shuffle_epi8(TRANSVERSIONS_MASK, tmp3);
     //add to vector
-	count_transversions = _mm_add_epi8(count_transversions, tmp);
+	count_transversions = _mm256_add_epi8(count_transversions, tmp);
 
     //Done! 128 characters counted in 17 operations, not counting the gather/extract portion done in newCalcDNA
 }
@@ -232,8 +232,8 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 	register __m256i counts_gaps;
 	register __m256i counts_transitions;
 
-
-	int numOfInts = ceil((float)this->lengthOfSequences/16.0);
+    //should this change to /32 or /8?
+	int numOfInts = ceil((float)this->lengthOfSequences/32.0);
 	if(numOfInts % 4 != 0)
 		numOfInts += 4 - (numOfInts % 4);
 
@@ -245,7 +245,8 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 	const unsigned int* Agap = this->gapInTheSequences[a];
 	const unsigned int* Bgap = this->gapInTheSequences[b];
 
-	int num_transversions = 0;
+	int num_transversions = 0; //rename accum instead of num
+	//TODO: make this a vector instead of an int
 	int num_transitions = 0;
 	int gaps = 0;
 	int i = 0;
@@ -255,8 +256,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 		counts_gaps = x256;
 		counts_transitions = x256;
 
-		//TODO: How does this loop (i & j) need to change? What is the overflow problem?
-		for(int j = 0;i<numOfInts && j < 32; i += 4){ //a maximum of 32 vectors allowed not to overflow things
+		for(int j = 0;i<numOfInts && j < 31; i += 8){ //a maximum of 32 vectors allowed not to overflow the int the numbers are stored in
 				seq1 = *(__m256i*)&Achar[i];
 				seq2 = *(__m256i*)&Bchar[i];
 
@@ -266,16 +266,15 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 				count256(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
 
 				j+=4;
-				//increase from +=4 to +=8?
+				//TODO: does this increase from +=4 to +=8? TEST
 		}
 
 		/*gather transversion counts*/
 
 		counts_transversions = _mm256_xor_si256(counts_transversions, x256);
 		counts_transversions = _mm256_sad_epu8 (counts_transversions, zero);
-
-		//tmp = _mm_shuffle_epi32(counts_transversions, _MM_SHUFFLE(1, 1, 1, 2));
-		// keeping - does _MM_SHUFFLE need to be doubled?
+        // in avx this gives 4 16-bit integers, not 2
+		//now do 256 bit add to accum_transitions
         tmp = _mm256_shuffle_epi32(counts_transversions, _MM_SHUFFLE(1, 1, 1, 2));
 		counts_transversions = _mm256_add_epi16 (counts_transversions, tmp);
 
@@ -299,7 +298,10 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 		gaps += _mm256_extract_epi16(counts_gaps, 0);
 	}
-
+    //TODO: now pull the 4 values together from the accum vector after while loop breaks
+    //do shuffle where you bring 4 and 3 under 2 and 1 and then add them, and then bring 2 under and add them again
+    // shuffle -> add -> shuffle -> add         shuffle (1,2,3,4) for 4, 3 , 2 ,1
+    // maybe hadds? look into it
 	length -= gaps;
 
 
@@ -614,7 +616,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 
 		distance = _mm_xor_si128(distance, x128);
 
-		distance = _mm_sad_epu8 (distance, zero);
+		distance = _mm_sad_epu8 (distance, zero128);
 		tmp1 = _mm_shuffle_epi32(distance, _MM_SHUFFLE(1, 1, 1, 2));
 		distance = _mm_add_epi16(distance, tmp1);
 
@@ -625,7 +627,7 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 
 		counts_gaps = _mm_xor_si128(counts_gaps, x128);
 
-		counts_gaps = _mm_sad_epu8 (counts_gaps, zero);
+		counts_gaps = _mm_sad_epu8 (counts_gaps, zero128);
 		tmp1 = _mm_shuffle_epi32(counts_gaps, _MM_SHUFFLE(1, 1, 1, 2));
 		counts_gaps = _mm_add_epi16(counts_gaps, tmp1);
 
@@ -1040,7 +1042,7 @@ void DistanceCalculator::convertAllProtein(){
 
 
 	this->x128 = _mm_set1_epi8((int8_t) -128);
-	this->zero = _mm_set1_epi8((int8_t) 0x00);
+	this->zero128 = _mm_set1_epi8((int8_t) 0x00);
 
 	generateProteinClusterDict(this->protein_dict);
 
