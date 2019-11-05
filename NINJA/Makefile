@@ -7,6 +7,7 @@
 # TODO: implement checking which operating system is being used
 # TODO: implement flag for unit test compilation
 
+#CXX = /usr/local/bin/g++-6 #must support C++11
 CXX = /usr/bin/g++-7 #must support C++11
 
 # sources in alphabetical order
@@ -17,7 +18,7 @@ SOURCES += BinaryHeap_IntKey_TwoInts.cpp
 SOURCES += BinaryHeap_TwoInts.cpp
 SOURCES += BinaryHeap.cpp
 SOURCES += CandidateHeap.cpp
-SOURCES += DistanceCalculatorAVX.cpp
+SOURCES += DistanceCalculatorAVX.cpp #switched from regular to AVX file here - NOT including other at the moment
 SOURCES += DistanceReader.cpp
 SOURCES += DistanceReaderExtMem.cpp
 SOURCES += ExceptionHandler.cpp
@@ -32,6 +33,7 @@ SOURCES += TreeNode.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
+#CXXFLAGS = -std=gnu++11 -Wall -ssse3 -fopenmp
 CXXFLAGS = -std=gnu++11 -Wall -mavx2 -fopenmp
 EXEC = Ninja
 debugfile = Ninja_debug

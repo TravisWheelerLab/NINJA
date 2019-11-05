@@ -467,7 +467,6 @@ inline void DistanceCalculator::count128P(register __m128i &seq1, register __m12
 	//gap1 = gaps
 	//gap2 = min2
 	//seq1 = index1 final
-
 	//index2
 	seq2 = _mm_srli_epi16(seq2, 8); //go right by 8
 
