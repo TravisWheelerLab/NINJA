@@ -232,7 +232,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 	register __m256i counts_gaps;
 	register __m256i counts_transitions;
 
-    //should this change to /32 or /8?
+
 	int numOfInts = ceil((float)this->lengthOfSequences/32.0);
 	if(numOfInts % 4 != 0)
 		numOfInts += 4 - (numOfInts % 4);
@@ -245,9 +245,10 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 	const unsigned int* Agap = this->gapInTheSequences[a];
 	const unsigned int* Bgap = this->gapInTheSequences[b];
 
-	int num_transversions = 0; //rename accum instead of num
+	int accum_transversions = 0;
 	//TODO: make this a vector instead of an int
-	int num_transitions = 0;
+	//what size vectors?
+	int accum_transitions = 0;
 	int gaps = 0;
 	int i = 0;
 
@@ -272,13 +273,13 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 		/*gather transversion counts*/
 
 		counts_transversions = _mm256_xor_si256(counts_transversions, x256);
-		counts_transversions = _mm256_sad_epu8 (counts_transversions, zero);
+		counts_transversions = _mm256_sad_epu8 (counts_transversions, zero); //Compute the absolute differences of packed unsigned 8-bit integers in a and b, then horizontally sum each consecutive 8 differences to produce four unsigned 16-bit integers, and pack these unsigned 16-bit integers in the low 16 bits of 64-bit elements in dst.
         // in avx this gives 4 16-bit integers, not 2
-		//now do 256 bit add to accum_transitions
+		//now do 256 bit add to accum_transversions
         tmp = _mm256_shuffle_epi32(counts_transversions, _MM_SHUFFLE(1, 1, 1, 2));
 		counts_transversions = _mm256_add_epi16 (counts_transversions, tmp);
 
-		num_transversions +=  _mm256_extract_epi16(counts_transversions, 0);
+		accum_transversions +=  _mm256_extract_epi16(counts_transversions, 0);
 
 
 		/*gather transition counts*/
@@ -287,7 +288,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 		tmp = _mm256_shuffle_epi32(counts_transitions, _MM_SHUFFLE(1, 1, 1, 2));
 		counts_transitions = _mm256_add_epi16 (counts_transitions, tmp);
 
-		num_transitions += _mm256_extract_epi16(counts_transitions, 0);
+		accum_transitions += _mm256_extract_epi16(counts_transitions, 0);
 
 
 		/*gather gaps counts*/
@@ -311,8 +312,8 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 	if(length == 0){
 		dist = maxscore;
 	}else{
-		float p_f = (float)((float)num_transitions / (float)length);
-		float q_f = (float)((float)num_transversions / (float)length);
+		float p_f = (float)((float)accum_transitions / (float)length);
+		float q_f = (float)((float)accum_transversions / (float)length);
 
 		if ( p_f+q_f == 0)
 			dist = 0;
@@ -1095,14 +1096,14 @@ void DistanceCalculator::convertAllDNA(){
 	this->zero = _mm256_set1_epi8((int8_t) 0x00);
 	this->COUNTS_MASK = _mm256_set1_epi8((int8_t) 0xF);
 
-	//TODO: These were all doubled in length, but should it be done differently than just repeating the existing numbers?
-	this->GAPS_COUNT_MASK = _mm256_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
+	//TODO: these are not doubled yet. Not sure they need to be
+	this->GAPS_COUNT_MASK = _mm256_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
 
-	this->DECOMPRESSED_GAPS = _mm256_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0, 255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
+	this->DECOMPRESSED_GAPS = _mm256_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
 
-	this->TRANSITIONS_MASK = _mm256_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
+	this->TRANSITIONS_MASK = _mm256_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
 
-	this->TRANSVERSIONS_MASK = _mm256_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
+	this->TRANSVERSIONS_MASK = _mm256_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
 
 	this->convertedSequences = new unsigned int*[this->numberOfSequences];
 	this->gapInTheSequences = new unsigned int*[this->numberOfSequences];
