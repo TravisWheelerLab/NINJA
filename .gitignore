@@ -1,5 +1,9 @@
 *.o
 *~
 *.swp
-NINJA/NINJA
+NINJA/Ninja
+
+GPATH
+GRTAGS
+GTAGS
 
