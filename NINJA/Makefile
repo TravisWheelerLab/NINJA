@@ -13,21 +13,21 @@ CXXFLAGS = -std=gnu++11 -Wall -mavx2 -msse3 -fopenmp
 EXEC = Ninja
 debugfile = Ninja_debug
 
-.PHONEY: all
+.PHONY: all
 all: CXXFLAGS += -O3
 all: $(OBJECTS)
 	${CXX} $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
-.PHONEY: debug
+.PHONY: debug
 debug: CXXFLAGS += -O0 -g3 -pg
 debug: $(OBJECTS)
 	${CXX} $(DBGFLAGS) $(CXXFLAGS) $(OBJECTS) -o $(debugfile) $(LNFLAGS) 
 
-.PHONEY: check
+.PHONY: check
 check:
 	echo "Running checks..."
 
-.PHONEY: clean
+.PHONY: clean
 clean:
 	$(RM) count *.o *~
 	$(RM) $(EXEC)
