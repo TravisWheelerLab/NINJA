@@ -1,52 +1,33 @@
 # Makefile for NINJA
-# Author: Michel Wan Der Maas
-# 05/15/16
 
+# Set the C++ compiler. If you would like to use a particular compiler
+# you can set it here or from the command line. The compiler must support
+# C++11 and OpenMP (the version of Clang shipped by default with MacOS
+# does not support the latter).
+# CXX = /usr/bin/g++-7
 
-# only works if processor has support to SSE3, TODO: implement checking
-# TODO: implement checking which operating system is being used
-# TODO: implement flag for unit test compilation
-
-#CXX = /usr/local/bin/g++-6 #must support C++11
-CXX = /usr/bin/g++-7 #must support C++11
-
-# sources in alphabetical order
-SOURCES = ArgumentHandler.cpp
-SOURCES += ArrayHeapExtMem.cpp
-SOURCES += BinaryHeap_FourInts.cpp
-SOURCES += BinaryHeap_IntKey_TwoInts.cpp
-SOURCES += BinaryHeap_TwoInts.cpp
-SOURCES += BinaryHeap.cpp
-SOURCES += CandidateHeap.cpp
-SOURCES += DistanceCalculatorAVX.cpp #switched from regular to AVX file here - NOT including other at the moment
-SOURCES += DistanceReader.cpp
-SOURCES += DistanceReaderExtMem.cpp
-SOURCES += ExceptionHandler.cpp
-SOURCES += Ninja.cpp
-SOURCES += SequenceFileReader.cpp
-SOURCES += Stack.cpp
-SOURCES += TreeBuilder.cpp
-SOURCES += TreeBuilderBinHeap.cpp
-SOURCES += TreeBuilderExtMem.cpp
-SOURCES += TreeBuilderManager.cpp
-SOURCES += TreeNode.cpp
-
+SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
-#CXXFLAGS = -std=gnu++11 -Wall -ssse3 -fopenmp
-CXXFLAGS = -std=gnu++11 -Wall -mavx2 -fopenmp
+CXXFLAGS = -std=gnu++11 -Wall -mavx2 -msse3 -fopenmp
 EXEC = Ninja
 debugfile = Ninja_debug
 
-debug: CXXFLAGS += -O0 -g3 -pg
+.PHONEY: all
 all: CXXFLAGS += -O3
-
 all: $(OBJECTS)
 	${CXX} $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
+.PHONEY: debug
+debug: CXXFLAGS += -O0 -g3 -pg
 debug: $(OBJECTS)
 	${CXX} $(DBGFLAGS) $(CXXFLAGS) $(OBJECTS) -o $(debugfile) $(LNFLAGS) 
 
+.PHONEY: check
+check:
+	echo "Running checks..."
+
+.PHONEY: clean
 clean:
 	$(RM) count *.o *~
 	$(RM) $(EXEC)
