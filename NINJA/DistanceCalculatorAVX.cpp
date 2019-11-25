@@ -1103,7 +1103,7 @@ void DistanceCalculator::convertAllDNA(){
 
 	this->TRANSITIONS_MASK = _mm256_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
 
-	this->TRANSVERSIONS_MASK = __mm256_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
+	this->TRANSVERSIONS_MASK = _mm256_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
 
 	this->convertedSequences = new unsigned int*[this->numberOfSequences];
 	this->gapInTheSequences = new unsigned int*[this->numberOfSequences];
