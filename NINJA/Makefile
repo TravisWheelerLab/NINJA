@@ -6,7 +6,26 @@
 # does not support the latter).
 # CXX = /usr/bin/g++-7
 
-SOURCES = $(wildcard *.cpp)
+SOURCES = ArgumentHandler.cpp
+SOURCES += ArrayHeapExtMem.cpp
+SOURCES += BinaryHeap.cpp
+SOURCES += BinaryHeap_FourInts.cpp
+SOURCES += BinaryHeap_IntKey_TwoInts.cpp
+SOURCES += BinaryHeap_TwoInts.cpp
+SOURCES += CandidateHeap.cpp
+#SOURCES += DistanceCalculator.cpp
+SOURCES += DistanceCalculatorAVX.cpp
+SOURCES += DistanceReader.cpp
+SOURCES += DistanceReaderExtMem.cpp
+SOURCES += ExceptionHandler.cpp
+SOURCES += Ninja.cpp
+SOURCES += SequenceFileReader.cpp
+SOURCES += Stack.cpp
+SOURCES += TreeBuilder.cpp
+SOURCES += TreeBuilderBinHeap.cpp
+SOURCES += TreeBuilderExtMem.cpp
+SOURCES += TreeBuilderManager.cpp
+SOURCES += TreeNode.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
 CXXFLAGS = -std=gnu++11 -Wall -mavx2 -msse3 -fopenmp
