@@ -1,109 +1,64 @@
-/*
- * DistanceCalculator.hpp
- *
- *  Created on: Oct 8, 2019
- *      Author: Sarah
- */
-
 #ifndef DISTANCECALCULATOR_HPP
 #define DISTANCECALCULATOR_HPP
 
+#include "DistanceCalculatorBase.hpp"
 #include "ExceptionHandler.hpp"
 #include <math.h>
 #include <float.h>
 
-/*#include <xmmintrin.h>		*//* SSE  *//*
-#include <emmintrin.h>		*//* SSE2 *//*
-#include <tmmintrin.h>      *//* SSE3 */
-#include <x86intrin.h>      // all SSE/AVX headers which are enabled according to compiler switches
-#include <immintrin.h>      //avx
-#include <nmmintrin.h>      //other?
-#include <stdint.h>
-
 #include <omp.h> /* openmp */
 
+/**
+ * AVX distance calculator implementation.
+ */
+class DistanceCalculator : DistanceCalculatorBase<__m256i>
+{
+public:
+	DistanceCalculator(std::string **A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences, bool useSSE);
+	~DistanceCalculator();
 
-class DistanceCalculator{
-		const float bl45[21][21];
-	public:
+	double calc(int a, int b);
 
+	int *getInverseAlphabet(std::string alph, int length);
 
-		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/};
-		enum AlphabetType {dna, amino, null};
+	double testDifferenceCluster(int a, int b);
 
-		DistanceCalculator (std::string** A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences, bool useSSE);
-		~DistanceCalculator();
+protected:
+	void countBitWidth(
+		register __m256i &seq1,
+		register __m256i &seq2,
+		register __m256i &gap1,
+		register __m256i &gap2,
+		register __m256i &tmp,
+		register __m256i &tmp2,
+		register __m256i &tmp3,
+		register __m256i &count_transversions,
+		register __m256i &count_transitions,
+		register __m256i &count_gaps);
 
-		AlphabetType   alph_type;
-		CorrectionType corr_type;
+private:
+	int *inv_alph;
 
-		std::string dna_chars;
-		std::string aa_chars;
-		std::string** A;
+	int protein_dict[256];
+	int protein_dict_original[256];
+	int additionalGaps; //inverse of the number of gaps added at the end of the sequence in sse calculation
 
-		int numberOfSequences;
-		int lengthOfSequences;
+	inline void count128P(register __m128i &seq1, register __m128i &seq2, register __m128i &gap1, register __m128i &gap2, register __m128i &VALUES_0, register __m128i &VALUES_1, register __m128i &VALUES_2, register __m128i &VALUES_3, register __m128i &VALUES_4, register __m128i &VALUES_5, register __m128i &VALUES_6, register __m128i &VALUES_7, register __m128i &sum, register __m128i &gap_count, register __m128i &tmp1, register __m128i &tmp2, int a, int b);
 
-		//TODO: change up this bool sitch
-		bool newCalculation;
+	double newCalcDNA(int a, int b);
 
+	double newCalcProtein(int a, int b);
 
-		double calc (int a, int b);
-		int* getInverseAlphabet (std::string alph, int length);
+	void convertAllDNA();
+	void convertAllProtein();
 
-		double testDifferenceCluster(int a, int b);
+	void getBitsDNA(char *seq, int *size, unsigned int *seqOut, unsigned int *gapOut);
 
-		unsigned int** convertedSequences;
-		unsigned int** gapInTheSequences;
+	void generateProteinClusterDict(int *protein_dictionary);
+	void getBitsProteinClustered(char *seq, int *size, unsigned int *seqOut, unsigned int *gapOut);
+	void generateProteinOriginalDict(int *protein_dictionary);
 
-
-		__m256i x256;
-        __m256i zero;
-        __m256i GAPS_COUNT_MASK;
-
-        __m256i DECOMPRESSED_GAPS;
-        __m256i COUNTS_MASK;
-        __m256i TRANSITIONS_MASK;
-        __m256i TRANSVERSIONS_MASK;
-
-        __m128i zero128;
-        __m128i x128;
-        __m128i VALUES_0;
-        __m128i VALUES_1;
-        __m128i VALUES_2;
-        __m128i VALUES_3;
-        __m128i VALUES_4;
-        __m128i VALUES_5;
-        __m128i VALUES_6;
-        __m128i VALUES_7;
-
-
-	private:
-		int *inv_alph;
-
-		int protein_dict[256];
-		int protein_dict_original[256];
-		int additionalGaps; //inverse of the number of gaps added at the end of the sequence in sse calculation
-
-		inline void count256(register __m256i &seq1, register __m256i &seq2, register __m256i &gap1, register __m256i &gap2, register __m256i &tmp, register __m256i &tmp2, register __m256i &tmp3, register __m256i &count_transversions, register __m256i &count_transitions, register __m256i &count_gaps);
-		inline void count128P(register __m128i &seq1, register __m128i &seq2,  register __m128i &gap1,  register __m128i &gap2, register __m128i &VALUES_0,  register __m128i &VALUES_1,  register __m128i &VALUES_2,  register __m128i &VALUES_3,  register __m128i &VALUES_4,  register __m128i &VALUES_5,  register __m128i &VALUES_6,  register __m128i &VALUES_7, register __m128i &sum, register __m128i &gap_count, register __m128i &tmp1, register __m128i &tmp2, int a, int b);
-
-		double newCalcDNA(int a, int b);
-
-		double newCalcProtein(int a, int b);
-
-		void convertAllDNA();
-		void convertAllProtein();
-
-		void getBitsDNA(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut);
-
-		void generateProteinClusterDict(int* protein_dictionary);
-		void getBitsProteinClustered(char* seq, int* size, unsigned int *seqOut, unsigned int *gapOut);
-		void generateProteinOriginalDict(int* protein_dictionary);
-
-		unsigned int* getProteinDic(std::string alph, int length);
-
+	unsigned int *getProteinDic(std::string alph, int length);
 };
 
 #endif
-

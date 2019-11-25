@@ -8,31 +8,7 @@
 #include "DistanceCalculatorAVX.hpp"
 #include <iostream>
 
-DistanceCalculator::DistanceCalculator (std::string** A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences, bool useSSE) :
-bl45{
-				  {0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
-			      {0.0, 0, 1.31097856, 1.06573001, 1.26827829, 0.90471293, 1.05855446, 1.05232790, 0.76957444, 1.27579668, 0.96460409, 0.98717819, 1.05007594, 1.05464162, 1.19859874, 0.96740447, 0.70049019, 0.88006018, 1.09748548, 1.28141710, 0.80003850},
-			      {0.0, 1.31097856, 0, 0.80108902, 0.95334071, 1.36011107, 0.63154377, 0.79101490, 1.15694899, 0.76115257, 1.45014917, 1.17792001, 0.39466107, 0.99880755, 1.13514340, 1.15432562, 1.05309036, 1.05010474, 1.03938321, 0.96321690, 1.20274751},
-			      {0.0, 1.06573001, 0.80108902, 0, 0.48821721, 1.10567116, 0.81497020, 0.81017644, 0.74648741, 0.61876156, 1.17886558, 1.52003670, 0.80844267, 1.28890258, 1.16264109, 1.18228799, 0.67947568, 0.85365861, 1.68988558, 1.24297493, 1.55207513},
-			      {0.0, 1.26827829, 0.95334071, 0.48821721, 0, 1.31581050, 0.76977847, 0.48207762, 0.88836175, 0.73636084, 1.76756333, 1.43574761, 0.76361291, 1.53386612, 1.74323672, 0.88634740, 0.80861404, 1.01590147, 1.59617804, 1.17404948, 1.46600946},
-			      {0.0, 0.90471293, 1.36011107, 1.10567116, 1.31581050, 0, 1.38367893, 1.37553994, 1.26740695, 1.32361065, 1.26087264, 1.02417540, 1.37259631, 1.09416720, 0.98698208, 1.59321190, 0.91563878, 0.91304285, 1.80744143, 1.32944171, 0.83002214},
-			      {0.0, 1.05855446, 0.63154377, 0.81497020, 0.76977847, 1.38367893, 0, 0.50694279, 1.17699648, 0.61459544, 1.17092829, 1.19833088, 0.63734107, 0.80649084, 1.83315144, 0.93206447, 0.85032169, 1.06830084, 1.05739353, 0.97990742, 1.54162503},
-			      {0.0, 1.05232790, 0.79101490, 0.81017644, 0.48207762, 1.37553994, 0.50694279, 0, 1.17007322, 0.76978695, 1.46659942, 1.19128214, 0.63359215, 1.27269395, 1.44641491, 0.73542857, 0.84531998, 1.06201695, 1.32439599, 1.22734387, 1.53255698},
-			      {0.0, 0.76957444, 1.15694899, 0.74648741, 0.88836175, 1.26740695, 1.17699648, 1.17007322, 0, 1.12590070, 1.70254155, 1.38293205, 1.16756929, 1.17264582, 1.33271035, 1.07564768, 0.77886828, 1.23287107, 0.96853965, 1.42479529, 1.41208067},
-			      {0.0, 1.27579668, 0.76115257, 0.61876156, 0.73636084, 1.32361065, 0.61459544, 0.76978695, 1.12590070, 0, 1.41123246, 1.14630894, 0.96779528, 0.77147945, 1.10468029, 1.12334774, 1.02482926, 1.28754326, 1.27439749, 0.46868384, 1.47469999},
-			      {0.0, 0.96460409, 1.45014917, 1.17886558, 1.76756333, 1.26087264, 1.17092829, 1.46659942, 1.70254155, 1.41123246, 0, 0.43335051, 1.46346092, 0.46296554, 0.66291968, 1.07010201, 1.23000200, 0.97348545, 0.96354620, 0.70872476, 0.35120011},
-			      {0.0, 0.98717819, 1.17792001, 1.52003670, 1.43574761, 1.02417540, 1.19833088, 1.19128214, 1.38293205, 1.14630894, 0.43335051, 0, 1.49770950, 0.47380007, 0.53847312, 1.37979627, 1.58597231, 0.99626739, 0.98609554, 0.72531066, 0.57054219},
-			      {0.0, 1.05007594, 0.39466107, 0.80844267, 0.76361291, 1.37259631, 0.63734107, 0.63359215, 1.16756929, 0.96779528, 1.46346092, 1.49770950, 0, 1.00797618, 1.44331961, 0.92459908, 1.06275728, 1.05974425, 1.04892430, 0.97205882, 1.21378822},
-			      {0.0, 1.05464162, 0.99880755, 1.28890258, 1.53386612, 1.09416720, 0.80649084, 1.27269395, 1.17264582, 0.77147945, 0.46296554, 0.47380007, 1.00797618, 0, 0.72479754, 1.16998686, 1.34481214, 1.06435197, 1.05348497, 0.77487815, 0.60953285},
-			      {0.0, 1.19859874, 1.13514340, 1.16264109, 1.74323672, 0.98698208, 1.83315144, 1.44641491, 1.33271035, 1.10468029, 0.66291968, 0.53847312, 1.44331961, 0.72479754, 0, 1.32968844, 1.21307373, 0.96008757, 0.47514255, 0.34948536, 0.69273324},
-			      {0.0, 0.96740447, 1.15432562, 1.18228799, 0.88634740, 1.59321190, 0.93206447, 0.73542857, 1.07564768, 1.12334774, 1.07010201, 1.37979627, 0.92459908, 1.16998686, 1.32968844, 0, 0.97908742, 0.97631161, 1.21751652, 1.42156458, 1.40887880},
-			      {0.0, 0.70049019, 1.05309036, 0.67947568, 0.80861404, 0.91563878, 0.85032169, 0.84531998, 0.77886828, 1.02482926, 1.23000200, 1.58597231, 1.06275728, 1.34481214, 1.21307373, 0.97908742, 0, 0.56109848, 1.76318885, 1.29689226, 1.02015839},
-			      {0.0, 0.88006018, 1.05010474, 0.85365861, 1.01590147, 0.91304285, 1.06830084, 1.06201695, 1.23287107, 1.28754326, 0.97348545, 0.99626739, 1.05974425, 1.06435197, 0.96008757, 0.97631161, 0.56109848, 0, 1.39547634, 1.02642577, 0.80740466},
-			      {0.0, 1.09748548, 1.03938321, 1.68988558, 1.59617804, 1.80744143, 1.05739353, 1.32439599, 0.96853965, 1.27439749, 0.96354620, 0.98609554, 1.04892430, 1.05348497, 0.47514255, 1.21751652, 1.76318885, 1.39547634, 0, 0.32000293, 1.26858915},
-			      {0.0, 1.28141710, 0.96321690, 1.24297493, 1.17404948, 1.32944171, 0.97990742, 1.22734387, 1.42479529, 0.46868384, 0.70872476, 0.72531066, 0.97205882, 0.77487815, 0.34948536, 1.42156458, 1.29689226, 1.02642577, 0.32000293, 0, 0.93309543},
-			      {0.0, 0.80003850, 1.20274751, 1.55207513, 1.46600946, 0.83002214, 1.54162503, 1.53255698, 1.41208067, 1.47469999, 0.35120011, 0.57054219, 1.21378822, 0.60953285, 0.69273324, 1.40887880, 1.02015839, 0.80740466, 1.26858915, 0.93309543, 0}
-				}
-
+DistanceCalculator::DistanceCalculator (std::string** A /*alignment*/, AlphabetType alphType, CorrectionType corrType, int numberOfSequences, bool useSSE)
 {
 	this->A  = A;
 	this->corr_type = corrType;
@@ -71,7 +47,7 @@ int* DistanceCalculator::getInverseAlphabet (std::string alph, int length) {
         inv_alph[(int)alph[i]] = i;
     return inv_alph;
 }
-inline void DistanceCalculator::count256(register __m256i &seq1, register __m256i &seq2, register __m256i &gap1, register __m256i &gap2, register __m256i &tmp, register __m256i &tmp2, register __m256i &tmp3, register __m256i &count_transversions, register __m256i &count_transitions, register __m256i &count_gaps){
+inline void DistanceCalculator::countBitWidth(register __m256i &seq1, register __m256i &seq2, register __m256i &gap1, register __m256i &gap2, register __m256i &tmp, register __m256i &tmp2, register __m256i &tmp3, register __m256i &count_transversions, register __m256i &count_transitions, register __m256i &count_gaps){
     /*
      * Maps and their description:
      * DNA encoded as
@@ -253,9 +229,9 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 	int i = 0;
 
 	while(i < numOfInts){
-		counts_transversions = x256;
-		counts_gaps = x256;
-		counts_transitions = x256;
+		counts_transversions = xDNA;
+		counts_gaps = xDNA;
+		counts_transitions = xDNA;
 
 		for(int j = 0;i<numOfInts && j < 31; i += 8){ //a maximum of 32 vectors allowed not to overflow the int the numbers are stored in
 				seq1 = *(__m256i*)&Achar[i];
@@ -264,7 +240,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 				gap1 = *(__m256i*)&Agap[i];
 				gap2 = *(__m256i*)&Bgap[i];
 
-				count256(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
+				countBitWidth(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
 
 				j+=4;
 				//TODO: does this increase from +=4 to +=8? TEST
@@ -272,8 +248,8 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 		/*gather transversion counts*/
 
-		counts_transversions = _mm256_xor_si256(counts_transversions, x256);
-		counts_transversions = _mm256_sad_epu8 (counts_transversions, zero); //Compute the absolute differences of packed unsigned 8-bit integers in a and b, then horizontally sum each consecutive 8 differences to produce four unsigned 16-bit integers, and pack these unsigned 16-bit integers in the low 16 bits of 64-bit elements in dst.
+		counts_transversions = _mm256_xor_si256(counts_transversions, xDNA);
+		counts_transversions = _mm256_sad_epu8 (counts_transversions, zeroDNA); //Compute the absolute differences of packed unsigned 8-bit integers in a and b, then horizontally sum each consecutive 8 differences to produce four unsigned 16-bit integers, and pack these unsigned 16-bit integers in the low 16 bits of 64-bit elements in dst.
         // in avx this gives 4 16-bit integers, not 2
 		//now do 256 bit add to accum_transversions
         tmp = _mm256_shuffle_epi32(counts_transversions, _MM_SHUFFLE(1, 1, 1, 2));
@@ -283,8 +259,8 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 
 		/*gather transition counts*/
-		counts_transitions = _mm256_xor_si256(counts_transitions, x256);
-		counts_transitions = _mm256_sad_epu8 (counts_transitions, zero);
+		counts_transitions = _mm256_xor_si256(counts_transitions, xDNA);
+		counts_transitions = _mm256_sad_epu8 (counts_transitions, zeroDNA);
 		tmp = _mm256_shuffle_epi32(counts_transitions, _MM_SHUFFLE(1, 1, 1, 2));
 		counts_transitions = _mm256_add_epi16 (counts_transitions, tmp);
 
@@ -292,8 +268,8 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 
 
 		/*gather gaps counts*/
-		counts_gaps = _mm256_xor_si256(counts_gaps, x256);
-		counts_gaps = _mm256_sad_epu8 (counts_gaps, zero);
+		counts_gaps = _mm256_xor_si256(counts_gaps, xDNA);
+		counts_gaps = _mm256_sad_epu8 (counts_gaps, zeroDNA);
 		tmp = _mm256_shuffle_epi32(counts_gaps, _MM_SHUFFLE(1, 1, 1, 2));
 		counts_gaps = _mm256_add_epi16 (counts_gaps, tmp);
 
@@ -597,8 +573,8 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 	int i = 0;
 
 	while(i < numOfInts){ //a maximum of 8 vectors allowed not to overflow things
-		distance = x128;
-		counts_gaps= x128;
+		distance = xProtein;
+		counts_gaps= xProtein;
 
 		for(int j = 0;i<numOfInts && j < 8; j++){
 
@@ -615,9 +591,9 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 
 		/*gather distance*/
 
-		distance = _mm_xor_si128(distance, x128);
+		distance = _mm_xor_si128(distance, xProtein);
 
-		distance = _mm_sad_epu8 (distance, zero128);
+		distance = _mm_sad_epu8 (distance, zeroProtein);
 		tmp1 = _mm_shuffle_epi32(distance, _MM_SHUFFLE(1, 1, 1, 2));
 		distance = _mm_add_epi16(distance, tmp1);
 
@@ -626,9 +602,9 @@ double DistanceCalculator::newCalcProtein(int a, int b){
 
 		/*gather gaps counts*/
 
-		counts_gaps = _mm_xor_si128(counts_gaps, x128);
+		counts_gaps = _mm_xor_si128(counts_gaps, xProtein);
 
-		counts_gaps = _mm_sad_epu8 (counts_gaps, zero128);
+		counts_gaps = _mm_sad_epu8 (counts_gaps, zeroProtein);
 		tmp1 = _mm_shuffle_epi32(counts_gaps, _MM_SHUFFLE(1, 1, 1, 2));
 		counts_gaps = _mm_add_epi16(counts_gaps, tmp1);
 
@@ -1042,8 +1018,8 @@ void DistanceCalculator::convertAllProtein(){
 	long int res = (k*(n-1)*n)/(long int)2; //number of pairs
 
 
-	this->x128 = _mm_set1_epi8((int8_t) -128);
-	this->zero128 = _mm_set1_epi8((int8_t) 0x00);
+	this->xProtein = _mm_set1_epi8((int8_t) -128);
+	this->zeroProtein = _mm_set1_epi8((int8_t) 0x00);
 
 	generateProteinClusterDict(this->protein_dict);
 
@@ -1092,8 +1068,8 @@ void DistanceCalculator::convertAllDNA(){
 	long int n = this->numberOfSequences;
 	long int res = (k*(n-1)*n)/(long int)2; //number of pairs
 
-	this->x256 = _mm256_set1_epi8((int8_t) -128);
-	this->zero = _mm256_set1_epi8((int8_t) 0x00);
+	this->xDNA = _mm256_set1_epi8((int8_t) -128);
+	this->zeroDNA = _mm256_set1_epi8((int8_t) 0x00);
 	this->COUNTS_MASK = _mm256_set1_epi8((int8_t) 0xF);
 
 	//TODO: these are not doubled yet. Not sure they need to be
