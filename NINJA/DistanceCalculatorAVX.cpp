@@ -1097,13 +1097,13 @@ void DistanceCalculator::convertAllDNA(){
 	this->COUNTS_MASK = _mm256_set1_epi8((int8_t) 0xF);
 
 	//TODO: these are not doubled yet. Not sure they need to be
-	this->GAPS_COUNT_MASK = _mm256_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
+	this->GAPS_COUNT_MASK = _mm256_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
 
-	this->DECOMPRESSED_GAPS = _mm256_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
+	this->DECOMPRESSED_GAPS = _mm256_set_epi8(255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0, 255, 252, 243, 240, 207, 204, 195, 192, 63, 60, 51, 48, 15, 12, 3, 0);
 
-	this->TRANSITIONS_MASK = _mm256_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
+	this->TRANSITIONS_MASK = _mm256_set_epi8(0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 2, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0);
 
-	this->TRANSVERSIONS_MASK = _mm256_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
+	this->TRANSVERSIONS_MASK = _mm256_set_epi8(2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0, 2, 1, 2, 1, 1, 0, 1, 0);
 
 	this->convertedSequences = new unsigned int*[this->numberOfSequences];
 	this->gapInTheSequences = new unsigned int*[this->numberOfSequences];
