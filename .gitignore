@@ -1,7 +1,8 @@
 *.o
 *~
 *.swp
-NINJA/Ninja
+Ninja
+Ninja_debug
 
 GPATH
 GRTAGS

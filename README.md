@@ -29,6 +29,22 @@ brew install gcc
 make CXX=/usr/local/bin/g++-9 all
 ```
 
+### Docker
+
+It is possible to use Docker to build a Linux binary, even if your machine
+doesn't have the exact requirements. This is also helpful for
+cross-compilation on a Mac (for example). To build with Docker, run the
+command below from the repository root:
+
+```
+docker run --mount src="$(pwd)",target=/code,type=bind wheelerlabum/ninja-build:latest
+```
+
+This will download the latest version of the build image. See
+<https://hub.docker.com/repository/docker/wheelerlabum/ninja-build>
+for other versions. It will build the code in your working copy of the
+repository and produce an executable called `Ninja`.
+
 ## Contributing
 
 We use a "git flow" workflow. We have two active branches:
