@@ -349,10 +349,11 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
     const unsigned int *Agap = this->gapInTheSequences[a];
     const unsigned int *Bgap = this->gapInTheSequences[b];
 
-    int accum_transversions = 0;
-    // TODO: make this a vector instead of an int
-    // what size vectors?
-    int accum_transitions = 0;
+    __m256i accum_transversions = _mm256_set1_epi16((int16_t)0x00);
+    int transversions = 0;
+    __m256i accum_transitions = _mm256_set1_epi16((int16_t)0x00);
+    int transitions = 0;
+    __m256i accum_gaps = _mm256_set1_epi16((int16_t)0x00);
     int gaps = 0;
     int i = 0;
 
@@ -377,45 +378,57 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
             // TODO: does this increase from +=4 to +=8? TEST
         }
 
-        /*gather transversion counts*/
+        /*gather transversion counts:
+        Compute the absolute differences of packed unsigned 8-bit
+        integers in a and b, then horizontally sum each
+        consecutive 8 differences to produce four unsigned 16-bit
+        integers, and pack these unsigned 16-bit integers in the
+        low 16 bits of 64-bit elements in dst.
+        **in avx this gives 4 16-bit integers, not 2*/
 
         counts_transversions = _mm256_xor_si256(counts_transversions, x256);
-        counts_transversions = _mm256_sad_epu8(
-            counts_transversions,
-            zero); // Compute the absolute differences of packed unsigned 8-bit
-                   // integers in a and b, then horizontally sum each
-                   // consecutive 8 differences to produce four unsigned 16-bit
-                   // integers, and pack these unsigned 16-bit integers in the
-                   // low 16 bits of 64-bit elements in dst.
-        // in avx this gives 4 16-bit integers, not 2
-        // now do 256 bit add to accum_transversions
-        tmp =
-            _mm256_shuffle_epi32(counts_transversions, _MM_SHUFFLE(1, 1, 1, 2));
-        counts_transversions = _mm256_add_epi16(counts_transversions, tmp);
-
-        accum_transversions += _mm256_extract_epi16(counts_transversions, 0);
+        counts_transversions = _mm256_sad_epu8(counts_transversions, zero);
+        accum_transversions = _mm256_add_epi16(counts_transversions, accum_transversions);
 
         /*gather transition counts*/
         counts_transitions = _mm256_xor_si256(counts_transitions, x256);
         counts_transitions = _mm256_sad_epu8(counts_transitions, zero);
-        tmp = _mm256_shuffle_epi32(counts_transitions, _MM_SHUFFLE(1, 1, 1, 2));
-        counts_transitions = _mm256_add_epi16(counts_transitions, tmp);
+        accum_transitions = _mm256_add_epi16(counts_transitions, accum_transitions);
 
-        accum_transitions += _mm256_extract_epi16(counts_transitions, 0);
 
         /*gather gaps counts*/
         counts_gaps = _mm256_xor_si256(counts_gaps, x256);
         counts_gaps = _mm256_sad_epu8(counts_gaps, zero);
-        tmp = _mm256_shuffle_epi32(counts_gaps, _MM_SHUFFLE(1, 1, 1, 2));
-        counts_gaps = _mm256_add_epi16(counts_gaps, tmp);
+        accum_gaps = _mm256_add_epi16(counts_gaps, accum_gaps);
 
-        gaps += _mm256_extract_epi16(counts_gaps, 0);
     }
     // TODO: now pull the 4 values together from the accum vector after while
     // loop breaks do shuffle where you bring 4 and 3 under 2 and 1 and then add
     // them, and then bring 2 under and add them again shuffle -> add -> shuffle
     // -> add         shuffle (1,2,3,4) for 4, 3 , 2 ,1 maybe hadds? look into
     // it
+
+    /*extracting transversion count*/
+    tmp = _mm256_permute2x128_si256(accum_transversions, accum_transversions, 1);
+    accum_transversions = _mm256_hadd_epi32(accum_transversions, tmp);
+    accum_transversions = _mm256_hadd_epi32(accum_transversions, accum_transversions);
+    accum_transversions = _mm256_hadd_epi32(accum_transversions, accum_transversions);
+    transversions = _mm256_extract_epi32(accum_transversions,0);
+
+    /*extracting transition count*/
+    tmp = _mm256_permute2x128_si256(accum_transitions, accum_transitions, 1);
+    accum_transitions = _mm256_hadd_epi32(accum_transitions, tmp);
+    accum_transitions = _mm256_hadd_epi32(accum_transitions, accum_transitions);
+    accum_transitions = _mm256_hadd_epi32(accum_transitions, accum_transitions);
+    transitions = _mm256_extract_epi32(accum_transitions,0);
+
+    /*extracting gap count*/
+    tmp = _mm256_permute2x128_si256(accum_gaps, accum_gaps, 1);
+    accum_gaps = _mm256_hadd_epi32(accum_gaps, tmp);
+    accum_gaps = _mm256_hadd_epi32(accum_gaps, accum_gaps);
+    accum_gaps = _mm256_hadd_epi32(accum_gaps, accum_gaps);
+    gaps = _mm256_extract_epi32(accum_gaps,0);
+
     length -= gaps;
 
     float dist = 0.0f;
@@ -424,8 +437,8 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
     if (length == 0) {
         dist = maxscore;
     } else {
-        float p_f = (float)((float)accum_transitions / (float)length);
-        float q_f = (float)((float)accum_transversions / (float)length);
+        float p_f = (float)((float)transitions / (float)length);
+        float q_f = (float)((float)transversions / (float)length);
 
         if (p_f + q_f == 0)
             dist = 0;
@@ -443,6 +456,7 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
 
     return dist_d;
 }
+
 inline void DistanceCalculator::count128P(
     register __m128i &seq1, register __m128i &seq2, register __m128i &gap1,
     register __m128i &gap2, register __m128i &VALUES_0,
