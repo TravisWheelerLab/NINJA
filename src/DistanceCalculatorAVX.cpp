@@ -1111,7 +1111,7 @@ void DistanceCalculator::getBitsDNA(char *seq, int *size, unsigned int *seqOut,
                    '-') { // gap, 1 in one of the 4 lower bits of a byte
             *gapOut -=
                 powersOfTwo[whereToGo[i / 4] -
-                            (i % 4)]; // get the right place to add and and the
+                            (i % 4)]; // get the right place to add and the
                                       // powers of 2 correspondent
         }
     }
@@ -1326,7 +1326,6 @@ void DistanceCalculator::convertAllDNA() {
     this->zero = _mm256_set1_epi8((int8_t)0x00);
     this->COUNTS_MASK = _mm256_set1_epi8((int8_t)0xF);
 
-    // TODO: these are not doubled yet. Not sure they need to be
     this->GAPS_COUNT_MASK =
         _mm256_set_epi8(0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4, 0, 1, 1,
                         2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
@@ -1348,7 +1347,7 @@ void DistanceCalculator::convertAllDNA() {
 
     // TODO: I think this calculation needs to change from 16 to 32 - or 8?
     // TODO trace through this loop and make sure it is correct for doubled size
-    int allocSize = ceil((float)this->lengthOfSequences / 16.0);
+    int allocSize = ceil((float)this->lengthOfSequences / 32.0);
     if (allocSize % 4 != 0) // min size of 128bits TODO: change to min size
                             // 256bits
         allocSize += 4 - (allocSize % 4);
