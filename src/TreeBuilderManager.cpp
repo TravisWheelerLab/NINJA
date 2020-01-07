@@ -99,10 +99,12 @@ std::string TreeBuilderManager::doJob() {
             this->alphType =
                 (TreeBuilderManager::AlphabetType)seqReader->getAlphType();
             fprintf(stderr, "Calculating distances....\n");
-            DistanceCalculator *distCalc = new DistanceCalculator(
-                seqs, (DistanceCalculator::AlphabetType)alphType,
-                (DistanceCalculator::CorrectionType)corrType,
-                seqReader->numSeqs, this->newDistanceMethod);
+            void *distCalcMem = _mm_malloc(sizeof(DistanceCalculator), 32);
+            DistanceCalculator *distCalc = static_cast<DistanceCalculator*>(distCalcMem);
+            new(distCalc) DistanceCalculator(
+                    seqs, (DistanceCalculator::AlphabetType)alphType,
+                    (DistanceCalculator::CorrectionType)corrType,
+                    seqReader->numSeqs, this->newDistanceMethod);
             K = seqReader->numSeqs;
             reader = new DistanceReaderExtMem(distCalc, K);
         } else {
@@ -167,10 +169,12 @@ std::string TreeBuilderManager::doJob() {
             this->alphType =
                 (TreeBuilderManager::AlphabetType)seqReader->getAlphType();
             fprintf(stderr, "Calculating distances....\n");
-            DistanceCalculator *distCalc = new DistanceCalculator(
-                seqs, (DistanceCalculator::AlphabetType)alphType,
-                (DistanceCalculator::CorrectionType)corrType,
-                seqReader->numSeqs, newDistanceMethod);
+            void *distCalcMem = _mm_malloc(sizeof(DistanceCalculator), 32);
+            DistanceCalculator *distCalc = static_cast<DistanceCalculator*>(distCalcMem);
+            new(distCalc) DistanceCalculator(
+                    seqs, (DistanceCalculator::AlphabetType)alphType,
+                    (DistanceCalculator::CorrectionType)corrType,
+                    seqReader->numSeqs, this->newDistanceMethod);
             K = seqReader->numSeqs;
             reader = new DistanceReader(distCalc, K, this->threads);
         } else {
