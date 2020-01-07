@@ -365,11 +365,16 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
         for (int j = 0; i < numOfInts && j < 31;
              i += 8) { // a maximum of 32 vectors allowed not to overflow the
                        // int the numbers are stored in
-            seq1 = *(__m256i *)&Achar[i];
-            seq2 = *(__m256i *)&Bchar[i];
 
-            gap1 = *(__m256i *)&Agap[i];
-            gap2 = *(__m256i *)&Bgap[i];
+            seq1 = _mm256_load_si256((__m256i*)&Achar[i]);
+            //seq1 = *(__m256i *)&Achar[i];
+            seq2 = _mm256_load_si256((__m256i*)&Bchar[i]);
+            //seq2 = *(__m256i *)&Bchar[i];
+
+            //gap1 = *(__m256i *)&Agap[i];
+            gap1 = _mm256_load_si256((__m256i*)&Agap[i]);
+            //gap2 = *(__m256i *)&Bgap[i];
+            gap2 = _mm256_load_si256((__m256i*)&Bgap[i]);
 
             count256(seq1, seq2, gap1, gap2, tmp, tmp2, tmp3,
                      counts_transversions, counts_transitions, counts_gaps);
@@ -1293,10 +1298,10 @@ void DistanceCalculator::convertAllProtein() {
         allocSize += 4 - (allocSize % 4);
     int sizeLeft;
     for (int i = 0; i < this->numberOfSequences; i++) {
-        this->convertedSequences[i] =
-            new unsigned int[allocSize]; // min of 128bits, no need to change
-        this->gapInTheSequences[i] =
-            new unsigned int[allocSize]; // min of 128bits, no need to change
+        this->convertedSequences[i] = new unsigned int[allocSize]; // min of 128bits, no need to change
+        //this->convertedSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
+        this->gapInTheSequences[i] = new unsigned int[allocSize]; // min of 128bits, no need to change
+        //this->gapInTheSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
         sizeLeft = this->lengthOfSequences;
         for (int j = 0; j < allocSize; j++) {
             getBitsProteinClustered(
@@ -1353,8 +1358,8 @@ void DistanceCalculator::convertAllDNA() {
         allocSize += 4 - (allocSize % 4);
     int sizeLeft;
     for (int i = 0; i < this->numberOfSequences; i++) {
-        this->convertedSequences[i] = new unsigned int[allocSize];
-        this->gapInTheSequences[i] = new unsigned int[allocSize];
+        this->convertedSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
+        this->gapInTheSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
 
         sizeLeft = this->lengthOfSequences;
         for (int j = 0; j < allocSize; j++) {

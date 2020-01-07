@@ -11,7 +11,8 @@
 #include "ExceptionHandler.hpp"
 #include <float.h>
 #include <math.h>
-
+#include <cstdlib>
+#include <stdlib.h>
 #include <immintrin.h> //avx
 #include <nmmintrin.h> //other?
 #include <stdint.h>
