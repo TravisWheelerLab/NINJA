@@ -57,7 +57,7 @@ debug: $(OBJECTS)
 format:
 	clang-format -i -style=file src/*.cpp src/*.hpp
 
-.PHONY: check-format
-check-format: format
-	git diff --exit-code
+#.PHONY: check-format
+#check-format: format
+#	git diff --exit-code
 
