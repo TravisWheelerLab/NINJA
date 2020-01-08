@@ -1,0 +1,19 @@
+FROM fedora:29
+
+RUN dnf -y upgrade-minimal && \
+  dnf -y install --setopt=install_weak_deps=False \
+    gcc-c++ \
+    git \
+    make \
+    redhat-lsb-core \
+    rpm-build \
+    ruby \
+    ruby-devel \
+    rubygems && \
+  dnf clean all
+RUN gem install --no-document fpm
+
+VOLUME /code
+WORKDIR /code
+
+ENTRYPOINT make package
