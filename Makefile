@@ -52,7 +52,8 @@ check: ## Run the main test suite (TODO)
 	@echo "Running checks..."
 
 .PHONY: check-format
-check-format: @echo "Skip formatting for now"
+check-format:
+	@echo "Skip formatting for now"
 #check-format: format ## Verify that the formatter has been run
 #	git diff --exit-code
 
