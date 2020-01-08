@@ -4,7 +4,11 @@
 Ninja
 Ninja_debug
 
+.DS_Store
+
 GPATH
 GRTAGS
 GTAGS
+
+dist/
 

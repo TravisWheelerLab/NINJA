@@ -3,6 +3,10 @@ Nearly Infinite Neighbor Joining Application
 
 ## Building
 
+There are a number of make targets for different situations. Run
+`make help` to see a list along with descriptions of the developer-facing
+targets.
+
 ### Linux
 
 Nothing special should be required to build on a reasonably recent
@@ -11,7 +15,7 @@ distribution.
 From the `NINJA` subdirectory:
 
 ```
-make all
+make
 ```
 
 ### Mac
@@ -26,7 +30,7 @@ From the `NINJA` subdirectory:
 
 ```
 brew install gcc
-make CXX=/usr/local/bin/g++-9 all
+make CXX=/usr/local/bin/g++-9
 ```
 
 ### Docker
@@ -37,13 +41,34 @@ cross-compilation on a Mac (for example). To build with Docker, run the
 command below from the repository root:
 
 ```
-docker run --mount src="$(pwd)",target=/code,type=bind wheelerlabum/ninja-build:latest
+docker run --mount src="$(pwd)",target=/code,type=bind traviswheelerlab/ninja-build:latest
 ```
 
 This will download the latest version of the build image. See
 <https://hub.docker.com/repository/docker/wheelerlabum/ninja-build>
 for other versions. It will build the code in your working copy of the
 repository and produce an executable called `Ninja`.
+
+#### Other Images
+
+There are a number of other Docker images defined in the `pkg` directory for various
+Linux distributions. To build the images locally, run `make build-images`. To build
+NINJA using one of these images (regardless of whether you've built it locally), run
+the following:
+
+```
+docker run --mount src="$(pwd)",target=/code,type=bind traviswheelerlab/ninja-build-{OS}-{RELEASE}
+```
+
+Substitute `OS` and `RELEASE` for any distribution / version pair that has a Dockerfile
+defined in `pkg/`. For example, "Fedora" and "31" will result in a build on Fedora 31.
+These containers will run a build in the local directory and also create a distribution
+package (like an RPM), depending on the OS chosen.
+
+To generate all Linux packages run `make package-linux`. To generate a Mac installer
+package, run `make package` on a Mac.
+
+Packages will be saved in the `dist` directory (which will be created if necessary).
 
 ## Contributing
 
@@ -64,5 +89,3 @@ To contribute to NINJA development, you want to be on the
 **develop** branch, which is where we are currently integrating
 feature branches. For more information, see the
 [NINJA wiki](https://github.com/TravisWheelerLab/NINJA/wiki).
-
-

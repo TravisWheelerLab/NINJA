@@ -1,7 +1,7 @@
 Quick NINJA README pre-release (05/14)
 
 Compilation:
-    Tested only on linux using g++, with the "make all" command.
+    Tested only on linux using g++, with the "make" command.
 
 Arguments:
 

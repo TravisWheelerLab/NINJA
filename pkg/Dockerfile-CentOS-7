@@ -1,0 +1,19 @@
+FROM centos:7
+
+RUN yum -y update-minimal && \
+  yum -y install \
+    gcc-c++ \
+    git \
+    make \
+    redhat-lsb-core \
+    rpm-build \
+    ruby \
+    ruby-devel \
+    rubygems && \
+  yum clean all
+RUN gem install --no-document fpm
+
+VOLUME /code
+WORKDIR /code
+
+ENTRYPOINT make package
