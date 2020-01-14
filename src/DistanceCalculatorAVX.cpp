@@ -367,13 +367,13 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
                        // int the numbers are stored in
 
             seq1 = _mm256_load_si256((__m256i*)&Achar[i]);
-            //seq1 = *(__m256i *)&Achar[i];
+            //seq1 = *(__m256i *)&Achar[i];     This is the previous version
             seq2 = _mm256_load_si256((__m256i*)&Bchar[i]);
-            //seq2 = *(__m256i *)&Bchar[i];
+            //seq2 = *(__m256i *)&Bchar[i];     Previous version
 
-            //gap1 = *(__m256i *)&Agap[i];
+            //gap1 = *(__m256i *)&Agap[i];      Previous version
             gap1 = _mm256_load_si256((__m256i*)&Agap[i]);
-            //gap2 = *(__m256i *)&Bgap[i];
+            //gap2 = *(__m256i *)&Bgap[i];      Previous version
             gap2 = _mm256_load_si256((__m256i*)&Bgap[i]);
 
             count256(seq1, seq2, gap1, gap2, tmp, tmp2, tmp3,
@@ -387,8 +387,8 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
         Compute the absolute differences of packed unsigned 8-bit
         integers in a and b, then horizontally sum each
         consecutive 8 differences to produce four unsigned 16-bit
-        integers, and pack these unsigned 16-bit integers in the
-        low 16 bits of 64-bit elements in dst.
+        integers. Each 16-bit integer is packed into the low
+        64 bits of each of the four 64-bit lanes
         **in avx this gives 4 16-bit integers, not 2*/
 
         counts_transversions = _mm256_xor_si256(counts_transversions, x256);
@@ -442,12 +442,12 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
     if (length == 0) {
         dist = maxscore;
     } else {
-        float p_f = (float)((float)transitions / (float)length);
-        float q_f = (float)((float)transversions / (float)length);
+		float p_f = (float)((float)transitions / (float)length);
+		float q_f = (float)((float)transversions / (float)length);
 
-        if (p_f + q_f == 0)
-            dist = 0;
-        else if (this->corr_type == JukesCantor)
+		if (p_f + q_f == 0)
+			dist = 0;
+		else if (this->corr_type == JukesCantor)
             dist = (float)(-(0.75) *
                            log((double)(1.0 - (4.0 / 3.0) * (p_f + q_f))));
         else if (this->corr_type == Kimura2) {
@@ -1350,12 +1350,10 @@ void DistanceCalculator::convertAllDNA() {
     this->convertedSequences = new unsigned int *[this->numberOfSequences];
     this->gapInTheSequences = new unsigned int *[this->numberOfSequences];
 
-    // TODO: I think this calculation needs to change from 16 to 32 - or 8?
     // TODO trace through this loop and make sure it is correct for doubled size
     int allocSize = ceil((float)this->lengthOfSequences / 32.0);
-    if (allocSize % 4 != 0) // min size of 128bits TODO: change to min size
-                            // 256bits
-        allocSize += 4 - (allocSize % 4);
+    if (allocSize % 8 != 0) // min size of 256bits
+        allocSize += 8 - (allocSize % 8);
     int sizeLeft;
     for (int i = 0; i < this->numberOfSequences; i++) {
         this->convertedSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
