@@ -458,7 +458,8 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
     }
 
     double dist_d = (dist < maxscore ? dist : maxscore);
-
+    printf("%f\n", dist);
+    std::cout << dist << std::endl;
     return dist_d;
 }
 
@@ -975,6 +976,8 @@ double DistanceCalculator::calc(int a, int b) {
     }
 
     double dist_d = (dist < maxscore ? dist : maxscore);
+    printf("%f\n", dist);
+    std::cout << dist << std::endl;
     return dist_d;
 }
 
