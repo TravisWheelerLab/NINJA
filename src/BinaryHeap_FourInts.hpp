@@ -8,51 +8,48 @@
 #ifndef BINARYHEAP_FOUR_INTS_HPP
 #define BINARYHEAP_FOUR_INTS_HPP
 
+#include "BinaryHeap.hpp"
 #include "ExceptionHandler.hpp"
 #include <limits.h>
-#include "BinaryHeap.hpp"
 
-struct ints4float{
-	int first;
-	int second;
-	int third;
-	int fourth;
-	float key;
+struct ints4float {
+    int first;
+    int second;
+    int third;
+    int fourth;
+    float key;
 };
 
-
-
 class BinaryHeap_FourInts {
-public:
-	//constructors
-	BinaryHeap_FourInts();
-	BinaryHeap_FourInts(int maxCapacity);
-	BinaryHeap_FourInts(int* val1s, const int* val2s, const int* val3s, const int* val4s, Float keys);
-	BinaryHeap_FourInts(int* val1s, const int* val2s, const int* val3s, const int* val4s, Float keys, int maxCapacity);
-	~BinaryHeap_FourInts();
+  public:
+    // constructors
+    BinaryHeap_FourInts();
+    BinaryHeap_FourInts(int maxCapacity);
+    BinaryHeap_FourInts(int *val1s, const int *val2s, const int *val3s,
+                        const int *val4s, Float keys);
+    BinaryHeap_FourInts(int *val1s, const int *val2s, const int *val3s,
+                        const int *val4s, Float keys, int maxCapacity);
+    ~BinaryHeap_FourInts();
 
+    int size(); // return BinaryHeap size
 
+    // functions
+    void insert(int val1, int val2, int val3, int val4, float key);
+    void deleteMin(); // Remove the smallest item from the priority queue
 
-	int size(); //return BinaryHeap size
+    int getMin();
+    bool isEmpty();   // check if empty
+    void makeEmpty(); // empty heap
 
-	//functions
-	void insert(int val1, int val2, int val3, int val4, float key);
-	void deleteMin(); //Remove the smallest item from the priority queue
+    bool binHeapTest(bool verbose);
 
-	int getMin();
-	bool isEmpty(); //check if empty
-	void makeEmpty(); //empty heap
+    void buildAgain(int *val1s, const int *val2s, const int *val3s,
+                    const int *val4s, Float keys);
 
-	bool binHeapTest(bool verbose);
+    std::vector<ints4float> *heap;
 
-	void buildAgain(int* val1s, const int* val2s, const int* val3s, const int* val4s, Float keys);
+    static const int DEFAULT_CAPACITY = 1000;
 
-	std::vector< ints4float > *heap;
-
-
-	static const int DEFAULT_CAPACITY = 1000;
-
-	bool binHeapFourTest(bool verbose);
-
+    bool binHeapFourTest(bool verbose);
 };
 #endif

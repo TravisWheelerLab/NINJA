@@ -9,26 +9,26 @@
 #define STACK_HPP
 
 #include "ExceptionHandler.hpp"
-#include <string.h>
 #include <stack>
+#include <string.h>
 
-class Stack{
-	public:
-		Stack();
-		~Stack();
-		Stack(int size);
-		void push(int x);
-		int pop();
-		int length();
-		int maxSize();
-		bool isEmpty();
-		void clear();
+class Stack {
+  public:
+    Stack();
+    ~Stack();
+    Stack(int size);
+    void push(int x);
+    int pop();
+    int length();
+    int maxSize();
+    bool isEmpty();
+    void clear();
 
-		bool stackTest(bool verbose);
-	private:
-		std::stack<int> *mystack;
+    bool stackTest(bool verbose);
 
-		void resize();
+  private:
+    std::stack<int> *mystack;
+
+    void resize();
 };
 #endif
-

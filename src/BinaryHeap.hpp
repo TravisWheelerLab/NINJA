@@ -1,49 +1,45 @@
-//includes
+// includes
 #ifndef BINARYHEAP_HPP
 #define BINARYHEAP_HPP
 
+#include "ExceptionHandler.hpp"
+#include <assert.h>
 #include <limits.h>
 #include <stdio.h>
-#include <assert.h>
-#include "ExceptionHandler.hpp"
 
-struct Int{
-	int* pointer;
-	int length;
+struct Int {
+    int *pointer;
+    int length;
 };
-struct Float{
-	float* pointer;
-	int length;
+struct Float {
+    float *pointer;
+    int length;
 };
 
 class BinaryHeap {
-public:
-	//constructors
-	BinaryHeap();
-	BinaryHeap(int maxCapacity);
-	BinaryHeap(const int* val1s, Int keys);
-	BinaryHeap(const int* val1s, Int keys, int maxCapacity);
+  public:
+    // constructors
+    BinaryHeap();
+    BinaryHeap(int maxCapacity);
+    BinaryHeap(const int *val1s, Int keys);
+    BinaryHeap(const int *val1s, Int keys, int maxCapacity);
 
-	~BinaryHeap();
+    ~BinaryHeap();
 
+    int size(); // return BinaryHeap size
 
-	int size(); //return BinaryHeap size
+    // functions
+    int insert(int val1, int key); // insert element
+    void deleteMin(); // Remove the smallest item from the priority queue
 
-	//functions
-	int insert(int val1, int key); //insert element
-	void deleteMin(); //Remove the smallest item from the priority queue
+    int getMin();
+    bool isEmpty();   // check if empty
+    void makeEmpty(); // empty heap
 
-	int getMin();
-	bool isEmpty(); //check if empty
-	void makeEmpty(); //empty heap
+    bool binHeapTest(bool verbose);
 
-	bool binHeapTest(bool verbose);
+    std::vector<std::pair<int, int>> *heap;
 
-	std::vector< std::pair<int,int> > *heap;
-
-
-	static const int DEFAULT_CAPACITY = 1000;
-
-
+    static const int DEFAULT_CAPACITY = 1000;
 };
 #endif
