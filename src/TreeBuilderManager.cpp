@@ -100,11 +100,12 @@ std::string TreeBuilderManager::doJob() {
                 (TreeBuilderManager::AlphabetType)seqReader->getAlphType();
             fprintf(stderr, "Calculating distances....\n");
             void *distCalcMem = _mm_malloc(sizeof(DistanceCalculator), 32);
-            DistanceCalculator *distCalc = static_cast<DistanceCalculator*>(distCalcMem);
-            new(distCalc) DistanceCalculator(
-                    seqs, (DistanceCalculator::AlphabetType)alphType,
-                    (DistanceCalculator::CorrectionType)corrType,
-                    seqReader->numSeqs, this->newDistanceMethod);
+            DistanceCalculator *distCalc =
+                static_cast<DistanceCalculator *>(distCalcMem);
+            new (distCalc) DistanceCalculator(
+                seqs, (DistanceCalculator::AlphabetType)alphType,
+                (DistanceCalculator::CorrectionType)corrType,
+                seqReader->numSeqs, this->newDistanceMethod);
             K = seqReader->numSeqs;
             reader = new DistanceReaderExtMem(distCalc, K);
         } else {
@@ -170,11 +171,12 @@ std::string TreeBuilderManager::doJob() {
                 (TreeBuilderManager::AlphabetType)seqReader->getAlphType();
             fprintf(stderr, "Calculating distances....\n");
             void *distCalcMem = _mm_malloc(sizeof(DistanceCalculator), 32);
-            DistanceCalculator *distCalc = static_cast<DistanceCalculator*>(distCalcMem);
-            new(distCalc) DistanceCalculator(
-                    seqs, (DistanceCalculator::AlphabetType)alphType,
-                    (DistanceCalculator::CorrectionType)corrType,
-                    seqReader->numSeqs, this->newDistanceMethod);
+            DistanceCalculator *distCalc =
+                static_cast<DistanceCalculator *>(distCalcMem);
+            new (distCalc) DistanceCalculator(
+                seqs, (DistanceCalculator::AlphabetType)alphType,
+                (DistanceCalculator::CorrectionType)corrType,
+                seqReader->numSeqs, this->newDistanceMethod);
             K = seqReader->numSeqs;
             reader = new DistanceReader(distCalc, K, this->threads);
         } else {

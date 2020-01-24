@@ -366,15 +366,15 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
              i += 8) { // a maximum of 32 vectors allowed not to overflow the
                        // int the numbers are stored in
 
-            seq1 = _mm256_load_si256((__m256i*)&Achar[i]);
-            //seq1 = *(__m256i *)&Achar[i];     This is the previous version
-            seq2 = _mm256_load_si256((__m256i*)&Bchar[i]);
-            //seq2 = *(__m256i *)&Bchar[i];     Previous version
+            seq1 = _mm256_load_si256((__m256i *)&Achar[i]);
+            // seq1 = *(__m256i *)&Achar[i];     This is the previous version
+            seq2 = _mm256_load_si256((__m256i *)&Bchar[i]);
+            // seq2 = *(__m256i *)&Bchar[i];     Previous version
 
-            //gap1 = *(__m256i *)&Agap[i];      Previous version
-            gap1 = _mm256_load_si256((__m256i*)&Agap[i]);
-            //gap2 = *(__m256i *)&Bgap[i];      Previous version
-            gap2 = _mm256_load_si256((__m256i*)&Bgap[i]);
+            // gap1 = *(__m256i *)&Agap[i];      Previous version
+            gap1 = _mm256_load_si256((__m256i *)&Agap[i]);
+            // gap2 = *(__m256i *)&Bgap[i];      Previous version
+            gap2 = _mm256_load_si256((__m256i *)&Bgap[i]);
 
             count256(seq1, seq2, gap1, gap2, tmp, tmp2, tmp3,
                      counts_transversions, counts_transitions, counts_gaps);
@@ -393,19 +393,19 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
 
         counts_transversions = _mm256_xor_si256(counts_transversions, x256);
         counts_transversions = _mm256_sad_epu8(counts_transversions, zero);
-        accum_transversions = _mm256_add_epi16(counts_transversions, accum_transversions);
+        accum_transversions =
+            _mm256_add_epi16(counts_transversions, accum_transversions);
 
         /*gather transition counts*/
         counts_transitions = _mm256_xor_si256(counts_transitions, x256);
         counts_transitions = _mm256_sad_epu8(counts_transitions, zero);
-        accum_transitions = _mm256_add_epi16(counts_transitions, accum_transitions);
-
+        accum_transitions =
+            _mm256_add_epi16(counts_transitions, accum_transitions);
 
         /*gather gaps counts*/
         counts_gaps = _mm256_xor_si256(counts_gaps, x256);
         counts_gaps = _mm256_sad_epu8(counts_gaps, zero);
         accum_gaps = _mm256_add_epi16(counts_gaps, accum_gaps);
-
     }
     // TODO: now pull the 4 values together from the accum vector after while
     // loop breaks do shuffle where you bring 4 and 3 under 2 and 1 and then add
@@ -414,25 +414,28 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
     // it
 
     /*extracting transversion count*/
-    tmp = _mm256_permute2x128_si256(accum_transversions, accum_transversions, 1);
+    tmp =
+        _mm256_permute2x128_si256(accum_transversions, accum_transversions, 1);
     accum_transversions = _mm256_hadd_epi32(accum_transversions, tmp);
-    accum_transversions = _mm256_hadd_epi32(accum_transversions, accum_transversions);
-    accum_transversions = _mm256_hadd_epi32(accum_transversions, accum_transversions);
-    transversions = _mm256_extract_epi32(accum_transversions,0);
+    accum_transversions =
+        _mm256_hadd_epi32(accum_transversions, accum_transversions);
+    accum_transversions =
+        _mm256_hadd_epi32(accum_transversions, accum_transversions);
+    transversions = _mm256_extract_epi32(accum_transversions, 0);
 
     /*extracting transition count*/
     tmp = _mm256_permute2x128_si256(accum_transitions, accum_transitions, 1);
     accum_transitions = _mm256_hadd_epi32(accum_transitions, tmp);
     accum_transitions = _mm256_hadd_epi32(accum_transitions, accum_transitions);
     accum_transitions = _mm256_hadd_epi32(accum_transitions, accum_transitions);
-    transitions = _mm256_extract_epi32(accum_transitions,0);
+    transitions = _mm256_extract_epi32(accum_transitions, 0);
 
     /*extracting gap count*/
     tmp = _mm256_permute2x128_si256(accum_gaps, accum_gaps, 1);
     accum_gaps = _mm256_hadd_epi32(accum_gaps, tmp);
     accum_gaps = _mm256_hadd_epi32(accum_gaps, accum_gaps);
     accum_gaps = _mm256_hadd_epi32(accum_gaps, accum_gaps);
-    gaps = _mm256_extract_epi32(accum_gaps,0);
+    gaps = _mm256_extract_epi32(accum_gaps, 0);
 
     length -= gaps;
 
@@ -442,12 +445,12 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
     if (length == 0) {
         dist = maxscore;
     } else {
-		float p_f = (float)((float)transitions / (float)length);
-		float q_f = (float)((float)transversions / (float)length);
+        float p_f = (float)((float)transitions / (float)length);
+        float q_f = (float)((float)transversions / (float)length);
 
-		if (p_f + q_f == 0)
-			dist = 0;
-		else if (this->corr_type == JukesCantor)
+        if (p_f + q_f == 0)
+            dist = 0;
+        else if (this->corr_type == JukesCantor)
             dist = (float)(-(0.75) *
                            log((double)(1.0 - (4.0 / 3.0) * (p_f + q_f))));
         else if (this->corr_type == Kimura2) {
@@ -1117,10 +1120,9 @@ void DistanceCalculator::getBitsDNA(char *seq, int *size, unsigned int *seqOut,
                         powersOfTwo[((numCharPerElement - i) * 2) - 1]);
         } else if (seq[i] ==
                    '-') { // gap, 1 in one of the 4 lower bits of a byte
-            *gapOut -=
-                powersOfTwo[whereToGo[i / 4] -
-                            (i % 4)]; // get the right place to add and the
-                                      // powers of 2 correspondent
+            *gapOut -= powersOfTwo[whereToGo[i / 4] -
+                                   (i % 4)]; // get the right place to add and
+                                             // the powers of 2 correspondent
         }
     }
     *size -= i;
@@ -1301,10 +1303,14 @@ void DistanceCalculator::convertAllProtein() {
         allocSize += 4 - (allocSize % 4);
     int sizeLeft;
     for (int i = 0; i < this->numberOfSequences; i++) {
-        this->convertedSequences[i] = new unsigned int[allocSize]; // min of 128bits, no need to change
-        //this->convertedSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
-        this->gapInTheSequences[i] = new unsigned int[allocSize]; // min of 128bits, no need to change
-        //this->gapInTheSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
+        this->convertedSequences[i] =
+            new unsigned int[allocSize]; // min of 128bits, no need to change
+        // this->convertedSequences[i] = (unsigned int*)aligned_alloc(64,
+        // allocSize * sizeof(unsigned int));
+        this->gapInTheSequences[i] =
+            new unsigned int[allocSize]; // min of 128bits, no need to change
+        // this->gapInTheSequences[i] = (unsigned int*)aligned_alloc(64,
+        // allocSize * sizeof(unsigned int));
         sizeLeft = this->lengthOfSequences;
         for (int j = 0; j < allocSize; j++) {
             getBitsProteinClustered(
@@ -1359,8 +1365,10 @@ void DistanceCalculator::convertAllDNA() {
         allocSize += 8 - (allocSize % 8);
     int sizeLeft;
     for (int i = 0; i < this->numberOfSequences; i++) {
-        this->convertedSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
-        this->gapInTheSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
+        this->convertedSequences[i] =
+            (unsigned int *)aligned_alloc(64, allocSize * sizeof(unsigned int));
+        this->gapInTheSequences[i] =
+            (unsigned int *)aligned_alloc(64, allocSize * sizeof(unsigned int));
 
         sizeLeft = this->lengthOfSequences;
         for (int j = 0; j < allocSize; j++) {

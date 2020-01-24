@@ -9,13 +9,13 @@
 #define DISTANCECALCULATORAVX_HPP
 
 #include "ExceptionHandler.hpp"
-#include <float.h>
-#include <math.h>
 #include <cstdlib>
-#include <stdlib.h>
+#include <float.h>
 #include <immintrin.h> //avx
+#include <math.h>
 #include <nmmintrin.h> //other?
 #include <stdint.h>
+#include <stdlib.h>
 #include <x86intrin.h> // all SSE/AVX headers which are enabled according to compiler switches
 
 #include <omp.h> /* openmp */
