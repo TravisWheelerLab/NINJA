@@ -368,6 +368,14 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
 
             seq1 = _mm256_load_si256((__m256i*)&Achar[i]);
             //seq1 = *(__m256i *)&Achar[i];     This is the previous version
+
+            /*BUG NOTE: version one (the line below this note) prints out in ints, not longs, to
+             * match what prints out from way down in convertAllDNA - that's how you can see the
+             * every-other-skip pattern*/
+            //fprintf(stderr,"Seq1: %ul %ul %ul %ul %ul %ul %ul %ul %ul %ul %ul %ul %ul %ul %ul %ul \n",
+            fprintf(stderr,"\nSeq0: %llu %llu %llu %llu %llu %llu %llu %llu\n",
+                    seq1[0], seq1[1],  seq1[2],  seq1[3],  seq1[4],  seq1[5],  seq1[6],  seq1[7]/*,
+                    seq1[8], seq1[9], seq1[10], seq1[11], seq1[12], seq1[13], seq1[14], seq1[15]*/);
             seq2 = _mm256_load_si256((__m256i*)&Bchar[i]);
             //seq2 = *(__m256i *)&Bchar[i];     Previous version
 
@@ -379,7 +387,7 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
             count256(seq1, seq2, gap1, gap2, tmp, tmp2, tmp3,
                      counts_transversions, counts_transitions, counts_gaps);
 
-            j += 4;
+            j += 8;
             // TODO: does this increase from +=4 to +=8? TEST
         }
 
@@ -419,6 +427,8 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
     accum_transversions = _mm256_hadd_epi32(accum_transversions, accum_transversions);
     accum_transversions = _mm256_hadd_epi32(accum_transversions, accum_transversions);
     transversions = _mm256_extract_epi32(accum_transversions,0);
+    fprintf(stderr, "Number of transversions: %i\n", transversions);
+
 
     /*extracting transition count*/
     tmp = _mm256_permute2x128_si256(accum_transitions, accum_transitions, 1);
@@ -426,6 +436,7 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
     accum_transitions = _mm256_hadd_epi32(accum_transitions, accum_transitions);
     accum_transitions = _mm256_hadd_epi32(accum_transitions, accum_transitions);
     transitions = _mm256_extract_epi32(accum_transitions,0);
+    fprintf(stderr, "Number of transitions: %i\n", transitions);
 
     /*extracting gap count*/
     tmp = _mm256_permute2x128_si256(accum_gaps, accum_gaps, 1);
@@ -433,14 +444,18 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
     accum_gaps = _mm256_hadd_epi32(accum_gaps, accum_gaps);
     accum_gaps = _mm256_hadd_epi32(accum_gaps, accum_gaps);
     gaps = _mm256_extract_epi32(accum_gaps,0);
+    fprintf(stderr, "Number of gaps: %i\n", gaps);
+
 
     length -= gaps;
+    fprintf(stderr, "Length: %i\n", length);
+
 
     float dist = 0.0f;
     float maxscore = (this->corr_type == none ? 1.0f : 3.0f);
-
     if (length == 0) {
         dist = maxscore;
+        fprintf(stderr, "Max score: %f\n", maxscore);
     } else {
 		float p_f = (float)((float)transitions / (float)length);
 		float q_f = (float)((float)transversions / (float)length);
@@ -453,13 +468,13 @@ double DistanceCalculator::newCalcDNA(int a, int b) {
         else if (this->corr_type == Kimura2) {
             dist = (float)(-0.5 * log(1.0 - 2 * p_f - q_f) -
                            0.25 * log(1.0 - 2 * q_f));
+            fprintf(stderr, "Calculating Kimura distance...\n");
         } else if (this->corr_type == none)
             dist = p_f + q_f;
     }
 
     double dist_d = (dist < maxscore ? dist : maxscore);
-    printf("%f\n", dist);
-    std::cout << dist << std::endl;
+    fprintf(stderr, "%f\n", dist_d);
     return dist_d;
 }
 
@@ -976,8 +991,7 @@ double DistanceCalculator::calc(int a, int b) {
     }
 
     double dist_d = (dist < maxscore ? dist : maxscore);
-    printf("%f\n", dist);
-    std::cout << dist << std::endl;
+    fprintf(stderr, "(in calc) Kimura distance: %f\n", dist);
     return dist_d;
 }
 
@@ -1020,94 +1034,137 @@ void DistanceCalculator::getBitsDNA(char *seq, int *size, unsigned int *seqOut,
      * 0, everything else is 1
      */
 
-    *seqOut = 0x0;
-    *gapOut =
-        0xF0F0F0F; // initialize higher 4 bits as 0, and lower 4 bits as one
+*seqOut = 0x0;
+*gapOut =
+    0xF0F0F0F; // initialize higher 4 bits as 0, and lower 4 bits as one
+
+if (size <= 0) {
+    return;
+}
+
+const static int numCharPerElement = 32; // doubled from 16
+
+// lookup table to figure where should one add the gap value
+const static int whereToGo[] = {
+    27, 19, 11, 3};
+// 27       19        11        3
+// 00011011 00010011 00001011 00000011
+// TODO: won't this lookup table need something added to it?
+
+// TODO: This had to be changed from unsigned int to unsigned long. Will
+// need to trace through and see if anything else needs changed
+const unsigned long powersOfTwo[] = {1,
+                                     2,
+                                     4,
+                                     8,
+                                     16,
+                                     32,
+                                     64,
+                                     128,
+                                     256,
+                                     512,
+                                     1024,
+                                     2048,
+                                     4096,
+                                     8192,
+                                     16384,
+                                     32768,
+                                     65536,
+                                     131072,
+                                     262144,
+                                     524288,
+                                     1048576,
+                                     2097152,
+                                     4194304,
+                                     8388608,
+                                     16777216,
+                                     33554432,
+                                     67108864,
+                                     134217728,
+                                     268435456,
+                                     536870912,
+                                     1073741824,
+                                     2147483648,
+                                     4294967296,
+                                     8589934592,
+                                     17179869184,
+                                     34359738368,
+                                     68719476736,
+                                     137438953472,
+                                     274877906944,
+                                     549755813888,
+                                     1099511627776,
+                                     2199023255552,
+                                     4398046511104,
+                                     8796093022208,
+                                     17592186044416,
+                                     35184372088832,
+                                     70368744177664,
+                                     140737488355328,
+                                     281474976710656,
+                                     562949953421312,
+                                     1125899906842624,
+                                     2251799813685248,
+                                     4503599627370496,
+                                     9007199254740992,
+                                     18014398509481984,
+                                     36028797018963968,
+                                     72057594037927936,
+                                     144115188075855872,
+                                     288230376151711744,
+                                     576460752303423488,
+                                     1152921504606846976,
+                                     2305843009213693952,
+                                     4611686018427387904,
+                                     9223372036854775808};
+//BUG NOTE: I changed this to a long, hoping it would fix the skipping-every-other-block issue - it did not
+unsigned long i;
+
+for (i = 0; i < *size && i < numCharPerElement; i++) { // goes until the sequence ends or 16 characters are converted
+    // TODO: needs to be changed to 32 characters converted
+    if (seq[i] == 'C') { // 01
+        *seqOut += powersOfTwo[((numCharPerElement - i) * 2) - 2];
+    } else if (seq[i] == 'G') { // 10
+        *seqOut += powersOfTwo[((numCharPerElement - i) * 2) - 1];
+    } else if (seq[i] == 'T') { // 11
+        *seqOut += (powersOfTwo[((numCharPerElement - i) * 2) - 2] +
+                    powersOfTwo[((numCharPerElement - i) * 2) - 1]);
+    } else if (seq[i] ==
+               '-') { // gap, 1 in one of the 4 lower bits of a byte
+        *gapOut -=
+            powersOfTwo[whereToGo[i / 8] -
+                        (i % 8)]; // get the right place to add and the
+                                  // powers of 2 correspondent
+    }
+}
+
+*size -= i;
+
+    //BUG NOTE: Here is Michel's original (SSE) bitpacking step. It works, but only in the smaller SSE sized chunks
+    /**seqOut = 0x0;
+    *gapOut = 0xF0F0F0F; // initialize higher 4 bits as 0, and lower 4 bits as one
 
     if (size <= 0) {
         return;
     }
 
-    const static int numCharPerElement = 32; // doubled from 16
+    const static int numCharPerElement = 16;
 
     const static int whereToGo[] = {
-        27, 19, 11,
-        3}; // lookup table to figure where should one add the gap value
-    // 27       19        11        3
-    // 00011011 00010011 00001011 00000011
-    // TODO: won't this lookup table need something added to it?
+            27, 19, 11, 3}; // lookup table to figure where should one add the gap value
 
-    // TODO: This had to be changed from unsigned int to unsigned long. Will
-    // need to trace through and see if anything else needs changed
-    const unsigned long powersOfTwo[] = {1,
-                                         2,
-                                         4,
-                                         8,
-                                         16,
-                                         32,
-                                         64,
-                                         128,
-                                         256,
-                                         512,
-                                         1024,
-                                         2048,
-                                         4096,
-                                         8192,
-                                         16384,
-                                         32768,
-                                         65536,
-                                         131072,
-                                         262144,
-                                         524288,
-                                         1048576,
-                                         2097152,
-                                         4194304,
-                                         8388608,
-                                         16777216,
-                                         33554432,
-                                         67108864,
-                                         134217728,
-                                         268435456,
-                                         536870912,
-                                         1073741824,
-                                         2147483648,
-                                         4294967296,
-                                         8589934592,
-                                         17179869184,
-                                         34359738368,
-                                         68719476736,
-                                         137438953472,
-                                         274877906944,
-                                         549755813888,
-                                         1099511627776,
-                                         2199023255552,
-                                         4398046511104,
-                                         8796093022208,
-                                         17592186044416,
-                                         35184372088832,
-                                         70368744177664,
-                                         140737488355328,
-                                         281474976710656,
-                                         562949953421312,
-                                         1125899906842624,
-                                         2251799813685248,
-                                         4503599627370496,
-                                         9007199254740992,
-                                         18014398509481984,
-                                         36028797018963968,
-                                         72057594037927936,
-                                         144115188075855872,
-                                         288230376151711744,
-                                         576460752303423488,
-                                         1152921504606846976,
-                                         2305843009213693952,
-                                         4611686018427387904,
-                                         9223372036854775808};
+    const unsigned int powersOfTwo[] = {
+            1,          2,         4,        8,         16,        32,
+            64,         128,       256,      512,       1024,      2048,
+            4096,       8192,      16384,    32768,     65536,     131072,
+            262144,     524288,    1048576,  2097152,   4194304,   8388608,
+            16777216,   33554432,  67108864, 134217728, 268435456, 536870912,
+            1073741824, 2147483648};
+
     int i;
 
-    for (i = 0; i < *size && i < numCharPerElement;
-         i++) { // goes until the sequence ends or 16 characters are converted
-        // TODO: needs to be changed to 32 characters converted
+    // goes until the sequence ends or 16 characters are converted
+    for (i = 0; i < *size && i < numCharPerElement; i++) {
         if (seq[i] == 'C') { // 01
             *seqOut += powersOfTwo[((numCharPerElement - i) * 2) - 2];
         } else if (seq[i] == 'G') { // 10
@@ -1118,12 +1175,12 @@ void DistanceCalculator::getBitsDNA(char *seq, int *size, unsigned int *seqOut,
         } else if (seq[i] ==
                    '-') { // gap, 1 in one of the 4 lower bits of a byte
             *gapOut -=
-                powersOfTwo[whereToGo[i / 4] -
-                            (i % 4)]; // get the right place to add and the
-                                      // powers of 2 correspondent
+                    powersOfTwo[whereToGo[i / 4] -
+                                (i % 4)]; // get the right place to add and and the
+            // powers of 2 correspondent
         }
     }
-    *size -= i;
+    *size -= i;*/
 }
 void DistanceCalculator::generateProteinClusterDict(int *protein_dictionary) {
 
@@ -1361,14 +1418,18 @@ void DistanceCalculator::convertAllDNA() {
     for (int i = 0; i < this->numberOfSequences; i++) {
         this->convertedSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
         this->gapInTheSequences[i] = (unsigned int*)aligned_alloc(64, allocSize * sizeof(unsigned int));
-
         sizeLeft = this->lengthOfSequences;
+        fprintf(stderr, "Size is %i \n", sizeLeft);
+        fprintf(stderr, "Seq %i is: \n", i);
+
         for (int j = 0; j < allocSize; j++) {
             getBitsDNA((char *)(this->A[i]->c_str() +
                                 (this->lengthOfSequences - sizeLeft)),
                        &sizeLeft, &(this->convertedSequences[i][j]),
                        &(this->gapInTheSequences[i][j]));
+            fprintf(stderr, "%llu ", convertedSequences[i][j]);
         }
+        fprintf(stderr, "\n");
     }
 
     if (this->A != NULL) {

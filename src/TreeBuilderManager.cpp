@@ -67,9 +67,9 @@ std::string TreeBuilderManager::doJob() {
     maxMemory = sysconf(_SC_PAGE_SIZE)*sysconf(_SC_AVPHYS_PAGES);
     #endif
     */
-
     SequenceFileReader *seqReader = NULL;
     if (!this->method.compare("extmem")) {
+        fprintf(stderr, "In !extmem\n");
         if (maxMemory < 1900000000) {
             fprintf(stderr,
                     "Warning: using an external-memory variant of NINJA with "

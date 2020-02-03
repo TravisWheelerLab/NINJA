@@ -57,6 +57,7 @@ class DistanceCalculator {
 
     double testDifferenceCluster(int a, int b);
 
+    //BUG NOTE: I believe these will have to be changed to longs also - but that has far-reaching consequences
     unsigned int **convertedSequences;
     unsigned int **gapInTheSequences;
 
