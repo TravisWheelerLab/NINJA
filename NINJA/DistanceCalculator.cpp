@@ -92,204 +92,158 @@ int* DistanceCalculator::getInverseAlphabet (std::string alph, int length) {
 	return inv_alph;
 }
 inline void DistanceCalculator::count128(register __m128i &seq1, register __m128i &seq2, register __m128i &gap1, register __m128i &gap2, register __m128i &tmp, register __m128i &tmp2, register __m128i &tmp3, register __m128i &count_transversions, register __m128i &count_transitions, register __m128i &count_gaps){
-	/*
-	 * Maps and their description:
-	 *
-	 * GAPS_COUNT_MASK (count for gaps, basically how many 0`s there are)
-	 * 	0000	4
-	 * 	0001	3
-	 * 	0010	3
-	 * 	0011	2
-	 * 	0100	3
-	 * 	0101	2
-	 * 	0110	2
-	 * 	0111	1
-	 * 	1000	3
-	 * 	1001	2
-	 * 	1010	2
-	 * 	1011	1
-	 * 	1100	2
-	 * 	1101	1
-	 * 	1110	1
-	 * 	1111	0
-	 *
-	 * 	DECOMPRESSED_GAPS (transform 1-bit representation to 2-bits)
-	 *
-	 * 	0000	00 00 00 00
-	 * 	0001	00 00 00 11
-	 * 	0010	00 00 11 00
-	 * 	0011	00 00 11 11
-	 * 	0100	00 11 00 00
-	 * 	0101	00 11 00 11
-	 * 	0110	00 11 11 00
-	 * 	0111	00 11 11 11
-	 * 	1000	11 00 00 00
-	 * 	1001	11 00 00 11
-	 * 	1010	11 00 11 00
-	 * 	1011	11 00 11 11
-	 * 	1100	11 11 00 00
-	 * 	1101	11 11 00 11
-	 * 	1110	11 11 11 00
-	 * 	1111	11 11 11 11
-	 *
-	 * 	COUNTS_MASK (clear upper 4 bits)
-	 *
-	 * 	0000 1111
-	 *
-	 * 	TRANSITIONS_MASK (count 10`s)
-	 *
-	 * 	0000	0
-	 * 	0001	0
-	 * 	0010	1
-	 * 	0011	0
-	 * 	0100	0
-	 * 	0101	0
-	 * 	0110	1
-	 * 	0111	0
-	 * 	1000	1
-	 * 	1001	1
-	 * 	1010	2
-	 * 	1011	1
-	 * 	1100	0
-	 * 	1101	0
-	 * 	1110	1
-	 * 	1111	0
-	 *
-	 * 	TRANSVERSIONS_MASK (count 01`s and 11`s)
-	 *
-	 * 	0000	0
-	 * 	0001	1
-	 * 	0010	0
-	 * 	0011	1
-	 * 	0100	1
-	 * 	0101	2
-	 * 	0110	1
-	 * 	0111	2
-	 * 	1000	0
-	 * 	1001	1
-	 * 	1010	0
-	 * 	1011	1
-	 * 	1100	1
-	 * 	1101	2
-	 * 	1110	1
-	 * 	1111	2
-	 */
+    /*
+     * A = 00
+     * C = 01
+     * G = 10
+     * T = 11
+     *
+     *
+     * Explanation of what`s coded below:
+     *
+     *
+     *
+     * TMP = XOR (Seq1, Seq2)
+     *
+     * After the XOR we can see the following pattern
+     *
+     * Transition = 10
+     * Transversion = 11,01
+     *
+     * However, there might be some misleading counts because of gaps (currently encoded the same way as A, which is 00), which forces us to use
+     * a mask which accounts for place where there are gaps and places where there are not. To account for that we do the following:
+     *
+     * TMP2 = AND(Gap1, Gap2)
+     *
+     * We can now use a count process based on SHUFFLE to figure out how many gaps there are:
+     *
+     * TMP3 = SHUFFLE(GAPS_COUNT_MASK, TMP2)
+     *
+     * COUNTS_GAP = ADD(COUNTS_GAP, TMP3)
+     *
+     * Now we have added the 8-bit count bins to COUNTS_GAP. We can then proceed to calculate the transitions and transversions:
+     *
+     * TMP3 = SHUFFLE(DECOMPRESSED_GAPS, TPM2) //we use the 0000 - 1 bit representation per gap, and map it to a 2 bit representation of the gaps, with 11 as gap, and 00 as not-gap
+     *
+     * Now that we have the right mask we AND the mask and the result of the XOR:
+     *
+     * TMP = AND(TMP, TMP3)
+     *
+     * With the right vector in hands we will calculate transitions using the SHUFFLE count approach:
+     *
+     * TMP2 = AND(TMP, COUNTS_MASK) //the mask is 0000 1111 , and it basically removes the higher 4 bits
+     *
+     * TMP3 = SHIFT_RIGHT(TMP, 4)
+     *
+     * TMP3 = AND(TMP3, COUNTS_MASK) // same here, but then we have the higher 4 bits, originally, in the lower 4 bits now
+     *
+     * Finally get the transitions count:
+     *
+     * TMP = SHUFFLE(TRANSITIONS_MASK, TMP2) //get the counts
+     *
+     * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
+     *
+     * TMP = SHUFFLE(TRANSITIONS_MASK, TMP3) //get the counts
+     *
+     * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
+     *
+     *
+     * And then the same happens to transversions:
+     *
+     * TMP = SHUFFLE(TRANSVERSIONS_MASK, TMP2) //get the counts
+     *
+     * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
+     *
+     * TMP = SHUFFLE(TRANSVERSIONS_MASK, TMP3) //get the counts
+     *
+     * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
+     *
+     *
+     * And that`s it. We can calculate 64 characters in 17 operations. There is also a gather/extract part after all vectors which is 5 instructions
+     * for each count, which equals 15.
+     *
+     */
 
+
+    // Begin by doing an xor seq1 and seq2, although this isn't used yet
 	tmp = _mm_xor_si128(seq1, seq2);
+
+    /* After the XOR we can see the following pattern:
+     * Transition = 10, Transversion = 11,01
+     * However, there might be some misleading counts because of gaps
+     * (currently encoded the same way as A, which is 00), which forces us
+     * to use a mask which accounts for place where there are gaps and places where
+     * there are not. To account for that we do the following:
+     * AND gap1 and gap2 together: */
 	tmp2  = _mm_and_si128(gap1,gap2);
 
+    /*  We can now use a count process based on SHUFFLE to figure out how many
+     * gaps there are, with 0s being gaps and 1s not a gap:
+     * gaps_count_mask = {0	   1    1    2    1    2    2    3    1    2    2    3    2    3    3    4}
+                       = 1111 1110 1101 1100 1011 1010 1001 1000 0111 0110 0101 0100 0011 0010 0001 0000 */
 	tmp3 = _mm_shuffle_epi8(GAPS_COUNT_MASK, tmp2);
 
+    // add this to count_gaps to accumulate the number of gaps with each iteration
 	count_gaps = _mm_add_epi8(count_gaps, tmp3);
 
+    /* Now we have added the 8-bit count bins to COUNTS_GAP. We can then proceed
+     * to calculate the transitions and transversions: we use the 0000 - 1 bit
+     * representation per gap, and map it to a 2 bit representation of the gaps,
+     * with 00 as gap, and 11 as not-gap:
+     * DECOMPRESSED_GAPS = {255  252  243  240    207  204  195  192  63   60   51   48   15   12   3    0}
+                         = 1111 1110 1101   1100 1011 1010 1001 1000 0111 0110 0101 0100 0011 0010 0001 0000 */
 	tmp3 = _mm_shuffle_epi8(DECOMPRESSED_GAPS, tmp2);
 
 
-
+    // Now that we have the right mask we AND the mask and the result of the XOR:
 	tmp  = _mm_and_si128(tmp,tmp3);
 
-
+    /* With the right vector in hands we will calculate transitions using a
+     * shuffle count approach: COUNTS_MASK is 0000 1111, and it ignores the
+     * higher 4 bits */
 	tmp2  = _mm_and_si128(tmp,COUNTS_MASK);
 
+    // now shift right by four
 	tmp3 = _mm_srli_epi64(tmp,4);
 
+    // COUNTS_MASK now masks what were the lower four bits and allows you to look at the higher 4 bits
 	tmp3 = _mm_and_si128(tmp3,COUNTS_MASK);
 
-
+    /* Now use shuffle to look at the lower 4 bit representation with the
+     * transitions mask, which looks for the 10 transition pattern - this will give
+     * you the number of transitions in the lower 4 bits
+     * transitions_mask = 0     1     0    0    1    2    1    1    0    1    0    0    0    1    0    0
+                        = 1111 1110 1101 1100 1011 1010 1001 1000 0111 0110 0101 0100 0011 0010 0001 0000 */
 	tmp = _mm_shuffle_epi8(TRANSITIONS_MASK, tmp2);
 
-	count_transitions = _mm_add_epi8(count_transitions, tmp);
+    // Accumulate that number in the count_transitions vector
+    count_transitions = _mm_add_epi8(count_transitions, tmp);
 
+    // Now use shuffle to look at the higher 4 bits and count the number of 10 patterns
 	tmp = _mm_shuffle_epi8(TRANSITIONS_MASK, tmp3);
 
+    // Once again, add that number in to count_transitions to accumulate in each iteration
 	count_transitions = _mm_add_epi8(count_transitions, tmp);
 
 
-
+    /* Now do the same process to get transversion counts!
+     * transversions_mask = 2     1    2    1    1    0    1    0    2    1    2    1   1    0    1    0
+                          = 1111 1110 1101 1100 1011 1010 1001 1000 0111 0110 0101 0100 0011 0010 0001 0000
+    * Once again, this mask is looking in the lower four bits for the tranversion patterns = 11, 01 */
 	tmp = _mm_shuffle_epi8(TRANSVERSIONS_MASK, tmp2);
 
+    // Accumulate that number in count_transversions vector
 	count_transversions = _mm_add_epi8(count_transversions, tmp);
 
+	// Now count tranversions in the higher four bits
 	tmp = _mm_shuffle_epi8(TRANSVERSIONS_MASK, tmp3);
 
+	// Add to vector!
 	count_transversions = _mm_add_epi8(count_transversions, tmp);
 
-
+    // Done! 128 characters counted in 17 operations, not counting the gather/extract portion done in newCalcDNA
 }
 double DistanceCalculator::newCalcDNA(int a, int b){
-	/*
-	 * A = 00
-	 * C = 01
-	 * G = 10
-	 * T = 11
-	 *
-	 *
-	 * Explanation of what`s coded below:
-	 *
-	 *
-	 *
-	 * TMP = XOR (Seq1, Seq2)
-	 *
-	 * After the XOR we can see the following pattern
-	 *
-	 * Transition = 10
-	 * Transversion = 11,01
-	 *
-	 * However, there might be some misleading counts because of gaps (currently encoded the same way as A, which is 00), which forces us to use
-	 * a mask which accounts for place where there are gaps and places where there are not. To account for that we do the following:
-	 *
-	 * TMP2 = AND(Gap1, Gap2)
-	 *
-	 * We can now use a count process based on SHUFFLE to figure out how many gaps there are:
-	 *
-	 * TMP3 = SHUFFLE(GAPS_COUNT_MASK, TMP2)
-	 *
-	 * COUNTS_GAP = ADD(COUNTS_GAP, TMP3)
-	 *
-	 * Now we have added the 8-bit count bins to COUNTS_GAP. We can then proceed to calculate the transitions and transversions:
-	 *
-	 * TMP3 = SHUFFLE(DECOMPRESSED_GAPS, TPM2) //we use the 0000 - 1 bit representation per gap, and map it to a 2 bit representation of the gaps, with 11 as gap, and 00 as not-gap
-	 *
-	 * Now that we have the right mask we AND the mask and the result of the XOR:
-	 *
-	 * TMP = AND(TMP, TMP3)
-	 *
-	 * With the right vector in hands we will calculate transitions using the SHUFFLE count approach:
-	 *
-	 * TMP2 = AND(TMP, COUNTS_MASK) //the mask is 0000 1111 , and it basically removes the higher 4 bits
-	 *
-	 * TMP3 = SHIFT_RIGHT(TMP, 4)
-	 *
-	 * TMP3 = AND(TMP3, COUNTS_MASK) // same here, but then we have the higher 4 bits, originally, in the lower 4 bits now
-	 *
-	 * Finally get the transitions count:
-	 *
-	 * TMP = SHUFFLE(TRANSITIONS_MASK, TMP2) //get the counts
-	 *
-	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
-	 *
-	 * TMP = SHUFFLE(TRANSITIONS_MASK, TMP3) //get the counts
-	 *
-	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
-	 *
-	 *
-	 * And then the same happens to transversions:
-	 *
-	 * TMP = SHUFFLE(TRANSVERSIONS_MASK, TMP2) //get the counts
-	 *
-	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
-	 *
-	 * TMP = SHUFFLE(TRANSVERSIONS_MASK, TMP3) //get the counts
-	 *
-	 * TRANSITIONS_COUNT = ADD(TRANSITIONS_COUNT, TMP) //add to the transitions vector
-	 *
-	 *
-	 * And that`s it. We can calculate 64 characters in 17 operations. There is also a gather/extract part after all vectors which is 5 instructions
-	 * for each count, which equals 15.
-	 *
-	 */
-
-
 	register __m128i seq1;
 	register __m128i seq2;
 	register __m128i gap1;
@@ -337,7 +291,7 @@ double DistanceCalculator::newCalcDNA(int a, int b){
 				gap1 = *(__m128i*)&Agap[i];
 				gap2 = *(__m128i*)&Bgap[i];
 
-				count128(seq1,seq2,gap1, gap2, tmp,tmp2,tmp3,counts_transversions,counts_transitions, counts_gaps);
+				count128(seq1, seq2, gap1, gap2, tmp, tmp2, tmp3, counts_transversions, counts_transitions, counts_gaps);
 
 
 				j+=4;
@@ -941,12 +895,12 @@ void DistanceCalculator::getBitsDNA(char* seq, int* size, unsigned int *seqOut, 
 	 *
 	 * The gaps (represented in ASCII as '-' ) are stored in gapOut, in the following manner:
 	 *
-	 * In each byte, the higher four bits are 0, and the lower 4 bits are either 1 or 0 if there is a gap or not, respectively.
-	 *
+	 * In each byte, the higher four bits are 0, and the lower 4 bits are either 0 or 1 if there is a gap or not, respectively.
+	 * i.e. gaps are encoded as 0, everything else is 1
 	 */
 
 	*seqOut = 0x0;
-	*gapOut = 0xF0F0F0F; // initialize higher 4 bits as 0, and lower 4 bits as one
+	*gapOut = 0xF0F0F0F; // initialize higher 4 bits as 0, and lower 4 bits as one (meaning default state is no gaps)
 
 	if(size<=0){
 		return;
@@ -1154,7 +1108,89 @@ void DistanceCalculator::convertAllProtein(){
 
 }
 void DistanceCalculator::convertAllDNA(){
-	
+    /*
+     * Maps and their description:
+     *
+     * GAPS_COUNT_MASK (count for gaps, basically how many 0`s there are)
+     * 	0000	4
+     * 	0001	3
+     * 	0010	3
+     * 	0011	2
+     * 	0100	3
+     * 	0101	2
+     * 	0110	2
+     * 	0111	1
+     * 	1000	3
+     * 	1001	2
+     * 	1010	2
+     * 	1011	1
+     * 	1100	2
+     * 	1101	1
+     * 	1110	1
+     * 	1111	0
+     *
+     * 	DECOMPRESSED_GAPS (transform 1-bit representation to 2-bits)
+     *
+     * 	0000	00 00 00 00
+     * 	0001	00 00 00 11
+     * 	0010	00 00 11 00
+     * 	0011	00 00 11 11
+     * 	0100	00 11 00 00
+     * 	0101	00 11 00 11
+     * 	0110	00 11 11 00
+     * 	0111	00 11 11 11
+     * 	1000	11 00 00 00
+     * 	1001	11 00 00 11
+     * 	1010	11 00 11 00
+     * 	1011	11 00 11 11
+     * 	1100	11 11 00 00
+     * 	1101	11 11 00 11
+     * 	1110	11 11 11 00
+     * 	1111	11 11 11 11
+     *
+     * 	COUNTS_MASK (clear upper 4 bits)
+     *
+     * 	0000 1111
+     *
+     * 	TRANSITIONS_MASK (count 10`s)
+     *
+     * 	0000	0
+     * 	0001	0
+     * 	0010	1
+     * 	0011	0
+     * 	0100	0
+     * 	0101	0
+     * 	0110	1
+     * 	0111	0
+     * 	1000	1
+     * 	1001	1
+     * 	1010	2
+     * 	1011	1
+     * 	1100	0
+     * 	1101	0
+     * 	1110	1
+     * 	1111	0
+     *
+     * 	TRANSVERSIONS_MASK (count 01`s and 11`s)
+     *
+     * 	0000	0
+     * 	0001	1
+     * 	0010	0
+     * 	0011	1
+     * 	0100	1
+     * 	0101	2
+     * 	0110	1
+     * 	0111	2
+     * 	1000	0
+     * 	1001	1
+     * 	1010	0
+     * 	1011	1
+     * 	1100	1
+     * 	1101	2
+     * 	1110	1
+     * 	1111	2
+     */
+
 	long int k = this->lengthOfSequences;
 	long int n = this->numberOfSequences;
 	long int res = (k*(n-1)*n)/(long int)2; //number of pairs
