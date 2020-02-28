@@ -128,7 +128,7 @@ int main(int argc, char**argv) {
 
     	//right now it has to be a fixed length instead of chosen by user at runtime, 
     	//otherwise the char arrays below aren't able to be initialized with that size
-        const unsigned long length = 1024;
+        const unsigned long length = 97;
         const unsigned int transitions = atoi(argv[1]);
         const unsigned int transversions = atoi(argv[2]);
         const unsigned int transitions2 = atoi(argv[3]);
