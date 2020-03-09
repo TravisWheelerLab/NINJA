@@ -7,8 +7,6 @@
 #include "TreeBuilderManager.hpp"
 #include "ArgumentHandler.hpp"
 #include "BinaryHeap.hpp"
-#include <iostream>
-
 
 #ifdef LINUX //TODO: include support for multiple plataforms
 #include <unistd.h>

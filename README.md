@@ -19,4 +19,17 @@ To contribute to NINJA development, you want to be on the
 feature branches. For more information, see the
 [NINJA wiki](https://github.com/TravisWheelerLab/NINJA/wiki).
 
+  
+      
+####AFTER CMAKE CONVERSION 
+######To build it: (from root NINJA folder)
+```bash
+    cd build  
+    cmake .. -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"   
+    make all  
+```
+      
+######Then to run:   
+    cd ..   
+    build/src/NINJA_run --in src/fixtures/10.fa --out_type d --corr_type k  
 

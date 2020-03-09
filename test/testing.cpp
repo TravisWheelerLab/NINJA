@@ -1,3 +1,5 @@
+// Created by Sarah Walling 3/2020
+
 #include <math.h>
 #include <float.h>
 #include <stdint.h>
@@ -9,7 +11,7 @@
 #include <bitset>
 #include <algorithm>
 #include <map>
-/*This script generates a random alignment of length 1024 nucleotides with the user's choice 
+/*This script generates a random alignment of length 1024 nucleotides with the user's choice
  * of number of transitions and transversions introduced into the second sequence
  * Currently does not include any gaps - they are ignored in kimura calculation anyway, so don't matter*/
 
@@ -34,12 +36,11 @@ int find_index(int length, std::map<int, bool> used){
     else {
         index = find_index(length, used);
     }
-    //return -1;
 }
 
-//because each nucleotide has multiple choices for transversions,
-//this function randomly chooses between the two "paths" and then
-//returns a different character to induce that transversion
+/*Because each nucleotide has multiple choices for transversions,
+* this function randomly chooses between the two "paths" and then
+* returns a different character to induce that transversion*/
 unsigned char transversion(char nuc) {
     int num = rand() % 2;
     if(num == 0){
@@ -71,8 +72,8 @@ unsigned char transversion(char nuc) {
 }
 
 
-//transitions are much simpler, so this just returns the correct nucleotide for
-//inducing a transition in a given nucleotide
+/*Transitions are much simpler, so this just returns the correct nucleotide for
+* inducing a transition in a given nucleotide*/
 unsigned char transition(char nuc) {
     //A-G   C-T
     if (nuc == 'G')
@@ -126,8 +127,8 @@ void check_index(char nuc1, char nuc2){
 int main(int argc, char**argv) {
     if (argc == 5) {
 
-    	//right now it has to be a fixed length instead of chosen by user at runtime, 
-    	//otherwise the char arrays below aren't able to be initialized with that size
+        //right now it has to be a fixed length instead of chosen by user at runtime,
+        //otherwise the char arrays below aren't able to be initialized with that size
         const unsigned long length = 97;
         const unsigned int transitions = atoi(argv[1]);
         const unsigned int transversions = atoi(argv[2]);
@@ -138,6 +139,7 @@ int main(int argc, char**argv) {
         char seq1[length] = {};
         char seq2[length] = {};
         char seq3[length] = {};
+        std::string names[3] = {"Seq1", "Seq2", "Seq3"};
 
         //this is a secondary structure used to just denote when a given index has already been
         //chosen as a spot to induce a transition/transversion - no "double dipping" the indices
@@ -175,8 +177,8 @@ int main(int argc, char**argv) {
 
         }
 
-		//this loop goes through and induces the number of transversions given into sequence 2
-		//as an index is chosen to induce a transversion, it is marked off in the map structure
+        //this loop goes through and induces the number of transversions given into sequence 2
+        //as an index is chosen to induce a transversion, it is marked off in the map structure
         //std::cout << "Transversions:" << std::endl;
         for (int n = 0; n < transversions; ++n){
             int index = find_index(length, usedSeq2);
@@ -189,14 +191,14 @@ int main(int argc, char**argv) {
         //print out seq2 and create seq3 from the final state of seq2 after mutations
         std::cout << ">Seq2" << std::endl;
         for(int i = 0; i < length; i++){
-        	seq3[i] = seq2[i]; 
-        	usedSeq3.insert(std::pair<int, bool>(i, false));
+            seq3[i] = seq2[i];
+            usedSeq3.insert(std::pair<int, bool>(i, false));
             std::cout << seq2[i] << "";
         }
         std::cout << "\n" << std::endl;
 
 
-		//now induce mutations into sequence 3 the same way we did with sequence 2!
+        //now induce mutations into sequence 3 the same way we did with sequence 2!
         //std::cout << "Transitions:" << std::endl;
         for (int n = 0; n < transitions2; ++n){
             int index = find_index(length, usedSeq3);
@@ -207,7 +209,7 @@ int main(int argc, char**argv) {
 
         }
 
-		//this loop goes through and induces the number of transversions given into sequence 3
+        //this loop goes through and induces the number of transversions given into sequence 3
         //std::cout << "Transversions:" << std::endl;
         for (int n = 0; n < transversions2; ++n){
             int index = find_index(length, usedSeq3);
@@ -217,7 +219,7 @@ int main(int argc, char**argv) {
             //std::cout << search->first << std::endl;
         }
 
-        //print out seq3 
+        //print out seq3
         std::cout << ">Seq3" << std::endl;
         for(int i = 0; i < length; i++){
             std::cout << seq3[i] << "";
@@ -258,8 +260,20 @@ int main(int argc, char**argv) {
         std::cout << "Seq2 " << dist1_2 << " " << "0.000000" << " " << dist2_3 << std::endl;
         std::cout << "Seq3 " << dist1_3 << " " << dist2_3 << " " << "0.000000" << std::endl;
 
-        //std::cout << "Gaps:" << "";
-        //std::cout << gaps << std::endl;
+
+/*        fprintf(outFile, "%d\n", this->K); //number of sequences
+        for (int i=0; i<this->K; i++){
+            fprintf(outFile, "%s", names[i]->c_str());
+            for (int j=0; j<i; j++){
+                fprintf(outFile," %.6lf",distances[j][i-j-1]);
+            }
+            fprintf(outFile," 0.000000");
+            for (int j=i+1; j<this->K; j++){
+                fprintf(outFile," %.6lf",distances[i][j-i-1]);
+            }
+            fprintf(outFile,"\n");
+        }*/
+
     }
     else
         std::cerr << "usage: ninja-gen <seq2 transitions> <seq2 transversions> <seq3 transitions> <seq3 transversions>" << std::endl;

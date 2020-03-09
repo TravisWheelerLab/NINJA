@@ -4,6 +4,7 @@
  *  Created on: Jan 24, 2016
  *      Author: michel
  */
+#include <iostream>
 #include "ArgumentHandler.hpp"
 
 //TreeBuilder *treebuilder = new TreeBuilder();

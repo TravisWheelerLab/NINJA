@@ -159,7 +159,7 @@ void DistanceReader::readAndWrite(std::string **names, FILE* outFile){ //possibl
 }
 
 void DistanceReader::write(FILE* outFile,double** distances,std::string** names){
-	fprintf(outFile, "%d\n", this->K); //number of sequences
+    fprintf(outFile, "%d\n", this->K); //number of sequences
 	for (int i=0; i<this->K; i++){
 		fprintf(outFile, "%s", names[i]->c_str());
 		for (int j=0; j<i; j++){
@@ -172,6 +172,7 @@ void DistanceReader::write(FILE* outFile,double** distances,std::string** names)
 		fprintf(outFile,"\n");
 	}
 }
+
 float DistanceReader::atoi (char* in, int end){
 	float val = 0.0;
 	int pos = end;

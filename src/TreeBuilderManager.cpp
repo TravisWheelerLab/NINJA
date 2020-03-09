@@ -171,10 +171,10 @@ std::string TreeBuilderManager::doJob(){
 				this->names[i] = new std::string();
 		}
 
-		distances = new int*[K];
-		for (int i=0; i<K; i++) {
-			distances[i] = new int[K - i - 1];
-		}
+        distances = new int*[K];
+        for (int i=0; i<K; i++) {
+            distances[i] = new int[K - i - 1];
+        }
 
 
 		if(this->outType == dist){
