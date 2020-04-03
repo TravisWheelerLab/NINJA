@@ -5,8 +5,6 @@
 #include "gtest/gtest.h"
 #include "DistanceCalculator.hpp"
 #include "TreeBuilderManager.hpp"
-#include "ArgumentHandler.hpp"
-#include "BinaryHeap.hpp"
 #include <math.h>
 #include <float.h>
 #include <stdint.h>
@@ -37,6 +35,7 @@ int find_index(int length, std::map<int, bool> used){
     else {
         index = find_index(length, used);
     }
+    return -1;
 }
 
 /*Because each nucleotide has multiple choices for transversions,
@@ -88,7 +87,7 @@ std::basic_string<char> transition(std::basic_string<char> nuc) {
     return 0;
 }
 
-/*this method checks the given index between seq1 and seq3 because they are the only pair of sequences
+/*This method checks the given index between seq1 and seq3 because they are the only pair of sequences
 which the number of transitions/transversions is not known between*/
 void check_index(std::basic_string<char> nuc1, std::basic_string<char> nuc2){
     if(nuc1 == nuc2){
@@ -126,7 +125,7 @@ void check_index(std::basic_string<char> nuc1, std::basic_string<char> nuc2){
     }
 }
 //This function does the kimura2 distance calc - removed from generation function to do its own thing here
-double** kimura_calc(double** distances, const unsigned int transitions, const unsigned int transversions, const unsigned int transitions2,
+void kimura_calc(double** distances, const unsigned int transitions, const unsigned int transversions, const unsigned int transitions2,
                      const unsigned int transversions2, const unsigned long length){
     //compute p_f and q_f for distance between seq1 and seq2
     float p_f = (float)((float)transitions / (float)length);
@@ -151,8 +150,6 @@ double** kimura_calc(double** distances, const unsigned int transitions, const u
     //compute distance
     distances[0][2] = (float)(-0.5 * log(1.0 - 2*p_f - q_f) - 0.25 * log( 1.0-2*q_f ));
     distances[2][0] = (float)(-0.5 * log(1.0 - 2*p_f - q_f) - 0.25 * log( 1.0-2*q_f ));
-
-    return distances;
 }
 
 void generate_all(std::string* seq1, std::string* seq2, std::string* seq3, const unsigned long length, int allowed_mutations, double** distances/*, std::ofstream outfile*/){
@@ -220,11 +217,12 @@ void generate_all(std::string* seq1, std::string* seq2, std::string* seq3, const
         search->second = true;
     }
 
-    //now we have to actually walk along and compare seq1 and seq3, because we don"t have exact count of transitions/transversions
+    //now we have to actually walk along and compare seq1 and seq3, because we don't have exact count of transitions/transversions
     for (int n = 0; n < length; ++n){
         check_index(seq1[n], seq3[n]);
     }
-    return;
+    //now call the distance calculation method and fill in the distance matrix!
+    kimura_calc(distances, transitions, transversions, transitions2, transversions2, length);
 }
 
 TEST(DistCalcTest, DistMatrix10){
@@ -258,25 +256,32 @@ TEST(DistCalcTest, DistMatrix10){
 
     //now do random generation for comparison!
     const unsigned long length = 10;
-    //char seq1[length] = {};
     std::string* seq1 = new std::string[length];
-    //char seq2[length] = {};
     std::string* seq2 = new std::string[length];
-    //char seq3[length] = {};
     std::string* seq3 = new std::string[length];
-    int allowed_mutations = 2;
-    //std::ofstream outfile = new std::ofstream("../src/fixtures/10-test.fa",std::ios::out);
+    int allowed_mutations = 2; //this is the overall allowed # of mutations for any given mutation in EACH sequence - not overall # across the board
+
+    //initialize the array to hold the distances in for "our" version of the distance matrix
     double** distances = new double*[numSeqs];
     for(int i = 0; i < numSeqs; ++i)
         distances[i] = new double[numSeqs];
+    //then fill in the diags up front with 0 vals
     distances[0][0] = 0.000000;
     distances[1][1] = 0.000000;
     distances[2][2] = 0.000000;
-
+    //now call the generation method to get sequences - then this method calls the kimura_calc and actually fills in the distance matrix
     generate_all(seq1, seq2, seq3, length, allowed_mutations, distances);
 
+
+/************************************************************************************************
+   Now we have to start the workflow to actually set up and test the DistanceCalculator class!
+ ************************************************************************************************
+ *
+ *   If you trace through the classes - Ninja -> TreeBuilderManager -> SequenceFileReader (& DistanceReader)
+ *   this is how the structures are set up to hold the data given to DistanceCalculator*/
     std::string** seqNames = new std::string*[numSeqs];
     std::string** sequences = new std::string*[numSeqs];
+    //this just hard-codes the names we're using for test cases
     seqNames[0] = new std::string();
     seqNames[0]->assign("Seq1");
     seqNames[1] = new std::string();
@@ -284,14 +289,34 @@ TEST(DistCalcTest, DistMatrix10){
     seqNames[2] = new std::string();
     seqNames[2]->assign("Seq3");
 
+    //this just takes the sequences as we generated above and puts them in a new array
     sequences[0] = seq1;
     sequences[1] = seq2;
     sequences[2] = seq3;
 
+    //I set this bool to true, because we want to use it, but it's iffy throughout Michel's code about whether it's being used or not... doesn't seem like he was done implementing it
     bool newCalculation = true;
+    //and actually finally make the DistanceCalculator!
     DistanceCalculator* distCalc = new DistanceCalculator(sequences, alphType, corrType, numSeqs, newCalculation);
-}
 
-/*EXPECT_EQ (Formula::bla (0),  0);
-EXPECT_EQ (Formula::bla (10), 20);
-EXPECT_EQ (Formula::bla (50), 100);*/
+    //This is almost exactly straight out of the DistanceReader class
+
+    double** class_distances = new double*[3];
+    for(int i = 0; i < numSeqs; ++i)
+        class_distances[i] = new double[numSeqs];
+
+    for (int i=0; i<numSeqs; i++){
+        for (int j=i+1; j<numSeqs; j++){
+            class_distances[i][j-i-1] = distCalc->calc(i,j) ;
+        }
+    }
+
+    //now actually compare the matrices!!!
+    for (int i=0; i<numSeqs; i++){
+        for (int j=i+1; j<numSeqs; j++){
+            //std::cout << "DistCalc: " << class_distances[i][j] << "/t" << "TestCalc: " << distances[i][j] << std::endl;
+            EXPECT_EQ (class_distances[i][j], distances[i][j]);
+        }
+    }
+
+}
