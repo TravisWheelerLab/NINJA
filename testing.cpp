@@ -1,5 +1,5 @@
 // Created by Sarah Walling 3/2020
-
+// THIS FILE IS INCLUDED CURRENTLY AS THE ORIGINAL SOURCE OF MOST OF THE DISTANCE MATRIX TEST CODE
 #include <math.h>
 #include <float.h>
 #include <stdint.h>
