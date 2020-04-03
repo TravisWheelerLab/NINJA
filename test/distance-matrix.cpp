@@ -31,7 +31,7 @@ TEST(DistCalcTest, DistMatrix10) {
     char *argv[] = {"../build/src/NINJA_run", "--in", "../src/fixtures/10.fa", "--out_type", "d", "--corr_type", "k"};
     ArgumentHandler *argHandler = new ArgumentHandler(argv,8);
 
-    std::string method = argHandler->getMethod();
+/*    std::string method = argHandler->getMethod();
     std::string inFile = argHandler->getInFile();
     std::string njTmpDir = argHandler->getNJTmpDir();
     ArgumentHandler::InputType inType = argHandler->getInputType();
@@ -48,7 +48,27 @@ TEST(DistCalcTest, DistMatrix10) {
                                                                  alphType,(TreeBuilderManager::CorrectionType) corrType, threads, useSSE, printTime);
 
     std::string treeString = manager->doJob();
+    */
+    std::vector<std::string> names;
+    std::vector<std::string> seq;
+    names.push_back("Seq1");
+    names.push_back("Seq2");
+    names.push_back("Seq3");
 
+
+    int numSeqs = 3;
+    std::string** seqNames = new std::string*[numSeqs];
+    std::string** sequences = new std::string*[numSeqs];
+    for (int i=0;i<numSeqs;i++){ //get strings into a strings array instead of a vector
+        seqNames[i] = new std::string();
+        seqNames[i]->assign(names[i]);
+        sequences[i] = new std::string();
+        sequences[i]->assign(seq[i]);
+    }
+
+    std::string seqs =
+
+    DistanceCalculator distCalc = new DistanceCalculator(seqs,(DistanceCalculator::AlphabetType) alphType,(DistanceCalculator::CorrectionType)  corrType, seqReader->numSeqs,newDistanceMethod);
 
     //now do random generation for comparison!
     const unsigned long length = 10;
