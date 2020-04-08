@@ -1,2 +1,4 @@
-NINJA/*.o
-NINJA/*.swp
+*.swp
+*~
+*.o
+.DS_Store
