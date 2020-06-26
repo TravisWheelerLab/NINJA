@@ -1,0 +1,287 @@
+[
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/ArgumentHandler.o",
+   "NINJA/ArgumentHandler.cpp"
+  ],
+  "file": "NINJA/ArgumentHandler.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/ArrayHeapExtMem.o",
+   "NINJA/ArrayHeapExtMem.cpp"
+  ],
+  "file": "NINJA/ArrayHeapExtMem.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/BinaryHeap.o",
+   "NINJA/BinaryHeap.cpp"
+  ],
+  "file": "NINJA/BinaryHeap.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/BinaryHeap_FourInts.o",
+   "NINJA/BinaryHeap_FourInts.cpp"
+  ],
+  "file": "NINJA/BinaryHeap_FourInts.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/BinaryHeap_IntKey_TwoInts.o",
+   "NINJA/BinaryHeap_IntKey_TwoInts.cpp"
+  ],
+  "file": "NINJA/BinaryHeap_IntKey_TwoInts.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/BinaryHeap_TwoInts.o",
+   "NINJA/BinaryHeap_TwoInts.cpp"
+  ],
+  "file": "NINJA/BinaryHeap_TwoInts.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/CandidateHeap.o",
+   "NINJA/CandidateHeap.cpp"
+  ],
+  "file": "NINJA/CandidateHeap.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/DistanceCalculator.o",
+   "NINJA/DistanceCalculator.cpp"
+  ],
+  "file": "NINJA/DistanceCalculator.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/DistanceReader.o",
+   "NINJA/DistanceReader.cpp"
+  ],
+  "file": "NINJA/DistanceReader.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/DistanceReaderExtMem.o",
+   "NINJA/DistanceReaderExtMem.cpp"
+  ],
+  "file": "NINJA/DistanceReaderExtMem.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/ExceptionHandler.o",
+   "NINJA/ExceptionHandler.cpp"
+  ],
+  "file": "NINJA/ExceptionHandler.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/Ninja.o",
+   "NINJA/Ninja.cpp"
+  ],
+  "file": "NINJA/Ninja.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/SequenceFileReader.o",
+   "NINJA/SequenceFileReader.cpp"
+  ],
+  "file": "NINJA/SequenceFileReader.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/Stack.o",
+   "NINJA/Stack.cpp"
+  ],
+  "file": "NINJA/Stack.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/TreeBuilder.o",
+   "NINJA/TreeBuilder.cpp"
+  ],
+  "file": "NINJA/TreeBuilder.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/TreeBuilderBinHeap.o",
+   "NINJA/TreeBuilderBinHeap.cpp"
+  ],
+  "file": "NINJA/TreeBuilderBinHeap.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/TreeBuilderExtMem.o",
+   "NINJA/TreeBuilderExtMem.cpp"
+  ],
+  "file": "NINJA/TreeBuilderExtMem.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/TreeBuilderManager.o",
+   "NINJA/TreeBuilderManager.cpp"
+  ],
+  "file": "NINJA/TreeBuilderManager.cpp"
+ },
+ {
+  "directory": "/Users/george/Code/NINJA",
+  "arguments": [
+   "g++-6",
+   "-std=gnu++11",
+   "-Wall",
+   "-mssse3",
+   "-O3",
+   "-c",
+   "-o",
+   "NINJA/TreeNode.o",
+   "NINJA/TreeNode.cpp"
+  ],
+  "file": "NINJA/TreeNode.cpp"
+ }
+]
