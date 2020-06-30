@@ -1,0 +1,166 @@
+\hypertarget{class_binary_heap___two_ints}{}\doxysection{Binary\+Heap\+\_\+\+Two\+Ints Class Reference}
+\label{class_binary_heap___two_ints}\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+
+
+{\ttfamily \#include $<$Binary\+Heap\+\_\+\+Two\+Ints.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_binary_heap___two_ints_ae1e39bfeaa140bd4608796e1c80491f1}{Binary\+Heap\+\_\+\+Two\+Ints}} ()
+\item 
+\mbox{\hyperlink{class_binary_heap___two_ints_aa1245be071e6ae2a125268d74ba29ffe}{Binary\+Heap\+\_\+\+Two\+Ints}} (int max\+Capacity)
+\item 
+\mbox{\hyperlink{class_binary_heap___two_ints_a7d25328959c6277adbd1cced0903d7c8}{Binary\+Heap\+\_\+\+Two\+Ints}} (int $\ast$val1s, const int $\ast$val2s, \mbox{\hyperlink{struct_float}{Float}} keys)
+\item 
+\mbox{\hyperlink{class_binary_heap___two_ints_aaa746e134affadee4235f430af662d2b}{Binary\+Heap\+\_\+\+Two\+Ints}} (int $\ast$val1s, const int $\ast$val2s, \mbox{\hyperlink{struct_float}{Float}} keys, int max\+Capacity)
+\item 
+\mbox{\hyperlink{class_binary_heap___two_ints_a1fa71262df0bb9bf2c9b6266eb9af356}{$\sim$\+Binary\+Heap\+\_\+\+Two\+Ints}} ()
+\item 
+int \mbox{\hyperlink{class_binary_heap___two_ints_a326a9ce80f6d91461bcf40ebfab50e59}{size}} ()
+\item 
+void \mbox{\hyperlink{class_binary_heap___two_ints_a0b87e515fcd12cc18e522098c32b1577}{insert}} (int val1, int val2, float key)
+\item 
+void \mbox{\hyperlink{class_binary_heap___two_ints_a73bf3013be5621b057cc5210033d969a}{delete\+Min}} ()
+\item 
+int \mbox{\hyperlink{class_binary_heap___two_ints_a5b0b88d6f793f8f89fb2e42a1560ab64}{get\+Min}} ()
+\item 
+bool \mbox{\hyperlink{class_binary_heap___two_ints_a83a8a61456a6ffcd9b90cf55563c1756}{is\+Empty}} ()
+\item 
+void \mbox{\hyperlink{class_binary_heap___two_ints_a82f621d2f56be0f2b9508be170473d02}{make\+Empty}} ()
+\item 
+void \mbox{\hyperlink{class_binary_heap___two_ints_ab66ffaaeeb24365ba90f5c4778ee20af}{build\+Again}} (int $\ast$val1s, const int $\ast$val2s, \mbox{\hyperlink{struct_float}{Float}} keys)
+\item 
+void \mbox{\hyperlink{class_binary_heap___two_ints_a0a3bdf477f64572ec2e8165214858770}{chop\+BottomK}} (int $\ast$val1s, int $\ast$val2s, \mbox{\hyperlink{struct_float}{Float}} keys)
+\item 
+bool \mbox{\hyperlink{class_binary_heap___two_ints_a5507eb0fa5fb8ad442d311fdcbb2f76c}{bin\+Heap\+Test}} (bool verbose)
+\item 
+bool \mbox{\hyperlink{class_binary_heap___two_ints_a7105a0874acdf81833a22cb55230db9d}{bin\+Heap\+Two\+Test}} (bool verbose)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{structints2float}{ints2float}} $>$ $\ast$ \mbox{\hyperlink{class_binary_heap___two_ints_afc8ee112de63beaeab67d803ba68d3c8}{heap}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const int \mbox{\hyperlink{class_binary_heap___two_ints_a6f4be2950530c270562b46fea29faec6}{D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+A\+P\+A\+C\+I\+TY}} = 1000
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_binary_heap___two_ints_ae1e39bfeaa140bd4608796e1c80491f1}\label{class_binary_heap___two_ints_ae1e39bfeaa140bd4608796e1c80491f1}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{BinaryHeap\_TwoInts()}{BinaryHeap\_TwoInts()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Two\+Ints\+::\+Binary\+Heap\+\_\+\+Two\+Ints (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_aa1245be071e6ae2a125268d74ba29ffe}\label{class_binary_heap___two_ints_aa1245be071e6ae2a125268d74ba29ffe}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{BinaryHeap\_TwoInts()}{BinaryHeap\_TwoInts()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Two\+Ints\+::\+Binary\+Heap\+\_\+\+Two\+Ints (\begin{DoxyParamCaption}\item[{int}]{max\+Capacity }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a7d25328959c6277adbd1cced0903d7c8}\label{class_binary_heap___two_ints_a7d25328959c6277adbd1cced0903d7c8}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{BinaryHeap\_TwoInts()}{BinaryHeap\_TwoInts()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Two\+Ints\+::\+Binary\+Heap\+\_\+\+Two\+Ints (\begin{DoxyParamCaption}\item[{int $\ast$}]{val1s,  }\item[{const int $\ast$}]{val2s,  }\item[{\mbox{\hyperlink{struct_float}{Float}}}]{keys }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_aaa746e134affadee4235f430af662d2b}\label{class_binary_heap___two_ints_aaa746e134affadee4235f430af662d2b}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{BinaryHeap\_TwoInts()}{BinaryHeap\_TwoInts()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Two\+Ints\+::\+Binary\+Heap\+\_\+\+Two\+Ints (\begin{DoxyParamCaption}\item[{int $\ast$}]{val1s,  }\item[{const int $\ast$}]{val2s,  }\item[{\mbox{\hyperlink{struct_float}{Float}}}]{keys,  }\item[{int}]{max\+Capacity }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a1fa71262df0bb9bf2c9b6266eb9af356}\label{class_binary_heap___two_ints_a1fa71262df0bb9bf2c9b6266eb9af356}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!````~BinaryHeap\_TwoInts@{$\sim$BinaryHeap\_TwoInts}}
+\index{````~BinaryHeap\_TwoInts@{$\sim$BinaryHeap\_TwoInts}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{$\sim$BinaryHeap\_TwoInts()}{~BinaryHeap\_TwoInts()}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Two\+Ints\+::$\sim$\+Binary\+Heap\+\_\+\+Two\+Ints (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_binary_heap___two_ints_a5507eb0fa5fb8ad442d311fdcbb2f76c}\label{class_binary_heap___two_ints_a5507eb0fa5fb8ad442d311fdcbb2f76c}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!binHeapTest@{binHeapTest}}
+\index{binHeapTest@{binHeapTest}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{binHeapTest()}{binHeapTest()}}
+{\footnotesize\ttfamily bool Binary\+Heap\+\_\+\+Two\+Ints\+::bin\+Heap\+Test (\begin{DoxyParamCaption}\item[{bool}]{verbose }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a7105a0874acdf81833a22cb55230db9d}\label{class_binary_heap___two_ints_a7105a0874acdf81833a22cb55230db9d}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!binHeapTwoTest@{binHeapTwoTest}}
+\index{binHeapTwoTest@{binHeapTwoTest}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{binHeapTwoTest()}{binHeapTwoTest()}}
+{\footnotesize\ttfamily bool Binary\+Heap\+\_\+\+Two\+Ints\+::bin\+Heap\+Two\+Test (\begin{DoxyParamCaption}\item[{bool}]{verbose }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_ab66ffaaeeb24365ba90f5c4778ee20af}\label{class_binary_heap___two_ints_ab66ffaaeeb24365ba90f5c4778ee20af}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!buildAgain@{buildAgain}}
+\index{buildAgain@{buildAgain}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{buildAgain()}{buildAgain()}}
+{\footnotesize\ttfamily void Binary\+Heap\+\_\+\+Two\+Ints\+::build\+Again (\begin{DoxyParamCaption}\item[{int $\ast$}]{val1s,  }\item[{const int $\ast$}]{val2s,  }\item[{\mbox{\hyperlink{struct_float}{Float}}}]{keys }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a0a3bdf477f64572ec2e8165214858770}\label{class_binary_heap___two_ints_a0a3bdf477f64572ec2e8165214858770}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!chopBottomK@{chopBottomK}}
+\index{chopBottomK@{chopBottomK}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{chopBottomK()}{chopBottomK()}}
+{\footnotesize\ttfamily void Binary\+Heap\+\_\+\+Two\+Ints\+::chop\+BottomK (\begin{DoxyParamCaption}\item[{int $\ast$}]{val1s,  }\item[{int $\ast$}]{val2s,  }\item[{\mbox{\hyperlink{struct_float}{Float}}}]{keys }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a73bf3013be5621b057cc5210033d969a}\label{class_binary_heap___two_ints_a73bf3013be5621b057cc5210033d969a}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!deleteMin@{deleteMin}}
+\index{deleteMin@{deleteMin}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{deleteMin()}{deleteMin()}}
+{\footnotesize\ttfamily void Binary\+Heap\+\_\+\+Two\+Ints\+::delete\+Min (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a5b0b88d6f793f8f89fb2e42a1560ab64}\label{class_binary_heap___two_ints_a5b0b88d6f793f8f89fb2e42a1560ab64}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!getMin@{getMin}}
+\index{getMin@{getMin}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{getMin()}{getMin()}}
+{\footnotesize\ttfamily int Binary\+Heap\+\_\+\+Two\+Ints\+::get\+Min (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a0b87e515fcd12cc18e522098c32b1577}\label{class_binary_heap___two_ints_a0b87e515fcd12cc18e522098c32b1577}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!insert@{insert}}
+\index{insert@{insert}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily void Binary\+Heap\+\_\+\+Two\+Ints\+::insert (\begin{DoxyParamCaption}\item[{int}]{val1,  }\item[{int}]{val2,  }\item[{float}]{key }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a83a8a61456a6ffcd9b90cf55563c1756}\label{class_binary_heap___two_ints_a83a8a61456a6ffcd9b90cf55563c1756}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!isEmpty@{isEmpty}}
+\index{isEmpty@{isEmpty}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{isEmpty()}{isEmpty()}}
+{\footnotesize\ttfamily bool Binary\+Heap\+\_\+\+Two\+Ints\+::is\+Empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a82f621d2f56be0f2b9508be170473d02}\label{class_binary_heap___two_ints_a82f621d2f56be0f2b9508be170473d02}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!makeEmpty@{makeEmpty}}
+\index{makeEmpty@{makeEmpty}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{makeEmpty()}{makeEmpty()}}
+{\footnotesize\ttfamily void Binary\+Heap\+\_\+\+Two\+Ints\+::make\+Empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_a326a9ce80f6d91461bcf40ebfab50e59}\label{class_binary_heap___two_ints_a326a9ce80f6d91461bcf40ebfab50e59}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!size@{size}}
+\index{size@{size}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily int Binary\+Heap\+\_\+\+Two\+Ints\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_binary_heap___two_ints_a6f4be2950530c270562b46fea29faec6}\label{class_binary_heap___two_ints_a6f4be2950530c270562b46fea29faec6}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!DEFAULT\_CAPACITY@{DEFAULT\_CAPACITY}}
+\index{DEFAULT\_CAPACITY@{DEFAULT\_CAPACITY}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{DEFAULT\_CAPACITY}{DEFAULT\_CAPACITY}}
+{\footnotesize\ttfamily const int Binary\+Heap\+\_\+\+Two\+Ints\+::\+D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+A\+P\+A\+C\+I\+TY = 1000\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_binary_heap___two_ints_afc8ee112de63beaeab67d803ba68d3c8}\label{class_binary_heap___two_ints_afc8ee112de63beaeab67d803ba68d3c8}} 
+\index{BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}!heap@{heap}}
+\index{heap@{heap}!BinaryHeap\_TwoInts@{BinaryHeap\_TwoInts}}
+\doxysubsubsection{\texorpdfstring{heap}{heap}}
+{\footnotesize\ttfamily std\+::vector$<$ \mbox{\hyperlink{structints2float}{ints2float}} $>$$\ast$ Binary\+Heap\+\_\+\+Two\+Ints\+::heap}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_binary_heap___two_ints_8hpp}{Binary\+Heap\+\_\+\+Two\+Ints.\+hpp}}\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_binary_heap___two_ints_8cpp}{Binary\+Heap\+\_\+\+Two\+Ints.\+cpp}}\end{DoxyCompactItemize}

@@ -35,11 +35,16 @@ debug: CXXFLAGS += -O0 -g3 -pg
 debug: $(OBJECTS)
 	$(CXX) $(DBGFLAGS) $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
+.PHONY: docs
+docs:
+	doxygen Doxyfile
+
 .PHONY: setup-mac
 setup-mac:
 	brew install pipenv
 	brew install pyenv
 	brew install gcc@6
+	brew install doxygen
 	pyenv install -s 3.8.3
 	pipenv sync --dev
 	@echo 'Use `pipenv shell` to start the virtual environment'

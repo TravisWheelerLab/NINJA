@@ -1,0 +1,277 @@
+\hypertarget{class_tree_builder_manager}{}\doxysection{Tree\+Builder\+Manager Class Reference}
+\label{class_tree_builder_manager}\index{TreeBuilderManager@{TreeBuilderManager}}
+
+
+{\ttfamily \#include $<$Tree\+Builder\+Manager.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68}{Input\+Type}} \{ \mbox{\hyperlink{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68a5496170f117c3d558853e10ccee02666}{alignment}}, 
+\mbox{\hyperlink{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68a6d9503e62c1cc7af8faafe95ca03fa9f}{distance}}
+ \}
+\item 
+enum \mbox{\hyperlink{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008}{Alphabet\+Type}} \{ \mbox{\hyperlink{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008a9cf0eb2046097228c5269e9da5e47cba}{dna}}, 
+\mbox{\hyperlink{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008a089be0a828fca4605323da2e3a171202}{amino}}, 
+\mbox{\hyperlink{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008a229d43ec692cb711e87fa15d1a163c4a}{null}}
+ \}
+\item 
+enum \mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8d}{Correction\+Type}} \{ \newline
+\mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8da6a180df7a39a3dd2e0f2283fbdc9c9eb}{not\+\_\+assigned}}, 
+\mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8daa48e32132856572cccb189cd72e521c7}{none}}, 
+\mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8da78e91f6ce40102b0d61e8b9d51750638}{Jukes\+Cantor}}, 
+\mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8dae1e7c68b84de2d982d8fc029b480cc17}{Kimura2}}, 
+\newline
+\mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8da7bff75f1893babce718611848369ad04}{Fast\+Tree}}
+ \}
+\item 
+enum \mbox{\hyperlink{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17}{Output\+Type}} \{ \mbox{\hyperlink{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17a19cba20113304d5be5b0b1b3cdb11b91}{dist}}, 
+\mbox{\hyperlink{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17a432f48fbf28ef0573a1a3848b5cf1d40}{tree}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_tree_builder_manager_a1c1e9bc07025dd5160ac37277c10647a}{Tree\+Builder\+Manager}} (std\+::string \mbox{\hyperlink{class_tree_builder_manager_a4c1a65ed414d8317911abe3d4f704bf6}{method}}, std\+::string \mbox{\hyperlink{class_tree_builder_manager_a7e62c0d18ca2e9782f6e1f689b4388d4}{nj\+Tmp\+Dir}}, std\+::string \mbox{\hyperlink{class_tree_builder_manager_ac2e2786055dddad38c1bdce4087638e8}{in\+File}}, F\+I\+LE $\ast$outfile, \mbox{\hyperlink{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68}{Input\+Type}} \mbox{\hyperlink{class_tree_builder_manager_aae28e02c9576d10f1d060a9b35e948d9}{in\+Type}}, \mbox{\hyperlink{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17}{Output\+Type}} \mbox{\hyperlink{class_tree_builder_manager_abdf50c04e7fbf7355186615c94738940}{out\+Type}}, \mbox{\hyperlink{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008}{Alphabet\+Type}} \mbox{\hyperlink{class_tree_builder_manager_a3047ef12674cd2feab230d5445ec057e}{alph\+Type}}, \mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8d}{Correction\+Type}} \mbox{\hyperlink{class_tree_builder_manager_adf86247bbac061e015008cf779aa1922}{corr\+Type}}, int \mbox{\hyperlink{class_tree_builder_manager_ac022773150741a88a56920d768b366d4}{threads}}, bool use\+S\+SE)
+\item 
+std\+::string \mbox{\hyperlink{class_tree_builder_manager_a82bd45375c241cc86bf5d26f4fef05ed}{do\+Job}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::string \mbox{\hyperlink{class_tree_builder_manager_ac80897b0e7c8f66191245a294e336738}{get\+Unique\+ID}} ()
+\item 
+static bool \mbox{\hyperlink{class_tree_builder_manager_a8901ec2e86f97fc6b951d465cffea38f}{delete\+Dir}} (F\+I\+LE $\ast$dir)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_tree_builder_manager_a4c1a65ed414d8317911abe3d4f704bf6}{method}}
+\item 
+std\+::string \mbox{\hyperlink{class_tree_builder_manager_a7e62c0d18ca2e9782f6e1f689b4388d4}{nj\+Tmp\+Dir}}
+\item 
+std\+::string \mbox{\hyperlink{class_tree_builder_manager_ac2e2786055dddad38c1bdce4087638e8}{in\+File}}
+\item 
+F\+I\+LE $\ast$ \mbox{\hyperlink{class_tree_builder_manager_a0efd9a961ff0dd21dc150202ad0dab65}{out\+File}}
+\item 
+std\+::string $\ast$$\ast$ \mbox{\hyperlink{class_tree_builder_manager_a5710efedbd3702d1dc95d0722e757351}{names}}
+\item 
+\mbox{\hyperlink{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68}{Input\+Type}} \mbox{\hyperlink{class_tree_builder_manager_aae28e02c9576d10f1d060a9b35e948d9}{in\+Type}}
+\item 
+\mbox{\hyperlink{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17}{Output\+Type}} \mbox{\hyperlink{class_tree_builder_manager_abdf50c04e7fbf7355186615c94738940}{out\+Type}}
+\item 
+\mbox{\hyperlink{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008}{Alphabet\+Type}} \mbox{\hyperlink{class_tree_builder_manager_a3047ef12674cd2feab230d5445ec057e}{alph\+Type}}
+\item 
+\mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8d}{Correction\+Type}} \mbox{\hyperlink{class_tree_builder_manager_adf86247bbac061e015008cf779aa1922}{corr\+Type}}
+\item 
+std\+::string \mbox{\hyperlink{class_tree_builder_manager_a150db90e2abf2fc03731688eb898bbb3}{chars}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_manager_ac022773150741a88a56920d768b366d4}{threads}}
+\item 
+bool \mbox{\hyperlink{class_tree_builder_manager_a4c60ce04a47c306072401de1d9d83571}{new\+Distance\+Method}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const int \mbox{\hyperlink{class_tree_builder_manager_a9ae531e04f5efb9fe8228ede332404dd}{N\+U\+M\+\_\+\+R\+A\+N\+D\+\_\+\+D\+I\+R\+\_\+\+C\+H\+A\+RS}} = 6
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008}\label{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!AlphabetType@{AlphabetType}}
+\index{AlphabetType@{AlphabetType}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{AlphabetType}{AlphabetType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008}{Tree\+Builder\+Manager\+::\+Alphabet\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{dna@{dna}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!dna@{dna}}}\mbox{\Hypertarget{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008a9cf0eb2046097228c5269e9da5e47cba}\label{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008a9cf0eb2046097228c5269e9da5e47cba}} 
+dna&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{amino@{amino}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!amino@{amino}}}\mbox{\Hypertarget{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008a089be0a828fca4605323da2e3a171202}\label{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008a089be0a828fca4605323da2e3a171202}} 
+amino&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{null@{null}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!null@{null}}}\mbox{\Hypertarget{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008a229d43ec692cb711e87fa15d1a163c4a}\label{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008a229d43ec692cb711e87fa15d1a163c4a}} 
+null&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8d}\label{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8d}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!CorrectionType@{CorrectionType}}
+\index{CorrectionType@{CorrectionType}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{CorrectionType}{CorrectionType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8d}{Tree\+Builder\+Manager\+::\+Correction\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{not\_assigned@{not\_assigned}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!not\_assigned@{not\_assigned}}}\mbox{\Hypertarget{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8da6a180df7a39a3dd2e0f2283fbdc9c9eb}\label{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8da6a180df7a39a3dd2e0f2283fbdc9c9eb}} 
+not\+\_\+assigned&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{none@{none}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!none@{none}}}\mbox{\Hypertarget{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8daa48e32132856572cccb189cd72e521c7}\label{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8daa48e32132856572cccb189cd72e521c7}} 
+none&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{JukesCantor@{JukesCantor}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!JukesCantor@{JukesCantor}}}\mbox{\Hypertarget{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8da78e91f6ce40102b0d61e8b9d51750638}\label{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8da78e91f6ce40102b0d61e8b9d51750638}} 
+Jukes\+Cantor&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kimura2@{Kimura2}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!Kimura2@{Kimura2}}}\mbox{\Hypertarget{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8dae1e7c68b84de2d982d8fc029b480cc17}\label{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8dae1e7c68b84de2d982d8fc029b480cc17}} 
+Kimura2&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FastTree@{FastTree}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!FastTree@{FastTree}}}\mbox{\Hypertarget{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8da7bff75f1893babce718611848369ad04}\label{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8da7bff75f1893babce718611848369ad04}} 
+Fast\+Tree&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68}\label{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!InputType@{InputType}}
+\index{InputType@{InputType}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{InputType}{InputType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68}{Tree\+Builder\+Manager\+::\+Input\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{alignment@{alignment}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!alignment@{alignment}}}\mbox{\Hypertarget{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68a5496170f117c3d558853e10ccee02666}\label{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68a5496170f117c3d558853e10ccee02666}} 
+alignment&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{distance@{distance}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!distance@{distance}}}\mbox{\Hypertarget{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68a6d9503e62c1cc7af8faafe95ca03fa9f}\label{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68a6d9503e62c1cc7af8faafe95ca03fa9f}} 
+distance&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17}\label{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!OutputType@{OutputType}}
+\index{OutputType@{OutputType}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{OutputType}{OutputType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17}{Tree\+Builder\+Manager\+::\+Output\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{dist@{dist}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!dist@{dist}}}\mbox{\Hypertarget{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17a19cba20113304d5be5b0b1b3cdb11b91}\label{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17a19cba20113304d5be5b0b1b3cdb11b91}} 
+dist&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{tree@{tree}!TreeBuilderManager@{TreeBuilderManager}}\index{TreeBuilderManager@{TreeBuilderManager}!tree@{tree}}}\mbox{\Hypertarget{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17a432f48fbf28ef0573a1a3848b5cf1d40}\label{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17a432f48fbf28ef0573a1a3848b5cf1d40}} 
+tree&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_tree_builder_manager_a1c1e9bc07025dd5160ac37277c10647a}\label{class_tree_builder_manager_a1c1e9bc07025dd5160ac37277c10647a}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!TreeBuilderManager@{TreeBuilderManager}}
+\index{TreeBuilderManager@{TreeBuilderManager}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{TreeBuilderManager()}{TreeBuilderManager()}}
+{\footnotesize\ttfamily Tree\+Builder\+Manager\+::\+Tree\+Builder\+Manager (\begin{DoxyParamCaption}\item[{std\+::string}]{method,  }\item[{std\+::string}]{nj\+Tmp\+Dir,  }\item[{std\+::string}]{in\+File,  }\item[{F\+I\+LE $\ast$}]{outfile,  }\item[{\mbox{\hyperlink{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68}{Input\+Type}}}]{in\+Type,  }\item[{\mbox{\hyperlink{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17}{Output\+Type}}}]{out\+Type,  }\item[{\mbox{\hyperlink{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008}{Alphabet\+Type}}}]{alph\+Type,  }\item[{\mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8d}{Correction\+Type}}}]{corr\+Type,  }\item[{int}]{threads,  }\item[{bool}]{use\+S\+SE }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_tree_builder_manager_a8901ec2e86f97fc6b951d465cffea38f}\label{class_tree_builder_manager_a8901ec2e86f97fc6b951d465cffea38f}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!deleteDir@{deleteDir}}
+\index{deleteDir@{deleteDir}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{deleteDir()}{deleteDir()}}
+{\footnotesize\ttfamily static bool Tree\+Builder\+Manager\+::delete\+Dir (\begin{DoxyParamCaption}\item[{F\+I\+LE $\ast$}]{dir }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_manager_a82bd45375c241cc86bf5d26f4fef05ed}\label{class_tree_builder_manager_a82bd45375c241cc86bf5d26f4fef05ed}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!doJob@{doJob}}
+\index{doJob@{doJob}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{doJob()}{doJob()}}
+{\footnotesize\ttfamily std\+::string Tree\+Builder\+Manager\+::do\+Job (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_tree_builder_manager_ac80897b0e7c8f66191245a294e336738}\label{class_tree_builder_manager_ac80897b0e7c8f66191245a294e336738}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!getUniqueID@{getUniqueID}}
+\index{getUniqueID@{getUniqueID}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{getUniqueID()}{getUniqueID()}}
+{\footnotesize\ttfamily static std\+::string Tree\+Builder\+Manager\+::get\+Unique\+ID (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_tree_builder_manager_a3047ef12674cd2feab230d5445ec057e}\label{class_tree_builder_manager_a3047ef12674cd2feab230d5445ec057e}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!alphType@{alphType}}
+\index{alphType@{alphType}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{alphType}{alphType}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_tree_builder_manager_ae26c0058859fbe67055a43f55b7c5008}{Alphabet\+Type}} Tree\+Builder\+Manager\+::alph\+Type}
+
+\mbox{\Hypertarget{class_tree_builder_manager_a150db90e2abf2fc03731688eb898bbb3}\label{class_tree_builder_manager_a150db90e2abf2fc03731688eb898bbb3}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!chars@{chars}}
+\index{chars@{chars}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{chars}{chars}}
+{\footnotesize\ttfamily std\+::string Tree\+Builder\+Manager\+::chars}
+
+\mbox{\Hypertarget{class_tree_builder_manager_adf86247bbac061e015008cf779aa1922}\label{class_tree_builder_manager_adf86247bbac061e015008cf779aa1922}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!corrType@{corrType}}
+\index{corrType@{corrType}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{corrType}{corrType}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_tree_builder_manager_a373cf550fdc215fc25daf72e40b56a8d}{Correction\+Type}} Tree\+Builder\+Manager\+::corr\+Type}
+
+\mbox{\Hypertarget{class_tree_builder_manager_ac2e2786055dddad38c1bdce4087638e8}\label{class_tree_builder_manager_ac2e2786055dddad38c1bdce4087638e8}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!inFile@{inFile}}
+\index{inFile@{inFile}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{inFile}{inFile}}
+{\footnotesize\ttfamily std\+::string Tree\+Builder\+Manager\+::in\+File}
+
+\mbox{\Hypertarget{class_tree_builder_manager_aae28e02c9576d10f1d060a9b35e948d9}\label{class_tree_builder_manager_aae28e02c9576d10f1d060a9b35e948d9}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!inType@{inType}}
+\index{inType@{inType}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{inType}{inType}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_tree_builder_manager_af1e010b6d69ec4c8a7860041ba823b68}{Input\+Type}} Tree\+Builder\+Manager\+::in\+Type}
+
+\mbox{\Hypertarget{class_tree_builder_manager_a4c1a65ed414d8317911abe3d4f704bf6}\label{class_tree_builder_manager_a4c1a65ed414d8317911abe3d4f704bf6}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!method@{method}}
+\index{method@{method}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{method}{method}}
+{\footnotesize\ttfamily std\+::string Tree\+Builder\+Manager\+::method}
+
+\mbox{\Hypertarget{class_tree_builder_manager_a5710efedbd3702d1dc95d0722e757351}\label{class_tree_builder_manager_a5710efedbd3702d1dc95d0722e757351}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!names@{names}}
+\index{names@{names}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{names}{names}}
+{\footnotesize\ttfamily std\+::string$\ast$$\ast$ Tree\+Builder\+Manager\+::names}
+
+\mbox{\Hypertarget{class_tree_builder_manager_a4c60ce04a47c306072401de1d9d83571}\label{class_tree_builder_manager_a4c60ce04a47c306072401de1d9d83571}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!newDistanceMethod@{newDistanceMethod}}
+\index{newDistanceMethod@{newDistanceMethod}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{newDistanceMethod}{newDistanceMethod}}
+{\footnotesize\ttfamily bool Tree\+Builder\+Manager\+::new\+Distance\+Method}
+
+\mbox{\Hypertarget{class_tree_builder_manager_a7e62c0d18ca2e9782f6e1f689b4388d4}\label{class_tree_builder_manager_a7e62c0d18ca2e9782f6e1f689b4388d4}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!njTmpDir@{njTmpDir}}
+\index{njTmpDir@{njTmpDir}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{njTmpDir}{njTmpDir}}
+{\footnotesize\ttfamily std\+::string Tree\+Builder\+Manager\+::nj\+Tmp\+Dir}
+
+\mbox{\Hypertarget{class_tree_builder_manager_a9ae531e04f5efb9fe8228ede332404dd}\label{class_tree_builder_manager_a9ae531e04f5efb9fe8228ede332404dd}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!NUM\_RAND\_DIR\_CHARS@{NUM\_RAND\_DIR\_CHARS}}
+\index{NUM\_RAND\_DIR\_CHARS@{NUM\_RAND\_DIR\_CHARS}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{NUM\_RAND\_DIR\_CHARS}{NUM\_RAND\_DIR\_CHARS}}
+{\footnotesize\ttfamily const int Tree\+Builder\+Manager\+::\+N\+U\+M\+\_\+\+R\+A\+N\+D\+\_\+\+D\+I\+R\+\_\+\+C\+H\+A\+RS = 6\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_manager_a0efd9a961ff0dd21dc150202ad0dab65}\label{class_tree_builder_manager_a0efd9a961ff0dd21dc150202ad0dab65}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!outFile@{outFile}}
+\index{outFile@{outFile}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{outFile}{outFile}}
+{\footnotesize\ttfamily F\+I\+LE$\ast$ Tree\+Builder\+Manager\+::out\+File}
+
+\mbox{\Hypertarget{class_tree_builder_manager_abdf50c04e7fbf7355186615c94738940}\label{class_tree_builder_manager_abdf50c04e7fbf7355186615c94738940}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!outType@{outType}}
+\index{outType@{outType}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{outType}{outType}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_tree_builder_manager_a4cd821248549c591777002b96d1b1f17}{Output\+Type}} Tree\+Builder\+Manager\+::out\+Type}
+
+\mbox{\Hypertarget{class_tree_builder_manager_ac022773150741a88a56920d768b366d4}\label{class_tree_builder_manager_ac022773150741a88a56920d768b366d4}} 
+\index{TreeBuilderManager@{TreeBuilderManager}!threads@{threads}}
+\index{threads@{threads}!TreeBuilderManager@{TreeBuilderManager}}
+\doxysubsubsection{\texorpdfstring{threads}{threads}}
+{\footnotesize\ttfamily int Tree\+Builder\+Manager\+::threads}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_tree_builder_manager_8hpp}{Tree\+Builder\+Manager.\+hpp}}\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_tree_builder_manager_8cpp}{Tree\+Builder\+Manager.\+cpp}}\end{DoxyCompactItemize}

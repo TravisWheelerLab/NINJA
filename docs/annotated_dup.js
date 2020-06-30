@@ -1,0 +1,28 @@
+var annotated_dup =
+[
+    [ "ArgumentHandler", "class_argument_handler.html", "class_argument_handler" ],
+    [ "ArrayHeapExtMem", "class_array_heap_ext_mem.html", "class_array_heap_ext_mem" ],
+    [ "BinaryHeap", "class_binary_heap.html", "class_binary_heap" ],
+    [ "BinaryHeap_FourInts", "class_binary_heap___four_ints.html", "class_binary_heap___four_ints" ],
+    [ "BinaryHeap_IntKey_TwoInts", "class_binary_heap___int_key___two_ints.html", "class_binary_heap___int_key___two_ints" ],
+    [ "BinaryHeap_TwoInts", "class_binary_heap___two_ints.html", "class_binary_heap___two_ints" ],
+    [ "CandidateHeap", "class_candidate_heap.html", "class_candidate_heap" ],
+    [ "DistanceCalculator", "class_distance_calculator.html", "class_distance_calculator" ],
+    [ "DistanceReader", "class_distance_reader.html", "class_distance_reader" ],
+    [ "DistanceReaderExtMem", "class_distance_reader_ext_mem.html", "class_distance_reader_ext_mem" ],
+    [ "Float", "struct_float.html", "struct_float" ],
+    [ "HeapReturn", "struct_heap_return.html", "struct_heap_return" ],
+    [ "Int", "struct_int.html", "struct_int" ],
+    [ "ints2float", "structints2float.html", "structints2float" ],
+    [ "ints3", "structints3.html", "structints3" ],
+    [ "ints4float", "structints4float.html", "structints4float" ],
+    [ "Node", "class_node.html", "class_node" ],
+    [ "SequenceFileReader", "class_sequence_file_reader.html", "class_sequence_file_reader" ],
+    [ "SlotPair", "class_slot_pair.html", "class_slot_pair" ],
+    [ "Stack", "class_stack.html", "class_stack" ],
+    [ "TreeBuilder", "class_tree_builder.html", "class_tree_builder" ],
+    [ "TreeBuilderBinHeap", "class_tree_builder_bin_heap.html", "class_tree_builder_bin_heap" ],
+    [ "TreeBuilderExtMem", "class_tree_builder_ext_mem.html", "class_tree_builder_ext_mem" ],
+    [ "TreeBuilderManager", "class_tree_builder_manager.html", "class_tree_builder_manager" ],
+    [ "TreeNode", "class_tree_node.html", "class_tree_node" ]
+];
