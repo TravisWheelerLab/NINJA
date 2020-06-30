@@ -3,30 +3,39 @@
 # TODO: implement flag for unit test compilation
 
 SOURCES := $(wildcard NINJA/*.cpp)
-OBJECTS = $(SOURCES:.cpp=.o)
+OBJECTS := $(SOURCES:.cpp=.o)
 
 # TODO: get newer GCC versions to work
 # The C++ compiler must support C++11
-CXX = g++-6
+CXX := g++-6
 # TODO: eliminate the need for openmp so we can use Apple Clang
-CXXFLAGS = -std=gnu++11 -Wall -mssse3
+CXXFLAGS := -std=gnu++11 -Wall -mssse3 -fopenmp
 
 # TODO: build to a dist directory or similar
 # TODO: use separate release and debug build directories
-EXEC = NINJA/Ninja
+EXEC := NINJA/Ninja
 
+.PHONY: all
 all: CXXFLAGS += -O3
 all: $(OBJECTS)
-	${CXX} $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
+	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
-debug: CXXFLAGS += -O0 -g3 -pg
-debug: $(OBJECTS)
-	${CXX} $(DBGFLAGS) $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
+.PHONY: check
+check: debug
+	# TODO: Run the test suite
+	# Start with a simple functional test suite
 
+.PHONY: clean
 clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(EXEC)
 
+.PHONY: debug
+debug: CXXFLAGS += -O0 -g3 -pg
+debug: $(OBJECTS)
+	$(CXX) $(DBGFLAGS) $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
+
+.PHONY: setup-mac
 setup-mac:
 	brew install pipenv
 	brew install pyenv
