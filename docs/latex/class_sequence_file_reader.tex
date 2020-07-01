@@ -1,0 +1,158 @@
+\hypertarget{class_sequence_file_reader}{}\doxysection{Sequence\+File\+Reader Class Reference}
+\label{class_sequence_file_reader}\index{SequenceFileReader@{SequenceFileReader}}
+
+
+{\ttfamily \#include $<$Sequence\+File\+Reader.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}{Alphabet\+Type}} \{ \mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7aeafabf791da5b60629a8c2eea71c9ee1}{dna}}, 
+\mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7acae42440ed46d49841a42325c14aaf41}{amino}}, 
+\mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7a9388aafb7eda9f884eed4c4dc315cc24}{null}}
+ \}
+\item 
+enum \mbox{\hyperlink{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57}{file\+Type}} \{ \mbox{\hyperlink{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57a04f278c472cd9257e9f801c8094076a2}{fasta}}, 
+\mbox{\hyperlink{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57a71d055fafc2c7e7bda14e4aa68119a9c}{stockholm}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_sequence_file_reader_afefc977e0ab5e10c56afbf0f2fa2ada8}{Sequence\+File\+Reader}} (std\+::string $\ast$filename, \mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}{Alphabet\+Type}} alph\+Type\+In)
+\item 
+\mbox{\hyperlink{class_sequence_file_reader_a68f93cafb0fff8017a6ddfdac763b2ec}{$\sim$\+Sequence\+File\+Reader}} ()
+\item 
+std\+::string $\ast$$\ast$ \mbox{\hyperlink{class_sequence_file_reader_a17b611ba364756ed6f8f977c26a200a2}{get\+Seqs}} ()
+\item 
+std\+::string $\ast$$\ast$ \mbox{\hyperlink{class_sequence_file_reader_a85ca1952acbad6ee9efdf64887d75cf4}{get\+Names}} ()
+\item 
+\mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}{Alphabet\+Type}} \mbox{\hyperlink{class_sequence_file_reader_a40f52eb12b9798936bd4a96e24fbe447}{get\+Alph\+Type}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string $\ast$$\ast$ \mbox{\hyperlink{class_sequence_file_reader_a4ed189180afd320f49605425fad1a0d9}{seqs}}
+\item 
+std\+::string $\ast$$\ast$ \mbox{\hyperlink{class_sequence_file_reader_ac5ad200019599845c0f1bc226ce0161b}{names}}
+\item 
+\mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}{Alphabet\+Type}} \mbox{\hyperlink{class_sequence_file_reader_a9318592fe459d2b67d3fb191b1f75057}{alph\+Type}}
+\item 
+int \mbox{\hyperlink{class_sequence_file_reader_aac56176cc7a6ed92728a106576ec3382}{num\+Seqs}}
+\item 
+\mbox{\hyperlink{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57}{file\+Type}} \mbox{\hyperlink{class_sequence_file_reader_a5599fbffb34bd065bfb846947c6e9c41}{filetype}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}\label{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}} 
+\index{SequenceFileReader@{SequenceFileReader}!AlphabetType@{AlphabetType}}
+\index{AlphabetType@{AlphabetType}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{AlphabetType}{AlphabetType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}{Sequence\+File\+Reader\+::\+Alphabet\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{dna@{dna}!SequenceFileReader@{SequenceFileReader}}\index{SequenceFileReader@{SequenceFileReader}!dna@{dna}}}\mbox{\Hypertarget{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7aeafabf791da5b60629a8c2eea71c9ee1}\label{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7aeafabf791da5b60629a8c2eea71c9ee1}} 
+dna&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{amino@{amino}!SequenceFileReader@{SequenceFileReader}}\index{SequenceFileReader@{SequenceFileReader}!amino@{amino}}}\mbox{\Hypertarget{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7acae42440ed46d49841a42325c14aaf41}\label{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7acae42440ed46d49841a42325c14aaf41}} 
+amino&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{null@{null}!SequenceFileReader@{SequenceFileReader}}\index{SequenceFileReader@{SequenceFileReader}!null@{null}}}\mbox{\Hypertarget{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7a9388aafb7eda9f884eed4c4dc315cc24}\label{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7a9388aafb7eda9f884eed4c4dc315cc24}} 
+null&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57}\label{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57}} 
+\index{SequenceFileReader@{SequenceFileReader}!fileType@{fileType}}
+\index{fileType@{fileType}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{fileType}{fileType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57}{Sequence\+File\+Reader\+::file\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{fasta@{fasta}!SequenceFileReader@{SequenceFileReader}}\index{SequenceFileReader@{SequenceFileReader}!fasta@{fasta}}}\mbox{\Hypertarget{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57a04f278c472cd9257e9f801c8094076a2}\label{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57a04f278c472cd9257e9f801c8094076a2}} 
+fasta&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{stockholm@{stockholm}!SequenceFileReader@{SequenceFileReader}}\index{SequenceFileReader@{SequenceFileReader}!stockholm@{stockholm}}}\mbox{\Hypertarget{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57a71d055fafc2c7e7bda14e4aa68119a9c}\label{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57a71d055fafc2c7e7bda14e4aa68119a9c}} 
+stockholm&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_sequence_file_reader_afefc977e0ab5e10c56afbf0f2fa2ada8}\label{class_sequence_file_reader_afefc977e0ab5e10c56afbf0f2fa2ada8}} 
+\index{SequenceFileReader@{SequenceFileReader}!SequenceFileReader@{SequenceFileReader}}
+\index{SequenceFileReader@{SequenceFileReader}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{SequenceFileReader()}{SequenceFileReader()}}
+{\footnotesize\ttfamily Sequence\+File\+Reader\+::\+Sequence\+File\+Reader (\begin{DoxyParamCaption}\item[{std\+::string $\ast$}]{filename,  }\item[{\mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}{Alphabet\+Type}}}]{alph\+Type\+In }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_sequence_file_reader_a68f93cafb0fff8017a6ddfdac763b2ec}\label{class_sequence_file_reader_a68f93cafb0fff8017a6ddfdac763b2ec}} 
+\index{SequenceFileReader@{SequenceFileReader}!````~SequenceFileReader@{$\sim$SequenceFileReader}}
+\index{````~SequenceFileReader@{$\sim$SequenceFileReader}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{$\sim$SequenceFileReader()}{~SequenceFileReader()}}
+{\footnotesize\ttfamily Sequence\+File\+Reader\+::$\sim$\+Sequence\+File\+Reader (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_sequence_file_reader_a40f52eb12b9798936bd4a96e24fbe447}\label{class_sequence_file_reader_a40f52eb12b9798936bd4a96e24fbe447}} 
+\index{SequenceFileReader@{SequenceFileReader}!getAlphType@{getAlphType}}
+\index{getAlphType@{getAlphType}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{getAlphType()}{getAlphType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}{Sequence\+File\+Reader\+::\+Alphabet\+Type}} Sequence\+File\+Reader\+::get\+Alph\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_sequence_file_reader_a85ca1952acbad6ee9efdf64887d75cf4}\label{class_sequence_file_reader_a85ca1952acbad6ee9efdf64887d75cf4}} 
+\index{SequenceFileReader@{SequenceFileReader}!getNames@{getNames}}
+\index{getNames@{getNames}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{getNames()}{getNames()}}
+{\footnotesize\ttfamily std\+::string $\ast$$\ast$ Sequence\+File\+Reader\+::get\+Names (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_sequence_file_reader_a17b611ba364756ed6f8f977c26a200a2}\label{class_sequence_file_reader_a17b611ba364756ed6f8f977c26a200a2}} 
+\index{SequenceFileReader@{SequenceFileReader}!getSeqs@{getSeqs}}
+\index{getSeqs@{getSeqs}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{getSeqs()}{getSeqs()}}
+{\footnotesize\ttfamily std\+::string $\ast$$\ast$ Sequence\+File\+Reader\+::get\+Seqs (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_sequence_file_reader_a9318592fe459d2b67d3fb191b1f75057}\label{class_sequence_file_reader_a9318592fe459d2b67d3fb191b1f75057}} 
+\index{SequenceFileReader@{SequenceFileReader}!alphType@{alphType}}
+\index{alphType@{alphType}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{alphType}{alphType}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_sequence_file_reader_a8cc42e15f26ed4a680ac4b968f0922a7}{Alphabet\+Type}} Sequence\+File\+Reader\+::alph\+Type}
+
+\mbox{\Hypertarget{class_sequence_file_reader_a5599fbffb34bd065bfb846947c6e9c41}\label{class_sequence_file_reader_a5599fbffb34bd065bfb846947c6e9c41}} 
+\index{SequenceFileReader@{SequenceFileReader}!filetype@{filetype}}
+\index{filetype@{filetype}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{filetype}{filetype}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_sequence_file_reader_a38d7a5bd2e01b009daa2fa7f0909ed57}{file\+Type}} Sequence\+File\+Reader\+::filetype}
+
+\mbox{\Hypertarget{class_sequence_file_reader_ac5ad200019599845c0f1bc226ce0161b}\label{class_sequence_file_reader_ac5ad200019599845c0f1bc226ce0161b}} 
+\index{SequenceFileReader@{SequenceFileReader}!names@{names}}
+\index{names@{names}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{names}{names}}
+{\footnotesize\ttfamily std\+::string$\ast$$\ast$ Sequence\+File\+Reader\+::names}
+
+\mbox{\Hypertarget{class_sequence_file_reader_aac56176cc7a6ed92728a106576ec3382}\label{class_sequence_file_reader_aac56176cc7a6ed92728a106576ec3382}} 
+\index{SequenceFileReader@{SequenceFileReader}!numSeqs@{numSeqs}}
+\index{numSeqs@{numSeqs}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{numSeqs}{numSeqs}}
+{\footnotesize\ttfamily int Sequence\+File\+Reader\+::num\+Seqs}
+
+\mbox{\Hypertarget{class_sequence_file_reader_a4ed189180afd320f49605425fad1a0d9}\label{class_sequence_file_reader_a4ed189180afd320f49605425fad1a0d9}} 
+\index{SequenceFileReader@{SequenceFileReader}!seqs@{seqs}}
+\index{seqs@{seqs}!SequenceFileReader@{SequenceFileReader}}
+\doxysubsubsection{\texorpdfstring{seqs}{seqs}}
+{\footnotesize\ttfamily std\+::string$\ast$$\ast$ Sequence\+File\+Reader\+::seqs}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_sequence_file_reader_8hpp}{Sequence\+File\+Reader.\+hpp}}\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_sequence_file_reader_8cpp}{Sequence\+File\+Reader.\+cpp}}\end{DoxyCompactItemize}

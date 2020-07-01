@@ -1,0 +1,319 @@
+\hypertarget{class_argument_handler}{}\doxysection{Argument\+Handler Class Reference}
+\label{class_argument_handler}\index{ArgumentHandler@{ArgumentHandler}}
+
+
+{\ttfamily \#include $<$Argument\+Handler.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854a}{Input\+Type}} \{ \mbox{\hyperlink{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854aafe3d262ec86ee31ed3d27ef42b1f235a}{alignment}}, 
+\mbox{\hyperlink{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854aa9d20bc1085ccd1932c0ffd1d97a10dc6}{distance}}
+ \}
+\item 
+enum \mbox{\hyperlink{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6}{Output\+Type}} \{ \mbox{\hyperlink{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6a1af730d3ffbdc6354d6bda2549356cef}{dist}}, 
+\mbox{\hyperlink{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6ab25e481414af792cbeffe6f6e2f06301}{tree}}
+ \}
+\item 
+enum \mbox{\hyperlink{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87}{Alphabet\+Type}} \{ \mbox{\hyperlink{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87af8d1253b6d8eecce0eea5eff86ddc63e}{dna}}, 
+\mbox{\hyperlink{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87abf0a7e58c2a951cb200e05ceed789d48}{amino}}, 
+\mbox{\hyperlink{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87a340fde3e9bbd6b4f6450c7e10baa63a4}{null}}
+ \}
+\item 
+enum \mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afd}{Correction\+Type}} \{ \newline
+\mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda3bc78094126089bb7a17ff4a5ef7e60f}{not\+\_\+assigned}}, 
+\mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda2c1d7a65ead4fefe3d70bfc2f64662e0}{none}}, 
+\mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda73811e507c334774db6b1ab687639b5f}{Jukes\+Cantor}}, 
+\mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda543fa5f6ad05da7f2efa6cefee5ba8d9}{Kimura2}}, 
+\newline
+\mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afdab094fe12b9abab259fbf519b9e3399a3}{Fast\+Tree}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_argument_handler_a2657983b12529181db92512d3a6fc1fa}{Argument\+Handler}} (char $\ast$argv\mbox{[}$\,$\mbox{]}, int argc)
+\item 
+std\+::string \mbox{\hyperlink{class_argument_handler_a224ff07fda4de663426717398570cc39}{get\+Method}} ()
+\item 
+std\+::string \mbox{\hyperlink{class_argument_handler_adecd074f940a7e8b0b6fec545ae60785}{get\+In\+File}} ()
+\item 
+std\+::string \mbox{\hyperlink{class_argument_handler_a2529018d697390828fb4d6e2885bbf61}{get\+N\+J\+Tmp\+Dir}} ()
+\item 
+\mbox{\hyperlink{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854a}{Input\+Type}} \mbox{\hyperlink{class_argument_handler_a92a40dbc7347ddf0c48f0d1e29983ee5}{get\+Input\+Type}} ()
+\item 
+\mbox{\hyperlink{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6}{Output\+Type}} \mbox{\hyperlink{class_argument_handler_adf6d4f88331a6507d6b599c6028bad81}{get\+Output\+Type}} ()
+\item 
+F\+I\+LE $\ast$ \mbox{\hyperlink{class_argument_handler_a55390d92e7af8c7ab3288e546ceac526}{get\+Outpu\+File}} ()
+\item 
+int \mbox{\hyperlink{class_argument_handler_a33212032b39f702b793ee894806fcd7a}{get\+Num\+Threads}} ()
+\item 
+\mbox{\hyperlink{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87}{Alphabet\+Type}} \mbox{\hyperlink{class_argument_handler_adc5b07465467d41d56243c86d36860aa}{get\+Alphabet\+Type}} ()
+\item 
+\mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afd}{Correction\+Type}} \mbox{\hyperlink{class_argument_handler_aa7474430e7b2f38a121c87bb958b6bca}{get\+Correction\+Type}} ()
+\item 
+bool \mbox{\hyperlink{class_argument_handler_aed3ea207ece08d71c49613911ac8b711}{argument\+Test}} ()
+\item 
+bool \mbox{\hyperlink{class_argument_handler_abfbe1a6eb30e677fc48f3f05a7e7c0c6}{use\+S\+SE}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_argument_handler_a914d0e32db0be49bb995e83eb5c27e67}{method}}
+\item 
+std\+::string \mbox{\hyperlink{class_argument_handler_ac0d77b705131e77090caad9edd0addb8}{nj\+Tmp\+Dir}}
+\item 
+std\+::string \mbox{\hyperlink{class_argument_handler_a0ade9cb2d7fe5fb64af8f07889ea5637}{in\+File}}
+\item 
+\mbox{\hyperlink{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854a}{Input\+Type}} \mbox{\hyperlink{class_argument_handler_aad76c53693b07c1fc1c1fb2de9ae5d2d}{in\+Type}}
+\item 
+\mbox{\hyperlink{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6}{Output\+Type}} \mbox{\hyperlink{class_argument_handler_a10623101cdf9c0106281c8abde0e765e}{out\+Type}}
+\item 
+\mbox{\hyperlink{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87}{Alphabet\+Type}} \mbox{\hyperlink{class_argument_handler_a6d6d8845f072a4d16d582369eb74d7e8}{alph\+Type}}
+\item 
+\mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afd}{Correction\+Type}} \mbox{\hyperlink{class_argument_handler_aa45c91570f06d0b3624179af8d4c2e7b}{corr\+Type}}
+\item 
+F\+I\+LE $\ast$ \mbox{\hyperlink{class_argument_handler_acb3b8922801c85e04e02b2a4efe66601}{out\+File}}
+\item 
+int \mbox{\hyperlink{class_argument_handler_a38e44c60210a91b35b4b882b054b35e9}{threads}}
+\item 
+bool \mbox{\hyperlink{class_argument_handler_abd1a6c1e121dfcf1612df55571ea64a1}{S\+SE}}
+\item 
+bool \mbox{\hyperlink{class_argument_handler_a0f6f818f0d21bbbb1a732eb368caec23}{abort}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Enumeration Documentation}
+\mbox{\Hypertarget{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87}\label{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87}} 
+\index{ArgumentHandler@{ArgumentHandler}!AlphabetType@{AlphabetType}}
+\index{AlphabetType@{AlphabetType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{AlphabetType}{AlphabetType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87}{Argument\+Handler\+::\+Alphabet\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{dna@{dna}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!dna@{dna}}}\mbox{\Hypertarget{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87af8d1253b6d8eecce0eea5eff86ddc63e}\label{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87af8d1253b6d8eecce0eea5eff86ddc63e}} 
+dna&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{amino@{amino}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!amino@{amino}}}\mbox{\Hypertarget{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87abf0a7e58c2a951cb200e05ceed789d48}\label{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87abf0a7e58c2a951cb200e05ceed789d48}} 
+amino&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{null@{null}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!null@{null}}}\mbox{\Hypertarget{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87a340fde3e9bbd6b4f6450c7e10baa63a4}\label{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87a340fde3e9bbd6b4f6450c7e10baa63a4}} 
+null&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afd}\label{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afd}} 
+\index{ArgumentHandler@{ArgumentHandler}!CorrectionType@{CorrectionType}}
+\index{CorrectionType@{CorrectionType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{CorrectionType}{CorrectionType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afd}{Argument\+Handler\+::\+Correction\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{not\_assigned@{not\_assigned}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!not\_assigned@{not\_assigned}}}\mbox{\Hypertarget{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda3bc78094126089bb7a17ff4a5ef7e60f}\label{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda3bc78094126089bb7a17ff4a5ef7e60f}} 
+not\+\_\+assigned&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{none@{none}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!none@{none}}}\mbox{\Hypertarget{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda2c1d7a65ead4fefe3d70bfc2f64662e0}\label{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda2c1d7a65ead4fefe3d70bfc2f64662e0}} 
+none&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{JukesCantor@{JukesCantor}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!JukesCantor@{JukesCantor}}}\mbox{\Hypertarget{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda73811e507c334774db6b1ab687639b5f}\label{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda73811e507c334774db6b1ab687639b5f}} 
+Jukes\+Cantor&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Kimura2@{Kimura2}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!Kimura2@{Kimura2}}}\mbox{\Hypertarget{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda543fa5f6ad05da7f2efa6cefee5ba8d9}\label{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afda543fa5f6ad05da7f2efa6cefee5ba8d9}} 
+Kimura2&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{FastTree@{FastTree}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!FastTree@{FastTree}}}\mbox{\Hypertarget{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afdab094fe12b9abab259fbf519b9e3399a3}\label{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afdab094fe12b9abab259fbf519b9e3399a3}} 
+Fast\+Tree&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854a}\label{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854a}} 
+\index{ArgumentHandler@{ArgumentHandler}!InputType@{InputType}}
+\index{InputType@{InputType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{InputType}{InputType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854a}{Argument\+Handler\+::\+Input\+Type}}}
+
+The input type can be either a set of alignments in F\+A\+S\+TA format, or a pre-\/computed distance matrix in Phylip format. \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{alignment@{alignment}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!alignment@{alignment}}}\mbox{\Hypertarget{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854aafe3d262ec86ee31ed3d27ef42b1f235a}\label{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854aafe3d262ec86ee31ed3d27ef42b1f235a}} 
+alignment&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{distance@{distance}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!distance@{distance}}}\mbox{\Hypertarget{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854aa9d20bc1085ccd1932c0ffd1d97a10dc6}\label{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854aa9d20bc1085ccd1932c0ffd1d97a10dc6}} 
+distance&\\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6}\label{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6}} 
+\index{ArgumentHandler@{ArgumentHandler}!OutputType@{OutputType}}
+\index{OutputType@{OutputType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{OutputType}{OutputType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6}{Argument\+Handler\+::\+Output\+Type}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{dist@{dist}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!dist@{dist}}}\mbox{\Hypertarget{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6a1af730d3ffbdc6354d6bda2549356cef}\label{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6a1af730d3ffbdc6354d6bda2549356cef}} 
+dist&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{tree@{tree}!ArgumentHandler@{ArgumentHandler}}\index{ArgumentHandler@{ArgumentHandler}!tree@{tree}}}\mbox{\Hypertarget{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6ab25e481414af792cbeffe6f6e2f06301}\label{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6ab25e481414af792cbeffe6f6e2f06301}} 
+tree&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_argument_handler_a2657983b12529181db92512d3a6fc1fa}\label{class_argument_handler_a2657983b12529181db92512d3a6fc1fa}} 
+\index{ArgumentHandler@{ArgumentHandler}!ArgumentHandler@{ArgumentHandler}}
+\index{ArgumentHandler@{ArgumentHandler}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{ArgumentHandler()}{ArgumentHandler()}}
+{\footnotesize\ttfamily Argument\+Handler\+::\+Argument\+Handler (\begin{DoxyParamCaption}\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]},  }\item[{int}]{argc }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_argument_handler_aed3ea207ece08d71c49613911ac8b711}\label{class_argument_handler_aed3ea207ece08d71c49613911ac8b711}} 
+\index{ArgumentHandler@{ArgumentHandler}!argumentTest@{argumentTest}}
+\index{argumentTest@{argumentTest}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{argumentTest()}{argumentTest()}}
+{\footnotesize\ttfamily bool Argument\+Handler\+::argument\+Test (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_adc5b07465467d41d56243c86d36860aa}\label{class_argument_handler_adc5b07465467d41d56243c86d36860aa}} 
+\index{ArgumentHandler@{ArgumentHandler}!getAlphabetType@{getAlphabetType}}
+\index{getAlphabetType@{getAlphabetType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{getAlphabetType()}{getAlphabetType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87}{Argument\+Handler\+::\+Alphabet\+Type}} Argument\+Handler\+::get\+Alphabet\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_aa7474430e7b2f38a121c87bb958b6bca}\label{class_argument_handler_aa7474430e7b2f38a121c87bb958b6bca}} 
+\index{ArgumentHandler@{ArgumentHandler}!getCorrectionType@{getCorrectionType}}
+\index{getCorrectionType@{getCorrectionType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{getCorrectionType()}{getCorrectionType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afd}{Argument\+Handler\+::\+Correction\+Type}} Argument\+Handler\+::get\+Correction\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_adecd074f940a7e8b0b6fec545ae60785}\label{class_argument_handler_adecd074f940a7e8b0b6fec545ae60785}} 
+\index{ArgumentHandler@{ArgumentHandler}!getInFile@{getInFile}}
+\index{getInFile@{getInFile}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{getInFile()}{getInFile()}}
+{\footnotesize\ttfamily std\+::string Argument\+Handler\+::get\+In\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_a92a40dbc7347ddf0c48f0d1e29983ee5}\label{class_argument_handler_a92a40dbc7347ddf0c48f0d1e29983ee5}} 
+\index{ArgumentHandler@{ArgumentHandler}!getInputType@{getInputType}}
+\index{getInputType@{getInputType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{getInputType()}{getInputType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854a}{Argument\+Handler\+::\+Input\+Type}} Argument\+Handler\+::get\+Input\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_a224ff07fda4de663426717398570cc39}\label{class_argument_handler_a224ff07fda4de663426717398570cc39}} 
+\index{ArgumentHandler@{ArgumentHandler}!getMethod@{getMethod}}
+\index{getMethod@{getMethod}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{getMethod()}{getMethod()}}
+{\footnotesize\ttfamily std\+::string Argument\+Handler\+::get\+Method (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_a2529018d697390828fb4d6e2885bbf61}\label{class_argument_handler_a2529018d697390828fb4d6e2885bbf61}} 
+\index{ArgumentHandler@{ArgumentHandler}!getNJTmpDir@{getNJTmpDir}}
+\index{getNJTmpDir@{getNJTmpDir}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{getNJTmpDir()}{getNJTmpDir()}}
+{\footnotesize\ttfamily std\+::string Argument\+Handler\+::get\+N\+J\+Tmp\+Dir (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_a33212032b39f702b793ee894806fcd7a}\label{class_argument_handler_a33212032b39f702b793ee894806fcd7a}} 
+\index{ArgumentHandler@{ArgumentHandler}!getNumThreads@{getNumThreads}}
+\index{getNumThreads@{getNumThreads}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{getNumThreads()}{getNumThreads()}}
+{\footnotesize\ttfamily int Argument\+Handler\+::get\+Num\+Threads (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_a55390d92e7af8c7ab3288e546ceac526}\label{class_argument_handler_a55390d92e7af8c7ab3288e546ceac526}} 
+\index{ArgumentHandler@{ArgumentHandler}!getOutpuFile@{getOutpuFile}}
+\index{getOutpuFile@{getOutpuFile}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{getOutpuFile()}{getOutpuFile()}}
+{\footnotesize\ttfamily F\+I\+LE $\ast$ Argument\+Handler\+::get\+Outpu\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_adf6d4f88331a6507d6b599c6028bad81}\label{class_argument_handler_adf6d4f88331a6507d6b599c6028bad81}} 
+\index{ArgumentHandler@{ArgumentHandler}!getOutputType@{getOutputType}}
+\index{getOutputType@{getOutputType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{getOutputType()}{getOutputType()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6}{Argument\+Handler\+::\+Output\+Type}} Argument\+Handler\+::get\+Output\+Type (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_argument_handler_abfbe1a6eb30e677fc48f3f05a7e7c0c6}\label{class_argument_handler_abfbe1a6eb30e677fc48f3f05a7e7c0c6}} 
+\index{ArgumentHandler@{ArgumentHandler}!useSSE@{useSSE}}
+\index{useSSE@{useSSE}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{useSSE()}{useSSE()}}
+{\footnotesize\ttfamily bool Argument\+Handler\+::use\+S\+SE (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_argument_handler_a0f6f818f0d21bbbb1a732eb368caec23}\label{class_argument_handler_a0f6f818f0d21bbbb1a732eb368caec23}} 
+\index{ArgumentHandler@{ArgumentHandler}!abort@{abort}}
+\index{abort@{abort}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{abort}{abort}}
+{\footnotesize\ttfamily bool Argument\+Handler\+::abort}
+
+\mbox{\Hypertarget{class_argument_handler_a6d6d8845f072a4d16d582369eb74d7e8}\label{class_argument_handler_a6d6d8845f072a4d16d582369eb74d7e8}} 
+\index{ArgumentHandler@{ArgumentHandler}!alphType@{alphType}}
+\index{alphType@{alphType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{alphType}{alphType}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_argument_handler_ac2a6552abc7c6449b625791aefdf6d87}{Alphabet\+Type}} Argument\+Handler\+::alph\+Type}
+
+\mbox{\Hypertarget{class_argument_handler_aa45c91570f06d0b3624179af8d4c2e7b}\label{class_argument_handler_aa45c91570f06d0b3624179af8d4c2e7b}} 
+\index{ArgumentHandler@{ArgumentHandler}!corrType@{corrType}}
+\index{corrType@{corrType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{corrType}{corrType}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_argument_handler_ae67a9e8d392b5fcc6f75c8fb7a875afd}{Correction\+Type}} Argument\+Handler\+::corr\+Type}
+
+\mbox{\Hypertarget{class_argument_handler_a0ade9cb2d7fe5fb64af8f07889ea5637}\label{class_argument_handler_a0ade9cb2d7fe5fb64af8f07889ea5637}} 
+\index{ArgumentHandler@{ArgumentHandler}!inFile@{inFile}}
+\index{inFile@{inFile}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{inFile}{inFile}}
+{\footnotesize\ttfamily std\+::string Argument\+Handler\+::in\+File}
+
+\mbox{\Hypertarget{class_argument_handler_aad76c53693b07c1fc1c1fb2de9ae5d2d}\label{class_argument_handler_aad76c53693b07c1fc1c1fb2de9ae5d2d}} 
+\index{ArgumentHandler@{ArgumentHandler}!inType@{inType}}
+\index{inType@{inType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{inType}{inType}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_argument_handler_ae693a55bec1ed6005f0976a40a7f854a}{Input\+Type}} Argument\+Handler\+::in\+Type}
+
+\mbox{\Hypertarget{class_argument_handler_a914d0e32db0be49bb995e83eb5c27e67}\label{class_argument_handler_a914d0e32db0be49bb995e83eb5c27e67}} 
+\index{ArgumentHandler@{ArgumentHandler}!method@{method}}
+\index{method@{method}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{method}{method}}
+{\footnotesize\ttfamily std\+::string Argument\+Handler\+::method}
+
+\mbox{\Hypertarget{class_argument_handler_ac0d77b705131e77090caad9edd0addb8}\label{class_argument_handler_ac0d77b705131e77090caad9edd0addb8}} 
+\index{ArgumentHandler@{ArgumentHandler}!njTmpDir@{njTmpDir}}
+\index{njTmpDir@{njTmpDir}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{njTmpDir}{njTmpDir}}
+{\footnotesize\ttfamily std\+::string Argument\+Handler\+::nj\+Tmp\+Dir}
+
+\mbox{\Hypertarget{class_argument_handler_acb3b8922801c85e04e02b2a4efe66601}\label{class_argument_handler_acb3b8922801c85e04e02b2a4efe66601}} 
+\index{ArgumentHandler@{ArgumentHandler}!outFile@{outFile}}
+\index{outFile@{outFile}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{outFile}{outFile}}
+{\footnotesize\ttfamily F\+I\+LE$\ast$ Argument\+Handler\+::out\+File}
+
+\mbox{\Hypertarget{class_argument_handler_a10623101cdf9c0106281c8abde0e765e}\label{class_argument_handler_a10623101cdf9c0106281c8abde0e765e}} 
+\index{ArgumentHandler@{ArgumentHandler}!outType@{outType}}
+\index{outType@{outType}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{outType}{outType}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_argument_handler_ae260b096d1b4cb57e0539b8d37ca1ce6}{Output\+Type}} Argument\+Handler\+::out\+Type}
+
+\mbox{\Hypertarget{class_argument_handler_abd1a6c1e121dfcf1612df55571ea64a1}\label{class_argument_handler_abd1a6c1e121dfcf1612df55571ea64a1}} 
+\index{ArgumentHandler@{ArgumentHandler}!SSE@{SSE}}
+\index{SSE@{SSE}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{SSE}{SSE}}
+{\footnotesize\ttfamily bool Argument\+Handler\+::\+S\+SE}
+
+\mbox{\Hypertarget{class_argument_handler_a38e44c60210a91b35b4b882b054b35e9}\label{class_argument_handler_a38e44c60210a91b35b4b882b054b35e9}} 
+\index{ArgumentHandler@{ArgumentHandler}!threads@{threads}}
+\index{threads@{threads}!ArgumentHandler@{ArgumentHandler}}
+\doxysubsubsection{\texorpdfstring{threads}{threads}}
+{\footnotesize\ttfamily int Argument\+Handler\+::threads}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_argument_handler_8hpp}{Argument\+Handler.\+hpp}}\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_argument_handler_8cpp}{Argument\+Handler.\+cpp}}\end{DoxyCompactItemize}

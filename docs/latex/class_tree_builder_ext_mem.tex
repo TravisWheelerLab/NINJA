@@ -1,0 +1,470 @@
+\hypertarget{class_tree_builder_ext_mem}{}\doxysection{Tree\+Builder\+Ext\+Mem Class Reference}
+\label{class_tree_builder_ext_mem}\index{TreeBuilderExtMem@{TreeBuilderExtMem}}
+
+
+{\ttfamily \#include $<$Tree\+Builder\+Ext\+Mem.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_tree_builder_ext_mem_a097a3625841011bcb55bc8663696b6de}{Tree\+Builder\+Ext\+Mem}} (std\+::string $\ast$$\ast$\mbox{\hyperlink{class_tree_builder_ext_mem_a1ed776826f04444636f65539fcfe5672}{names}}, int names\+Size, float $\ast$\mbox{\hyperlink{class_tree_builder_ext_mem_a144639ff1015c261a2aaf16803db8c9e}{R}}, std\+::string \mbox{\hyperlink{class_tree_builder_ext_mem_a4b2b84b017dd53228e2a6508bd08ad99}{nj\+Tmp\+Dir}}, F\+I\+LE $\ast$\mbox{\hyperlink{class_tree_builder_ext_mem_ab7249446a478f7b77e30e4acf832913a}{diskD}}, float $\ast$$\ast$\mbox{\hyperlink{class_tree_builder_ext_mem_a6d04c7dd74f24b8741169d7bd4fcb18d}{memD}}, int mem\+D\+First\+Size, int first\+Mem\+Col, int \mbox{\hyperlink{class_tree_builder_ext_mem_a5d132013eba6278067226c65ff4befdf}{row\+Length}}, long \mbox{\hyperlink{class_tree_builder_ext_mem_ad79f6b9e37659d5bf70c3718e21c2947}{max\+Memory}})
+\item 
+\mbox{\hyperlink{class_tree_builder_ext_mem_a1a01122703a9e481d4d2b441a32accd0}{$\sim$\+Tree\+Builder\+Ext\+Mem}} ()
+\item 
+\mbox{\hyperlink{class_tree_node}{Tree\+Node}} $\ast$$\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a1209ad5479e3822de6311cbd39cb897f}{build}} ()
+\item 
+void \mbox{\hyperlink{class_tree_builder_ext_mem_ac7587117b544a73a9790b46b1771dabd}{clear}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_ab53d954a69fb53cd2f3d89a41e6b766d}{K}}
+\item 
+std\+::string $\ast$$\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a1ed776826f04444636f65539fcfe5672}{names}}
+\item 
+\mbox{\hyperlink{class_tree_node}{Tree\+Node}} $\ast$$\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_ae942b98bb08c642021daf86883316eeb}{nodes}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a626f360d5e7bd8226f7796c48e0cee5d}{redirect}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_af855fdf19b20a592e844f6c565a4e982}{next\+Active\+Node}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_aff0d916999b5e4ad80171aa18502fb76}{prev\+Active\+Node}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_a2381bdb22844d37e18554f555272ff0c}{first\+Active\+Node}}
+\item 
+\mbox{\hyperlink{class_array_heap_ext_mem}{Array\+Heap\+Ext\+Mem}} $\ast$$\ast$$\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_acb9a7c738ae2fbbd270c04b91d63cdb4}{array\+Heaps}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a03f19dcfdb1d28c892c51032203d4f5a}{clust\+Assignments}}
+\item 
+float $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_aa5206abdfa96ffa94008732d720b7430}{clust\+Maxes}}
+\item 
+float $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a5e9768d9bc311e744c049d1f62d3346d}{clust\+Mins}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_aedbbd4020675014bade857e222c5c1bc}{clusters\+By\+Size}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a16a555756ad478a46e1b85331a0a5bd9}{clust\+Sizes}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_aa771bc9ec52cd29ef693b42f6d2c463b}{newK}}
+\item 
+F\+I\+LE $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_ab7249446a478f7b77e30e4acf832913a}{diskD}} =N\+U\+LL
+\item 
+F\+I\+LE $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a672a3332a9da5a3e11672fbd83321343}{cand\+File}} =N\+U\+LL
+\item 
+long \mbox{\hyperlink{class_tree_builder_ext_mem_a403430c08b69da50267e34bfa58bcc46}{cand\+File\+Pos}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_a1d270a24e9b6d01042d3d75271732546}{num\+Cand\+Triples\+To\+Disk}}
+\item 
+float $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a144639ff1015c261a2aaf16803db8c9e}{R}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_a480540a8c4d691e82da94e1c1b9799a8}{R\+Size}}
+\item 
+float $\ast$$\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a6d04c7dd74f24b8741169d7bd4fcb18d}{memD}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_a98f74a319e5e575865e9a956628954c0}{first\+Col\+In\+Mem}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_a3912718f528ea66d87eced66639c51de}{cur\+Col\+In\+Mem}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_ab6952a3aa94a0d3f43955ac582b6478f}{mem\+D\+Size}}
+\item 
+float $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a99d871535ef78aaefdafb6bf410ca15e}{f\+Buff}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_ac2e3a20b053bae3c24dd71357eb37c63}{candidate\+Count\+Per\+Loop}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a0d9a4b3ab6897b284ebaa43933ff4be9}{candidate\+Views\+Per\+Loop}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_aa964699ea4e40f6fcb90ed9d03a66f8c}{candidate\+Rows\+Count\+Per\+Loop}}
+\item 
+std\+::string \mbox{\hyperlink{class_tree_builder_ext_mem_a4b2b84b017dd53228e2a6508bd08ad99}{nj\+Tmp\+Dir}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_afe236f6821d59ebf61799db00a380103}{next\+Internal\+Node}}
+\item 
+float $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a777337240d1679453ee7bc377bdbc31f}{candidatesD}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a1f6ad52ede316b88af0946feefeef64c}{candidatesI}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a9f4cd273a24c748da1742a67bb87d032}{candidatesJ}}
+\item 
+bool $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_adcdadad8691305fed72697823310f4fd}{candidates\+Active}}
+\item 
+\mbox{\hyperlink{class_stack}{Stack}} $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a097532d1b2e32dc065964be64619454f}{free\+Candidates}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_a25bb731393ce6581026b2375934eb69d}{last\+Candidate\+Index}}
+\item 
+\mbox{\hyperlink{class_candidate_heap}{Candidate\+Heap}} $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_aa356150b0a266390e58eb290e2eee922}{starter\+Cand\+Heap}}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{class_candidate_heap}{Candidate\+Heap}} $\ast$ $>$ $\ast$ \mbox{\hyperlink{class_tree_builder_ext_mem_a5a47fa01f318c6916c27e86f914c3834}{cand\+Heap\+List}}
+\item 
+bool \mbox{\hyperlink{class_tree_builder_ext_mem_aec4be7962057f1a2c9beb6912bb4a730}{using\+Simple\+Candidates}}
+\item 
+float \mbox{\hyperlink{class_tree_builder_ext_mem_adb23e8c6abd2e9772da737bd59f283d2}{candidates\+Size}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ext_mem_a5d132013eba6278067226c65ff4befdf}{row\+Length}}
+\item 
+long \mbox{\hyperlink{class_tree_builder_ext_mem_ad79f6b9e37659d5bf70c3718e21c2947}{max\+Memory}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \mbox{\hyperlink{class_tree_builder_ext_mem_a35de8f4813b88b208a34bbe6e37df09d}{return\+Cands\+To\+Heaps}} = false
+\item 
+static const bool \mbox{\hyperlink{class_tree_builder_ext_mem_ad7c8613f567142feed3fb7e5ca8dfb72}{use\+Cand\+Heaps}} = true
+\item 
+static const bool \mbox{\hyperlink{class_tree_builder_ext_mem_a07a5c09c6a3b72b4187ec82a85d76b2a}{use\+Bin\+Pair\+Heaps}} = true
+\item 
+static const int \mbox{\hyperlink{class_tree_builder_ext_mem_a8ff94ee245fbd5a9af6604cddee46836}{complex\+Candidate\+Count}} = 2000
+\item 
+static const int \mbox{\hyperlink{class_tree_builder_ext_mem_a25916da6a4d22d46dbf542e68f4859ea}{complex\+Candidate\+Ratio}} = 40
+\item 
+static constexpr float \mbox{\hyperlink{class_tree_builder_ext_mem_a3f40c610b80b9b5b70c408384c9e72ab}{cand\+Heap\+Decay}} = 0.\+6f
+\item 
+static const int \mbox{\hyperlink{class_tree_builder_ext_mem_aaf55d2b5acf8d4c837cfc2c09398704d}{clust\+Cnt}} = 30
+\item 
+static const int \mbox{\hyperlink{class_tree_builder_ext_mem_a46024bb201d51df4bcd942d2f9debd2d}{cand\+Heap\+Thresh}} = 50000
+\item 
+static const int \mbox{\hyperlink{class_tree_builder_ext_mem_accd1869242cfe993b49948a01ec05711}{float\+Size}} = 4
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a097a3625841011bcb55bc8663696b6de}\label{class_tree_builder_ext_mem_a097a3625841011bcb55bc8663696b6de}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{TreeBuilderExtMem()}{TreeBuilderExtMem()}}
+{\footnotesize\ttfamily Tree\+Builder\+Ext\+Mem\+::\+Tree\+Builder\+Ext\+Mem (\begin{DoxyParamCaption}\item[{std\+::string $\ast$$\ast$}]{names,  }\item[{int}]{names\+Size,  }\item[{float $\ast$}]{R,  }\item[{std\+::string}]{nj\+Tmp\+Dir,  }\item[{F\+I\+LE $\ast$}]{diskD,  }\item[{float $\ast$$\ast$}]{memD,  }\item[{int}]{mem\+D\+First\+Size,  }\item[{int}]{first\+Mem\+Col,  }\item[{int}]{row\+Length,  }\item[{long}]{max\+Memory }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a1a01122703a9e481d4d2b441a32accd0}\label{class_tree_builder_ext_mem_a1a01122703a9e481d4d2b441a32accd0}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!````~TreeBuilderExtMem@{$\sim$TreeBuilderExtMem}}
+\index{````~TreeBuilderExtMem@{$\sim$TreeBuilderExtMem}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{$\sim$TreeBuilderExtMem()}{~TreeBuilderExtMem()}}
+{\footnotesize\ttfamily Tree\+Builder\+Ext\+Mem\+::$\sim$\+Tree\+Builder\+Ext\+Mem (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a1209ad5479e3822de6311cbd39cb897f}\label{class_tree_builder_ext_mem_a1209ad5479e3822de6311cbd39cb897f}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!build@{build}}
+\index{build@{build}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{build()}{build()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_tree_node}{Tree\+Node}} $\ast$$\ast$ Tree\+Builder\+Ext\+Mem\+::build (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_ac7587117b544a73a9790b46b1771dabd}\label{class_tree_builder_ext_mem_ac7587117b544a73a9790b46b1771dabd}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!clear@{clear}}
+\index{clear@{clear}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void Tree\+Builder\+Ext\+Mem\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_tree_builder_ext_mem_acb9a7c738ae2fbbd270c04b91d63cdb4}\label{class_tree_builder_ext_mem_acb9a7c738ae2fbbd270c04b91d63cdb4}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!arrayHeaps@{arrayHeaps}}
+\index{arrayHeaps@{arrayHeaps}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{arrayHeaps}{arrayHeaps}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_array_heap_ext_mem}{Array\+Heap\+Ext\+Mem}}$\ast$$\ast$$\ast$ Tree\+Builder\+Ext\+Mem\+::array\+Heaps}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a672a3332a9da5a3e11672fbd83321343}\label{class_tree_builder_ext_mem_a672a3332a9da5a3e11672fbd83321343}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candFile@{candFile}}
+\index{candFile@{candFile}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candFile}{candFile}}
+{\footnotesize\ttfamily F\+I\+LE$\ast$ Tree\+Builder\+Ext\+Mem\+::cand\+File =N\+U\+LL}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a403430c08b69da50267e34bfa58bcc46}\label{class_tree_builder_ext_mem_a403430c08b69da50267e34bfa58bcc46}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candFilePos@{candFilePos}}
+\index{candFilePos@{candFilePos}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candFilePos}{candFilePos}}
+{\footnotesize\ttfamily long Tree\+Builder\+Ext\+Mem\+::cand\+File\+Pos}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a3f40c610b80b9b5b70c408384c9e72ab}\label{class_tree_builder_ext_mem_a3f40c610b80b9b5b70c408384c9e72ab}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candHeapDecay@{candHeapDecay}}
+\index{candHeapDecay@{candHeapDecay}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candHeapDecay}{candHeapDecay}}
+{\footnotesize\ttfamily constexpr float Tree\+Builder\+Ext\+Mem\+::cand\+Heap\+Decay = 0.\+6f\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a5a47fa01f318c6916c27e86f914c3834}\label{class_tree_builder_ext_mem_a5a47fa01f318c6916c27e86f914c3834}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candHeapList@{candHeapList}}
+\index{candHeapList@{candHeapList}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candHeapList}{candHeapList}}
+{\footnotesize\ttfamily std\+::vector$<$\mbox{\hyperlink{class_candidate_heap}{Candidate\+Heap}}$\ast$$>$$\ast$ Tree\+Builder\+Ext\+Mem\+::cand\+Heap\+List}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a46024bb201d51df4bcd942d2f9debd2d}\label{class_tree_builder_ext_mem_a46024bb201d51df4bcd942d2f9debd2d}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candHeapThresh@{candHeapThresh}}
+\index{candHeapThresh@{candHeapThresh}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candHeapThresh}{candHeapThresh}}
+{\footnotesize\ttfamily const int Tree\+Builder\+Ext\+Mem\+::cand\+Heap\+Thresh = 50000\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_ac2e3a20b053bae3c24dd71357eb37c63}\label{class_tree_builder_ext_mem_ac2e3a20b053bae3c24dd71357eb37c63}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candidateCountPerLoop@{candidateCountPerLoop}}
+\index{candidateCountPerLoop@{candidateCountPerLoop}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candidateCountPerLoop}{candidateCountPerLoop}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::candidate\+Count\+Per\+Loop}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_aa964699ea4e40f6fcb90ed9d03a66f8c}\label{class_tree_builder_ext_mem_aa964699ea4e40f6fcb90ed9d03a66f8c}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candidateRowsCountPerLoop@{candidateRowsCountPerLoop}}
+\index{candidateRowsCountPerLoop@{candidateRowsCountPerLoop}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candidateRowsCountPerLoop}{candidateRowsCountPerLoop}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::candidate\+Rows\+Count\+Per\+Loop}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_adcdadad8691305fed72697823310f4fd}\label{class_tree_builder_ext_mem_adcdadad8691305fed72697823310f4fd}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candidatesActive@{candidatesActive}}
+\index{candidatesActive@{candidatesActive}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candidatesActive}{candidatesActive}}
+{\footnotesize\ttfamily bool$\ast$ Tree\+Builder\+Ext\+Mem\+::candidates\+Active}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a777337240d1679453ee7bc377bdbc31f}\label{class_tree_builder_ext_mem_a777337240d1679453ee7bc377bdbc31f}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candidatesD@{candidatesD}}
+\index{candidatesD@{candidatesD}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candidatesD}{candidatesD}}
+{\footnotesize\ttfamily float$\ast$ Tree\+Builder\+Ext\+Mem\+::candidatesD}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a1f6ad52ede316b88af0946feefeef64c}\label{class_tree_builder_ext_mem_a1f6ad52ede316b88af0946feefeef64c}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candidatesI@{candidatesI}}
+\index{candidatesI@{candidatesI}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candidatesI}{candidatesI}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::candidatesI}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a9f4cd273a24c748da1742a67bb87d032}\label{class_tree_builder_ext_mem_a9f4cd273a24c748da1742a67bb87d032}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candidatesJ@{candidatesJ}}
+\index{candidatesJ@{candidatesJ}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candidatesJ}{candidatesJ}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::candidatesJ}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_adb23e8c6abd2e9772da737bd59f283d2}\label{class_tree_builder_ext_mem_adb23e8c6abd2e9772da737bd59f283d2}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candidatesSize@{candidatesSize}}
+\index{candidatesSize@{candidatesSize}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candidatesSize}{candidatesSize}}
+{\footnotesize\ttfamily float Tree\+Builder\+Ext\+Mem\+::candidates\+Size}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a0d9a4b3ab6897b284ebaa43933ff4be9}\label{class_tree_builder_ext_mem_a0d9a4b3ab6897b284ebaa43933ff4be9}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!candidateViewsPerLoop@{candidateViewsPerLoop}}
+\index{candidateViewsPerLoop@{candidateViewsPerLoop}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{candidateViewsPerLoop}{candidateViewsPerLoop}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::candidate\+Views\+Per\+Loop}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a03f19dcfdb1d28c892c51032203d4f5a}\label{class_tree_builder_ext_mem_a03f19dcfdb1d28c892c51032203d4f5a}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!clustAssignments@{clustAssignments}}
+\index{clustAssignments@{clustAssignments}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{clustAssignments}{clustAssignments}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::clust\+Assignments}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_aaf55d2b5acf8d4c837cfc2c09398704d}\label{class_tree_builder_ext_mem_aaf55d2b5acf8d4c837cfc2c09398704d}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!clustCnt@{clustCnt}}
+\index{clustCnt@{clustCnt}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{clustCnt}{clustCnt}}
+{\footnotesize\ttfamily const int Tree\+Builder\+Ext\+Mem\+::clust\+Cnt = 30\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_aedbbd4020675014bade857e222c5c1bc}\label{class_tree_builder_ext_mem_aedbbd4020675014bade857e222c5c1bc}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!clustersBySize@{clustersBySize}}
+\index{clustersBySize@{clustersBySize}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{clustersBySize}{clustersBySize}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::clusters\+By\+Size}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_aa5206abdfa96ffa94008732d720b7430}\label{class_tree_builder_ext_mem_aa5206abdfa96ffa94008732d720b7430}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!clustMaxes@{clustMaxes}}
+\index{clustMaxes@{clustMaxes}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{clustMaxes}{clustMaxes}}
+{\footnotesize\ttfamily float$\ast$ Tree\+Builder\+Ext\+Mem\+::clust\+Maxes}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a5e9768d9bc311e744c049d1f62d3346d}\label{class_tree_builder_ext_mem_a5e9768d9bc311e744c049d1f62d3346d}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!clustMins@{clustMins}}
+\index{clustMins@{clustMins}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{clustMins}{clustMins}}
+{\footnotesize\ttfamily float$\ast$ Tree\+Builder\+Ext\+Mem\+::clust\+Mins}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a16a555756ad478a46e1b85331a0a5bd9}\label{class_tree_builder_ext_mem_a16a555756ad478a46e1b85331a0a5bd9}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!clustSizes@{clustSizes}}
+\index{clustSizes@{clustSizes}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{clustSizes}{clustSizes}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::clust\+Sizes}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a8ff94ee245fbd5a9af6604cddee46836}\label{class_tree_builder_ext_mem_a8ff94ee245fbd5a9af6604cddee46836}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!complexCandidateCount@{complexCandidateCount}}
+\index{complexCandidateCount@{complexCandidateCount}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{complexCandidateCount}{complexCandidateCount}}
+{\footnotesize\ttfamily const int Tree\+Builder\+Ext\+Mem\+::complex\+Candidate\+Count = 2000\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a25916da6a4d22d46dbf542e68f4859ea}\label{class_tree_builder_ext_mem_a25916da6a4d22d46dbf542e68f4859ea}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!complexCandidateRatio@{complexCandidateRatio}}
+\index{complexCandidateRatio@{complexCandidateRatio}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{complexCandidateRatio}{complexCandidateRatio}}
+{\footnotesize\ttfamily const int Tree\+Builder\+Ext\+Mem\+::complex\+Candidate\+Ratio = 40\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a3912718f528ea66d87eced66639c51de}\label{class_tree_builder_ext_mem_a3912718f528ea66d87eced66639c51de}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!curColInMem@{curColInMem}}
+\index{curColInMem@{curColInMem}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{curColInMem}{curColInMem}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::cur\+Col\+In\+Mem}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_ab7249446a478f7b77e30e4acf832913a}\label{class_tree_builder_ext_mem_ab7249446a478f7b77e30e4acf832913a}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!diskD@{diskD}}
+\index{diskD@{diskD}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{diskD}{diskD}}
+{\footnotesize\ttfamily F\+I\+LE$\ast$ Tree\+Builder\+Ext\+Mem\+::diskD =N\+U\+LL}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a99d871535ef78aaefdafb6bf410ca15e}\label{class_tree_builder_ext_mem_a99d871535ef78aaefdafb6bf410ca15e}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!fBuff@{fBuff}}
+\index{fBuff@{fBuff}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{fBuff}{fBuff}}
+{\footnotesize\ttfamily float$\ast$ Tree\+Builder\+Ext\+Mem\+::f\+Buff}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a2381bdb22844d37e18554f555272ff0c}\label{class_tree_builder_ext_mem_a2381bdb22844d37e18554f555272ff0c}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!firstActiveNode@{firstActiveNode}}
+\index{firstActiveNode@{firstActiveNode}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{firstActiveNode}{firstActiveNode}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::first\+Active\+Node}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a98f74a319e5e575865e9a956628954c0}\label{class_tree_builder_ext_mem_a98f74a319e5e575865e9a956628954c0}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!firstColInMem@{firstColInMem}}
+\index{firstColInMem@{firstColInMem}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{firstColInMem}{firstColInMem}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::first\+Col\+In\+Mem}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_accd1869242cfe993b49948a01ec05711}\label{class_tree_builder_ext_mem_accd1869242cfe993b49948a01ec05711}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!floatSize@{floatSize}}
+\index{floatSize@{floatSize}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{floatSize}{floatSize}}
+{\footnotesize\ttfamily const int Tree\+Builder\+Ext\+Mem\+::float\+Size = 4\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a097532d1b2e32dc065964be64619454f}\label{class_tree_builder_ext_mem_a097532d1b2e32dc065964be64619454f}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!freeCandidates@{freeCandidates}}
+\index{freeCandidates@{freeCandidates}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{freeCandidates}{freeCandidates}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_stack}{Stack}}$\ast$ Tree\+Builder\+Ext\+Mem\+::free\+Candidates}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_ab53d954a69fb53cd2f3d89a41e6b766d}\label{class_tree_builder_ext_mem_ab53d954a69fb53cd2f3d89a41e6b766d}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!K@{K}}
+\index{K@{K}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{K}{K}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::K}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a25bb731393ce6581026b2375934eb69d}\label{class_tree_builder_ext_mem_a25bb731393ce6581026b2375934eb69d}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!lastCandidateIndex@{lastCandidateIndex}}
+\index{lastCandidateIndex@{lastCandidateIndex}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{lastCandidateIndex}{lastCandidateIndex}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::last\+Candidate\+Index}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_ad79f6b9e37659d5bf70c3718e21c2947}\label{class_tree_builder_ext_mem_ad79f6b9e37659d5bf70c3718e21c2947}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!maxMemory@{maxMemory}}
+\index{maxMemory@{maxMemory}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{maxMemory}{maxMemory}}
+{\footnotesize\ttfamily long Tree\+Builder\+Ext\+Mem\+::max\+Memory}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a6d04c7dd74f24b8741169d7bd4fcb18d}\label{class_tree_builder_ext_mem_a6d04c7dd74f24b8741169d7bd4fcb18d}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!memD@{memD}}
+\index{memD@{memD}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{memD}{memD}}
+{\footnotesize\ttfamily float$\ast$$\ast$ Tree\+Builder\+Ext\+Mem\+::memD}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_ab6952a3aa94a0d3f43955ac582b6478f}\label{class_tree_builder_ext_mem_ab6952a3aa94a0d3f43955ac582b6478f}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!memDSize@{memDSize}}
+\index{memDSize@{memDSize}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{memDSize}{memDSize}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::mem\+D\+Size}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a1ed776826f04444636f65539fcfe5672}\label{class_tree_builder_ext_mem_a1ed776826f04444636f65539fcfe5672}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!names@{names}}
+\index{names@{names}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{names}{names}}
+{\footnotesize\ttfamily std\+::string$\ast$$\ast$ Tree\+Builder\+Ext\+Mem\+::names}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_aa771bc9ec52cd29ef693b42f6d2c463b}\label{class_tree_builder_ext_mem_aa771bc9ec52cd29ef693b42f6d2c463b}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!newK@{newK}}
+\index{newK@{newK}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{newK}{newK}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::newK}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_af855fdf19b20a592e844f6c565a4e982}\label{class_tree_builder_ext_mem_af855fdf19b20a592e844f6c565a4e982}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!nextActiveNode@{nextActiveNode}}
+\index{nextActiveNode@{nextActiveNode}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{nextActiveNode}{nextActiveNode}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::next\+Active\+Node}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_afe236f6821d59ebf61799db00a380103}\label{class_tree_builder_ext_mem_afe236f6821d59ebf61799db00a380103}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!nextInternalNode@{nextInternalNode}}
+\index{nextInternalNode@{nextInternalNode}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{nextInternalNode}{nextInternalNode}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::next\+Internal\+Node}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a4b2b84b017dd53228e2a6508bd08ad99}\label{class_tree_builder_ext_mem_a4b2b84b017dd53228e2a6508bd08ad99}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!njTmpDir@{njTmpDir}}
+\index{njTmpDir@{njTmpDir}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{njTmpDir}{njTmpDir}}
+{\footnotesize\ttfamily std\+::string Tree\+Builder\+Ext\+Mem\+::nj\+Tmp\+Dir}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_ae942b98bb08c642021daf86883316eeb}\label{class_tree_builder_ext_mem_ae942b98bb08c642021daf86883316eeb}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!nodes@{nodes}}
+\index{nodes@{nodes}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{nodes}{nodes}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_tree_node}{Tree\+Node}}$\ast$$\ast$ Tree\+Builder\+Ext\+Mem\+::nodes}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a1d270a24e9b6d01042d3d75271732546}\label{class_tree_builder_ext_mem_a1d270a24e9b6d01042d3d75271732546}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!numCandTriplesToDisk@{numCandTriplesToDisk}}
+\index{numCandTriplesToDisk@{numCandTriplesToDisk}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{numCandTriplesToDisk}{numCandTriplesToDisk}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::num\+Cand\+Triples\+To\+Disk}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_aff0d916999b5e4ad80171aa18502fb76}\label{class_tree_builder_ext_mem_aff0d916999b5e4ad80171aa18502fb76}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!prevActiveNode@{prevActiveNode}}
+\index{prevActiveNode@{prevActiveNode}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{prevActiveNode}{prevActiveNode}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::prev\+Active\+Node}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a144639ff1015c261a2aaf16803db8c9e}\label{class_tree_builder_ext_mem_a144639ff1015c261a2aaf16803db8c9e}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!R@{R}}
+\index{R@{R}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{R}{R}}
+{\footnotesize\ttfamily float$\ast$ Tree\+Builder\+Ext\+Mem\+::R}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a626f360d5e7bd8226f7796c48e0cee5d}\label{class_tree_builder_ext_mem_a626f360d5e7bd8226f7796c48e0cee5d}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!redirect@{redirect}}
+\index{redirect@{redirect}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{redirect}{redirect}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+Ext\+Mem\+::redirect}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a35de8f4813b88b208a34bbe6e37df09d}\label{class_tree_builder_ext_mem_a35de8f4813b88b208a34bbe6e37df09d}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!returnCandsToHeaps@{returnCandsToHeaps}}
+\index{returnCandsToHeaps@{returnCandsToHeaps}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{returnCandsToHeaps}{returnCandsToHeaps}}
+{\footnotesize\ttfamily const bool Tree\+Builder\+Ext\+Mem\+::return\+Cands\+To\+Heaps = false\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a5d132013eba6278067226c65ff4befdf}\label{class_tree_builder_ext_mem_a5d132013eba6278067226c65ff4befdf}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!rowLength@{rowLength}}
+\index{rowLength@{rowLength}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{rowLength}{rowLength}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::row\+Length}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a480540a8c4d691e82da94e1c1b9799a8}\label{class_tree_builder_ext_mem_a480540a8c4d691e82da94e1c1b9799a8}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!RSize@{RSize}}
+\index{RSize@{RSize}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{RSize}{RSize}}
+{\footnotesize\ttfamily int Tree\+Builder\+Ext\+Mem\+::\+R\+Size}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_aa356150b0a266390e58eb290e2eee922}\label{class_tree_builder_ext_mem_aa356150b0a266390e58eb290e2eee922}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!starterCandHeap@{starterCandHeap}}
+\index{starterCandHeap@{starterCandHeap}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{starterCandHeap}{starterCandHeap}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_candidate_heap}{Candidate\+Heap}}$\ast$ Tree\+Builder\+Ext\+Mem\+::starter\+Cand\+Heap}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_a07a5c09c6a3b72b4187ec82a85d76b2a}\label{class_tree_builder_ext_mem_a07a5c09c6a3b72b4187ec82a85d76b2a}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!useBinPairHeaps@{useBinPairHeaps}}
+\index{useBinPairHeaps@{useBinPairHeaps}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{useBinPairHeaps}{useBinPairHeaps}}
+{\footnotesize\ttfamily const bool Tree\+Builder\+Ext\+Mem\+::use\+Bin\+Pair\+Heaps = true\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_ad7c8613f567142feed3fb7e5ca8dfb72}\label{class_tree_builder_ext_mem_ad7c8613f567142feed3fb7e5ca8dfb72}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!useCandHeaps@{useCandHeaps}}
+\index{useCandHeaps@{useCandHeaps}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{useCandHeaps}{useCandHeaps}}
+{\footnotesize\ttfamily const bool Tree\+Builder\+Ext\+Mem\+::use\+Cand\+Heaps = true\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_ext_mem_aec4be7962057f1a2c9beb6912bb4a730}\label{class_tree_builder_ext_mem_aec4be7962057f1a2c9beb6912bb4a730}} 
+\index{TreeBuilderExtMem@{TreeBuilderExtMem}!usingSimpleCandidates@{usingSimpleCandidates}}
+\index{usingSimpleCandidates@{usingSimpleCandidates}!TreeBuilderExtMem@{TreeBuilderExtMem}}
+\doxysubsubsection{\texorpdfstring{usingSimpleCandidates}{usingSimpleCandidates}}
+{\footnotesize\ttfamily bool Tree\+Builder\+Ext\+Mem\+::using\+Simple\+Candidates}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_tree_builder_ext_mem_8hpp}{Tree\+Builder\+Ext\+Mem.\+hpp}}\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_tree_builder_ext_mem_8cpp}{Tree\+Builder\+Ext\+Mem.\+cpp}}\end{DoxyCompactItemize}

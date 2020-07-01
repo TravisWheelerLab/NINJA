@@ -1,0 +1,436 @@
+\hypertarget{class_array_heap_ext_mem}{}\doxysection{Array\+Heap\+Ext\+Mem Class Reference}
+\label{class_array_heap_ext_mem}\index{ArrayHeapExtMem@{ArrayHeapExtMem}}
+
+
+{\ttfamily \#include $<$Array\+Heap\+Ext\+Mem.\+hpp$>$}
+
+Inheritance diagram for Array\+Heap\+Ext\+Mem\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_array_heap_ext_mem}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_array_heap_ext_mem_a3a5ef6bdef74f27b29dba5c29996baf0}{Array\+Heap\+Ext\+Mem}} (std\+::string dir, int $\ast$active\+I\+Js)
+\item 
+\mbox{\hyperlink{class_array_heap_ext_mem_a6a94015ca871c8b85a56b90d935aa276}{Array\+Heap\+Ext\+Mem}} (std\+::string dir, int $\ast$active\+I\+Js, long size\+Exp)
+\item 
+\mbox{\hyperlink{class_array_heap_ext_mem_a24ce2bacde78413e6db5bb7b2e45a95e}{$\sim$\+Array\+Heap\+Ext\+Mem}} ()
+\item 
+void \mbox{\hyperlink{class_array_heap_ext_mem_a8a6d92421203923ef902b3bb78262a84}{close\+And\+Delete\+File}} ()
+\item 
+void \mbox{\hyperlink{class_array_heap_ext_mem_a70370771be3fc71f96fe0c2adfbbfdee}{insert}} (int i, int j, float key)
+\item 
+void \mbox{\hyperlink{class_array_heap_ext_mem_a28f40b2225137d0f8cbd0c065f767e4b}{prepare}} ()
+\item 
+void \mbox{\hyperlink{class_array_heap_ext_mem_a4f8d3d0869f1fa215d25e2cbcee0266d}{clear\+And\+Initialize}} ()
+\item 
+bool \mbox{\hyperlink{class_array_heap_ext_mem_a335bcdde7c416d7bfea8175cafefb120}{is\+Empty}} ()
+\item 
+void \mbox{\hyperlink{class_array_heap_ext_mem_abeadfba6f8a622814d9750c72f31fe3b}{describe\+Heap}} ()
+\item 
+\mbox{\hyperlink{struct_heap_return}{Heap\+Return}} \mbox{\hyperlink{class_array_heap_ext_mem_ae2586a4b61b0cda1447748fb0e0083d0}{get\+Binary\+Heap\+With\+Min}} ()
+\item 
+void \mbox{\hyperlink{class_array_heap_ext_mem_a7a233b3fbadb58b060a9147097a2c38e}{remove\+Min}} ()
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_a26fc220d8364d7e8894c3f5717714a51}{size}} ()
+\item 
+bool \mbox{\hyperlink{class_array_heap_ext_mem_abedb647d18a126923c1de65ed5a550ca}{test}} (bool verbose)
+\item 
+void \mbox{\hyperlink{class_array_heap_ext_mem_a49b44e6cebc42ae0ead6ae51fcde6a87}{delete\+All}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string \mbox{\hyperlink{class_array_heap_ext_mem_a88021eafbdcfca82e5c5bc33ee7c2800}{tmp\+Dir}}
+\item 
+std\+::string \mbox{\hyperlink{class_array_heap_ext_mem_af5f7270d94d659cb998a6d03f15ec68b}{file\+Name}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_a352c27df70ca0deac7b053bafc5b775f}{A}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_ab265c5ed6832460974f81d20d468d8b3}{B}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_a59b5c9dc112754fd0b53716cece2c622}{max\+Levels}}
+\item 
+float \mbox{\hyperlink{class_array_heap_ext_mem_abda6f67dea46d709e1a719843c7fec6b}{c}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_a27b976bfb35d0fe05d359e01f7b5c0a1}{block\+Size}}
+\item 
+long \mbox{\hyperlink{class_array_heap_ext_mem_a8b43317321928c37b4d477519a94e3b9}{mem}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_a7ea7fefd847ded939df6c046b3189d14}{cM}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_a6eaf293a2ab27192958b9d14603b0ae5}{num\+Slots}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_aa0b6486610fe9b60257a961fbec30261}{num\+Nodes\+Per\+Block}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_ab2b15fcf51ebc7c0ba8b99e516d9b345}{num\+Fields\+Per\+Block}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_a70670ca373b14372e320a98720efd50b}{n}}
+\item 
+\mbox{\hyperlink{class_binary_heap___two_ints}{Binary\+Heap\+\_\+\+Two\+Ints}} $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_af046437cd00f617b7e27f6a351c29d0d}{H1}}
+\item 
+\mbox{\hyperlink{class_binary_heap___four_ints}{Binary\+Heap\+\_\+\+Four\+Ints}} $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a1fd0c2cebe5dad42ccaec241391b169f}{H2}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_aaa5969924dc5022fe6ec7e07c2ca3e77}{loop\+Cntr}}
+\item 
+bool \mbox{\hyperlink{class_array_heap_ext_mem_a1a9ace36076570d6a57fe770337f556b}{start\+Checking\+Values}}
+\item 
+F\+I\+LE $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a286817a6f9bb0eb5028eb3337d9ccc10}{file}}
+\item 
+long $\ast$$\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_ad6c455ce31f15d20ccbcfe938a6e0e56}{slot\+Node\+Cnt}}
+\item 
+int $\ast$$\ast$$\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_aec025366f3eefa7993bf1d4b48351426}{per\+Slot\+Int\+Buffer}}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a66624d3b5e0a6fbd9ff43b524709e2ef}{slot\+Buff\+Pos}}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_ae6af6d1a94c1dacfbe156c7fef2bed09}{cnt\+On\+Heap}}
+\item 
+long $\ast$$\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a21f8ef1f47ab9a51e1696bf74fc9cd26}{slot\+Positions}}
+\item 
+std\+::vector$<$ std\+::list$<$ int $>$ $\ast$ $>$ $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a771585fbb3884278450a029aca44eb81}{free\+Slots}}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{class_slot_pair}{Slot\+Pair}} $\ast$ $>$ $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a4944bd6deb1708a28406c12effd53cff}{slot\+Pair\+List}}
+\item 
+char $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_aa0d9dd841ba0f6e56957daa451ae5dbc}{buffB}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_af6e41001eca36c3177f1c942314b45a2}{buffI}}
+\item 
+char $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a6a7f40696470a4a00aa81be3cddfd0b6}{big\+BuffB}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a11d7d97518e75793e6419b47860ff400}{big\+BuffI}}
+\item 
+int \mbox{\hyperlink{class_array_heap_ext_mem_a4a2c93680e45859648cdc17dd946d1c9}{num\+Fields}}
+\item 
+long $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_abc99606a0b40b94eae0150ee3bf4a64c}{cnt\+Max}}
+\item 
+\mbox{\hyperlink{class_binary_heap___two_ints}{Binary\+Heap\+\_\+\+Two\+Ints}} $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a22694810f074120668372f10505f6c8b}{sorting\+Heap}}
+\item 
+F\+I\+LE $\ast$ \mbox{\hyperlink{class_array_heap_ext_mem_a54153598c57a0dbe824e7a9c87e7a781}{temp\+File}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const bool \mbox{\hyperlink{class_array_heap_ext_mem_a8a4b5f9befa78ef8e0d043275c1855c1}{chop\+Bottom}} = true
+\item 
+static const bool \mbox{\hyperlink{class_array_heap_ext_mem_a962f7c37ee65041067e3b8369ddba764}{trim\+Inactive\+From\+Heap\+Array}} = true
+\item 
+static int \mbox{\hyperlink{class_array_heap_ext_mem_ac04b46fff6274414080239459dcefc6a}{num\+Arrays}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_array_heap_ext_mem_a3a5ef6bdef74f27b29dba5c29996baf0}\label{class_array_heap_ext_mem_a3a5ef6bdef74f27b29dba5c29996baf0}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{ArrayHeapExtMem()}{ArrayHeapExtMem()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Array\+Heap\+Ext\+Mem\+::\+Array\+Heap\+Ext\+Mem (\begin{DoxyParamCaption}\item[{std\+::string}]{dir,  }\item[{int $\ast$}]{active\+I\+Js }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a6a94015ca871c8b85a56b90d935aa276}\label{class_array_heap_ext_mem_a6a94015ca871c8b85a56b90d935aa276}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{ArrayHeapExtMem()}{ArrayHeapExtMem()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Array\+Heap\+Ext\+Mem\+::\+Array\+Heap\+Ext\+Mem (\begin{DoxyParamCaption}\item[{std\+::string}]{dir,  }\item[{int $\ast$}]{active\+I\+Js,  }\item[{long}]{size\+Exp }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a24ce2bacde78413e6db5bb7b2e45a95e}\label{class_array_heap_ext_mem_a24ce2bacde78413e6db5bb7b2e45a95e}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!````~ArrayHeapExtMem@{$\sim$ArrayHeapExtMem}}
+\index{````~ArrayHeapExtMem@{$\sim$ArrayHeapExtMem}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{$\sim$ArrayHeapExtMem()}{~ArrayHeapExtMem()}}
+{\footnotesize\ttfamily Array\+Heap\+Ext\+Mem\+::$\sim$\+Array\+Heap\+Ext\+Mem (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_array_heap_ext_mem_a4f8d3d0869f1fa215d25e2cbcee0266d}\label{class_array_heap_ext_mem_a4f8d3d0869f1fa215d25e2cbcee0266d}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!clearAndInitialize@{clearAndInitialize}}
+\index{clearAndInitialize@{clearAndInitialize}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{clearAndInitialize()}{clearAndInitialize()}}
+{\footnotesize\ttfamily void Array\+Heap\+Ext\+Mem\+::clear\+And\+Initialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a8a6d92421203923ef902b3bb78262a84}\label{class_array_heap_ext_mem_a8a6d92421203923ef902b3bb78262a84}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!closeAndDeleteFile@{closeAndDeleteFile}}
+\index{closeAndDeleteFile@{closeAndDeleteFile}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{closeAndDeleteFile()}{closeAndDeleteFile()}}
+{\footnotesize\ttfamily void Array\+Heap\+Ext\+Mem\+::close\+And\+Delete\+File (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a49b44e6cebc42ae0ead6ae51fcde6a87}\label{class_array_heap_ext_mem_a49b44e6cebc42ae0ead6ae51fcde6a87}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!deleteAll@{deleteAll}}
+\index{deleteAll@{deleteAll}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{deleteAll()}{deleteAll()}}
+{\footnotesize\ttfamily void Array\+Heap\+Ext\+Mem\+::delete\+All (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_abeadfba6f8a622814d9750c72f31fe3b}\label{class_array_heap_ext_mem_abeadfba6f8a622814d9750c72f31fe3b}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!describeHeap@{describeHeap}}
+\index{describeHeap@{describeHeap}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{describeHeap()}{describeHeap()}}
+{\footnotesize\ttfamily void Array\+Heap\+Ext\+Mem\+::describe\+Heap (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_ae2586a4b61b0cda1447748fb0e0083d0}\label{class_array_heap_ext_mem_ae2586a4b61b0cda1447748fb0e0083d0}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!getBinaryHeapWithMin@{getBinaryHeapWithMin}}
+\index{getBinaryHeapWithMin@{getBinaryHeapWithMin}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{getBinaryHeapWithMin()}{getBinaryHeapWithMin()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{struct_heap_return}{Heap\+Return}} Array\+Heap\+Ext\+Mem\+::get\+Binary\+Heap\+With\+Min (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a70370771be3fc71f96fe0c2adfbbfdee}\label{class_array_heap_ext_mem_a70370771be3fc71f96fe0c2adfbbfdee}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!insert@{insert}}
+\index{insert@{insert}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily void Array\+Heap\+Ext\+Mem\+::insert (\begin{DoxyParamCaption}\item[{int}]{i,  }\item[{int}]{j,  }\item[{float}]{key }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a335bcdde7c416d7bfea8175cafefb120}\label{class_array_heap_ext_mem_a335bcdde7c416d7bfea8175cafefb120}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!isEmpty@{isEmpty}}
+\index{isEmpty@{isEmpty}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{isEmpty()}{isEmpty()}}
+{\footnotesize\ttfamily bool Array\+Heap\+Ext\+Mem\+::is\+Empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a28f40b2225137d0f8cbd0c065f767e4b}\label{class_array_heap_ext_mem_a28f40b2225137d0f8cbd0c065f767e4b}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!prepare@{prepare}}
+\index{prepare@{prepare}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{prepare()}{prepare()}}
+{\footnotesize\ttfamily void Array\+Heap\+Ext\+Mem\+::prepare (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a7a233b3fbadb58b060a9147097a2c38e}\label{class_array_heap_ext_mem_a7a233b3fbadb58b060a9147097a2c38e}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!removeMin@{removeMin}}
+\index{removeMin@{removeMin}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{removeMin()}{removeMin()}}
+{\footnotesize\ttfamily void Array\+Heap\+Ext\+Mem\+::remove\+Min (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a26fc220d8364d7e8894c3f5717714a51}\label{class_array_heap_ext_mem_a26fc220d8364d7e8894c3f5717714a51}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!size@{size}}
+\index{size@{size}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_abedb647d18a126923c1de65ed5a550ca}\label{class_array_heap_ext_mem_abedb647d18a126923c1de65ed5a550ca}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!test@{test}}
+\index{test@{test}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{test()}{test()}}
+{\footnotesize\ttfamily bool Array\+Heap\+Ext\+Mem\+::test (\begin{DoxyParamCaption}\item[{bool}]{verbose }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_array_heap_ext_mem_a352c27df70ca0deac7b053bafc5b775f}\label{class_array_heap_ext_mem_a352c27df70ca0deac7b053bafc5b775f}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!A@{A}}
+\index{A@{A}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{A}{A}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::A}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_ab265c5ed6832460974f81d20d468d8b3}\label{class_array_heap_ext_mem_ab265c5ed6832460974f81d20d468d8b3}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!B@{B}}
+\index{B@{B}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{B}{B}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::B}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a6a7f40696470a4a00aa81be3cddfd0b6}\label{class_array_heap_ext_mem_a6a7f40696470a4a00aa81be3cddfd0b6}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!bigBuffB@{bigBuffB}}
+\index{bigBuffB@{bigBuffB}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{bigBuffB}{bigBuffB}}
+{\footnotesize\ttfamily char$\ast$ Array\+Heap\+Ext\+Mem\+::big\+BuffB}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a11d7d97518e75793e6419b47860ff400}\label{class_array_heap_ext_mem_a11d7d97518e75793e6419b47860ff400}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!bigBuffI@{bigBuffI}}
+\index{bigBuffI@{bigBuffI}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{bigBuffI}{bigBuffI}}
+{\footnotesize\ttfamily int$\ast$ Array\+Heap\+Ext\+Mem\+::big\+BuffI}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a27b976bfb35d0fe05d359e01f7b5c0a1}\label{class_array_heap_ext_mem_a27b976bfb35d0fe05d359e01f7b5c0a1}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!blockSize@{blockSize}}
+\index{blockSize@{blockSize}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{blockSize}{blockSize}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::block\+Size}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_aa0d9dd841ba0f6e56957daa451ae5dbc}\label{class_array_heap_ext_mem_aa0d9dd841ba0f6e56957daa451ae5dbc}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!buffB@{buffB}}
+\index{buffB@{buffB}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{buffB}{buffB}}
+{\footnotesize\ttfamily char$\ast$ Array\+Heap\+Ext\+Mem\+::buffB}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_af6e41001eca36c3177f1c942314b45a2}\label{class_array_heap_ext_mem_af6e41001eca36c3177f1c942314b45a2}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!buffI@{buffI}}
+\index{buffI@{buffI}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{buffI}{buffI}}
+{\footnotesize\ttfamily int$\ast$ Array\+Heap\+Ext\+Mem\+::buffI}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_abda6f67dea46d709e1a719843c7fec6b}\label{class_array_heap_ext_mem_abda6f67dea46d709e1a719843c7fec6b}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!c@{c}}
+\index{c@{c}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{c}{c}}
+{\footnotesize\ttfamily float Array\+Heap\+Ext\+Mem\+::c}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a8a4b5f9befa78ef8e0d043275c1855c1}\label{class_array_heap_ext_mem_a8a4b5f9befa78ef8e0d043275c1855c1}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!chopBottom@{chopBottom}}
+\index{chopBottom@{chopBottom}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{chopBottom}{chopBottom}}
+{\footnotesize\ttfamily const bool Array\+Heap\+Ext\+Mem\+::chop\+Bottom = true\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a7ea7fefd847ded939df6c046b3189d14}\label{class_array_heap_ext_mem_a7ea7fefd847ded939df6c046b3189d14}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!cM@{cM}}
+\index{cM@{cM}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{cM}{cM}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::cM}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_abc99606a0b40b94eae0150ee3bf4a64c}\label{class_array_heap_ext_mem_abc99606a0b40b94eae0150ee3bf4a64c}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!cntMax@{cntMax}}
+\index{cntMax@{cntMax}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{cntMax}{cntMax}}
+{\footnotesize\ttfamily long$\ast$ Array\+Heap\+Ext\+Mem\+::cnt\+Max}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_ae6af6d1a94c1dacfbe156c7fef2bed09}\label{class_array_heap_ext_mem_ae6af6d1a94c1dacfbe156c7fef2bed09}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!cntOnHeap@{cntOnHeap}}
+\index{cntOnHeap@{cntOnHeap}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{cntOnHeap}{cntOnHeap}}
+{\footnotesize\ttfamily int$\ast$$\ast$ Array\+Heap\+Ext\+Mem\+::cnt\+On\+Heap}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a286817a6f9bb0eb5028eb3337d9ccc10}\label{class_array_heap_ext_mem_a286817a6f9bb0eb5028eb3337d9ccc10}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!file@{file}}
+\index{file@{file}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{file}{file}}
+{\footnotesize\ttfamily F\+I\+LE$\ast$ Array\+Heap\+Ext\+Mem\+::file}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_af5f7270d94d659cb998a6d03f15ec68b}\label{class_array_heap_ext_mem_af5f7270d94d659cb998a6d03f15ec68b}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!fileName@{fileName}}
+\index{fileName@{fileName}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{fileName}{fileName}}
+{\footnotesize\ttfamily std\+::string Array\+Heap\+Ext\+Mem\+::file\+Name}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a771585fbb3884278450a029aca44eb81}\label{class_array_heap_ext_mem_a771585fbb3884278450a029aca44eb81}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!freeSlots@{freeSlots}}
+\index{freeSlots@{freeSlots}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{freeSlots}{freeSlots}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::list$<$int$>$$\ast$$>$$\ast$ Array\+Heap\+Ext\+Mem\+::free\+Slots}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_af046437cd00f617b7e27f6a351c29d0d}\label{class_array_heap_ext_mem_af046437cd00f617b7e27f6a351c29d0d}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!H1@{H1}}
+\index{H1@{H1}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{H1}{H1}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_binary_heap___two_ints}{Binary\+Heap\+\_\+\+Two\+Ints}}$\ast$ Array\+Heap\+Ext\+Mem\+::\+H1}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a1fd0c2cebe5dad42ccaec241391b169f}\label{class_array_heap_ext_mem_a1fd0c2cebe5dad42ccaec241391b169f}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!H2@{H2}}
+\index{H2@{H2}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{H2}{H2}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_binary_heap___four_ints}{Binary\+Heap\+\_\+\+Four\+Ints}}$\ast$ Array\+Heap\+Ext\+Mem\+::\+H2}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_aaa5969924dc5022fe6ec7e07c2ca3e77}\label{class_array_heap_ext_mem_aaa5969924dc5022fe6ec7e07c2ca3e77}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!loopCntr@{loopCntr}}
+\index{loopCntr@{loopCntr}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{loopCntr}{loopCntr}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::loop\+Cntr}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a59b5c9dc112754fd0b53716cece2c622}\label{class_array_heap_ext_mem_a59b5c9dc112754fd0b53716cece2c622}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!maxLevels@{maxLevels}}
+\index{maxLevels@{maxLevels}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{maxLevels}{maxLevels}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::max\+Levels}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a8b43317321928c37b4d477519a94e3b9}\label{class_array_heap_ext_mem_a8b43317321928c37b4d477519a94e3b9}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!mem@{mem}}
+\index{mem@{mem}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{mem}{mem}}
+{\footnotesize\ttfamily long Array\+Heap\+Ext\+Mem\+::mem}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a70670ca373b14372e320a98720efd50b}\label{class_array_heap_ext_mem_a70670ca373b14372e320a98720efd50b}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!n@{n}}
+\index{n@{n}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{n}{n}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::n}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_ac04b46fff6274414080239459dcefc6a}\label{class_array_heap_ext_mem_ac04b46fff6274414080239459dcefc6a}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!numArrays@{numArrays}}
+\index{numArrays@{numArrays}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{numArrays}{numArrays}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::num\+Arrays\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a4a2c93680e45859648cdc17dd946d1c9}\label{class_array_heap_ext_mem_a4a2c93680e45859648cdc17dd946d1c9}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!numFields@{numFields}}
+\index{numFields@{numFields}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{numFields}{numFields}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::num\+Fields}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_ab2b15fcf51ebc7c0ba8b99e516d9b345}\label{class_array_heap_ext_mem_ab2b15fcf51ebc7c0ba8b99e516d9b345}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!numFieldsPerBlock@{numFieldsPerBlock}}
+\index{numFieldsPerBlock@{numFieldsPerBlock}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{numFieldsPerBlock}{numFieldsPerBlock}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::num\+Fields\+Per\+Block}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_aa0b6486610fe9b60257a961fbec30261}\label{class_array_heap_ext_mem_aa0b6486610fe9b60257a961fbec30261}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!numNodesPerBlock@{numNodesPerBlock}}
+\index{numNodesPerBlock@{numNodesPerBlock}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{numNodesPerBlock}{numNodesPerBlock}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::num\+Nodes\+Per\+Block}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a6eaf293a2ab27192958b9d14603b0ae5}\label{class_array_heap_ext_mem_a6eaf293a2ab27192958b9d14603b0ae5}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!numSlots@{numSlots}}
+\index{numSlots@{numSlots}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{numSlots}{numSlots}}
+{\footnotesize\ttfamily int Array\+Heap\+Ext\+Mem\+::num\+Slots}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_aec025366f3eefa7993bf1d4b48351426}\label{class_array_heap_ext_mem_aec025366f3eefa7993bf1d4b48351426}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!perSlotIntBuffer@{perSlotIntBuffer}}
+\index{perSlotIntBuffer@{perSlotIntBuffer}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{perSlotIntBuffer}{perSlotIntBuffer}}
+{\footnotesize\ttfamily int$\ast$$\ast$$\ast$ Array\+Heap\+Ext\+Mem\+::per\+Slot\+Int\+Buffer}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a66624d3b5e0a6fbd9ff43b524709e2ef}\label{class_array_heap_ext_mem_a66624d3b5e0a6fbd9ff43b524709e2ef}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!slotBuffPos@{slotBuffPos}}
+\index{slotBuffPos@{slotBuffPos}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{slotBuffPos}{slotBuffPos}}
+{\footnotesize\ttfamily int$\ast$$\ast$ Array\+Heap\+Ext\+Mem\+::slot\+Buff\+Pos}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_ad6c455ce31f15d20ccbcfe938a6e0e56}\label{class_array_heap_ext_mem_ad6c455ce31f15d20ccbcfe938a6e0e56}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!slotNodeCnt@{slotNodeCnt}}
+\index{slotNodeCnt@{slotNodeCnt}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{slotNodeCnt}{slotNodeCnt}}
+{\footnotesize\ttfamily long$\ast$$\ast$ Array\+Heap\+Ext\+Mem\+::slot\+Node\+Cnt}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a4944bd6deb1708a28406c12effd53cff}\label{class_array_heap_ext_mem_a4944bd6deb1708a28406c12effd53cff}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!slotPairList@{slotPairList}}
+\index{slotPairList@{slotPairList}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{slotPairList}{slotPairList}}
+{\footnotesize\ttfamily std\+::vector$<$\mbox{\hyperlink{class_slot_pair}{Slot\+Pair}}$\ast$$>$$\ast$ Array\+Heap\+Ext\+Mem\+::slot\+Pair\+List}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a21f8ef1f47ab9a51e1696bf74fc9cd26}\label{class_array_heap_ext_mem_a21f8ef1f47ab9a51e1696bf74fc9cd26}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!slotPositions@{slotPositions}}
+\index{slotPositions@{slotPositions}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{slotPositions}{slotPositions}}
+{\footnotesize\ttfamily long$\ast$$\ast$ Array\+Heap\+Ext\+Mem\+::slot\+Positions}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a22694810f074120668372f10505f6c8b}\label{class_array_heap_ext_mem_a22694810f074120668372f10505f6c8b}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!sortingHeap@{sortingHeap}}
+\index{sortingHeap@{sortingHeap}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{sortingHeap}{sortingHeap}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_binary_heap___two_ints}{Binary\+Heap\+\_\+\+Two\+Ints}}$\ast$ Array\+Heap\+Ext\+Mem\+::sorting\+Heap}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a1a9ace36076570d6a57fe770337f556b}\label{class_array_heap_ext_mem_a1a9ace36076570d6a57fe770337f556b}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!startCheckingValues@{startCheckingValues}}
+\index{startCheckingValues@{startCheckingValues}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{startCheckingValues}{startCheckingValues}}
+{\footnotesize\ttfamily bool Array\+Heap\+Ext\+Mem\+::start\+Checking\+Values}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a54153598c57a0dbe824e7a9c87e7a781}\label{class_array_heap_ext_mem_a54153598c57a0dbe824e7a9c87e7a781}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!tempFile@{tempFile}}
+\index{tempFile@{tempFile}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{tempFile}{tempFile}}
+{\footnotesize\ttfamily F\+I\+LE$\ast$ Array\+Heap\+Ext\+Mem\+::temp\+File}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a88021eafbdcfca82e5c5bc33ee7c2800}\label{class_array_heap_ext_mem_a88021eafbdcfca82e5c5bc33ee7c2800}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!tmpDir@{tmpDir}}
+\index{tmpDir@{tmpDir}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{tmpDir}{tmpDir}}
+{\footnotesize\ttfamily std\+::string Array\+Heap\+Ext\+Mem\+::tmp\+Dir}
+
+\mbox{\Hypertarget{class_array_heap_ext_mem_a962f7c37ee65041067e3b8369ddba764}\label{class_array_heap_ext_mem_a962f7c37ee65041067e3b8369ddba764}} 
+\index{ArrayHeapExtMem@{ArrayHeapExtMem}!trimInactiveFromHeapArray@{trimInactiveFromHeapArray}}
+\index{trimInactiveFromHeapArray@{trimInactiveFromHeapArray}!ArrayHeapExtMem@{ArrayHeapExtMem}}
+\doxysubsubsection{\texorpdfstring{trimInactiveFromHeapArray}{trimInactiveFromHeapArray}}
+{\footnotesize\ttfamily const bool Array\+Heap\+Ext\+Mem\+::trim\+Inactive\+From\+Heap\+Array = true\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_array_heap_ext_mem_8hpp}{Array\+Heap\+Ext\+Mem.\+hpp}}\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_array_heap_ext_mem_8cpp}{Array\+Heap\+Ext\+Mem.\+cpp}}\end{DoxyCompactItemize}

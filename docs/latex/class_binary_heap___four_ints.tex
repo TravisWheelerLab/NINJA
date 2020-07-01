@@ -1,0 +1,158 @@
+\hypertarget{class_binary_heap___four_ints}{}\doxysection{Binary\+Heap\+\_\+\+Four\+Ints Class Reference}
+\label{class_binary_heap___four_ints}\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+
+
+{\ttfamily \#include $<$Binary\+Heap\+\_\+\+Four\+Ints.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_binary_heap___four_ints_accd7827f6c708ef7dbfdc8c0eb1e547b}{Binary\+Heap\+\_\+\+Four\+Ints}} ()
+\item 
+\mbox{\hyperlink{class_binary_heap___four_ints_a7f6ca4bb67056f72de9ef0211325c422}{Binary\+Heap\+\_\+\+Four\+Ints}} (int max\+Capacity)
+\item 
+\mbox{\hyperlink{class_binary_heap___four_ints_a6fbaca704e324341c5c8d394cd87d89a}{Binary\+Heap\+\_\+\+Four\+Ints}} (int $\ast$val1s, const int $\ast$val2s, const int $\ast$val3s, const int $\ast$val4s, \mbox{\hyperlink{struct_float}{Float}} keys)
+\item 
+\mbox{\hyperlink{class_binary_heap___four_ints_a95d631a245b56057593bff5bd35c7e2c}{Binary\+Heap\+\_\+\+Four\+Ints}} (int $\ast$val1s, const int $\ast$val2s, const int $\ast$val3s, const int $\ast$val4s, \mbox{\hyperlink{struct_float}{Float}} keys, int max\+Capacity)
+\item 
+\mbox{\hyperlink{class_binary_heap___four_ints_ad314090461a237a95b7e9060eb8547c6}{$\sim$\+Binary\+Heap\+\_\+\+Four\+Ints}} ()
+\item 
+int \mbox{\hyperlink{class_binary_heap___four_ints_a474c477bc3ec8db878be88589af2c838}{size}} ()
+\item 
+void \mbox{\hyperlink{class_binary_heap___four_ints_ae7607e83c39875496ada5937e71405d3}{insert}} (int val1, int val2, int val3, int val4, float key)
+\item 
+void \mbox{\hyperlink{class_binary_heap___four_ints_a0824a1f23be5f2d8f5aa0ba53617d1b6}{delete\+Min}} ()
+\item 
+int \mbox{\hyperlink{class_binary_heap___four_ints_a60d13c3396d61cfde62dac79045357ba}{get\+Min}} ()
+\item 
+bool \mbox{\hyperlink{class_binary_heap___four_ints_ac4168cbc92a816e1c36147c71486116e}{is\+Empty}} ()
+\item 
+void \mbox{\hyperlink{class_binary_heap___four_ints_a5205fb4581fad5ba22013cc77af56670}{make\+Empty}} ()
+\item 
+bool \mbox{\hyperlink{class_binary_heap___four_ints_a94a729c5f56d3b185e91a027617db1ef}{bin\+Heap\+Test}} (bool verbose)
+\item 
+void \mbox{\hyperlink{class_binary_heap___four_ints_a95f4f4b6740652fa39fc7ad699319444}{build\+Again}} (int $\ast$val1s, const int $\ast$val2s, const int $\ast$val3s, const int $\ast$val4s, \mbox{\hyperlink{struct_float}{Float}} keys)
+\item 
+bool \mbox{\hyperlink{class_binary_heap___four_ints_ae75fa6b6aa704e4091ab93daf783f5b2}{bin\+Heap\+Four\+Test}} (bool verbose)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{structints4float}{ints4float}} $>$ $\ast$ \mbox{\hyperlink{class_binary_heap___four_ints_ae30ab6419f2369a87a880dfc4aa97358}{heap}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const int \mbox{\hyperlink{class_binary_heap___four_ints_ab577dd35837b5bb7eadfd2e32231674a}{D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+A\+P\+A\+C\+I\+TY}} = 1000
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_binary_heap___four_ints_accd7827f6c708ef7dbfdc8c0eb1e547b}\label{class_binary_heap___four_ints_accd7827f6c708ef7dbfdc8c0eb1e547b}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{BinaryHeap\_FourInts()}{BinaryHeap\_FourInts()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Four\+Ints\+::\+Binary\+Heap\+\_\+\+Four\+Ints (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_a7f6ca4bb67056f72de9ef0211325c422}\label{class_binary_heap___four_ints_a7f6ca4bb67056f72de9ef0211325c422}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{BinaryHeap\_FourInts()}{BinaryHeap\_FourInts()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Four\+Ints\+::\+Binary\+Heap\+\_\+\+Four\+Ints (\begin{DoxyParamCaption}\item[{int}]{max\+Capacity }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_a6fbaca704e324341c5c8d394cd87d89a}\label{class_binary_heap___four_ints_a6fbaca704e324341c5c8d394cd87d89a}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{BinaryHeap\_FourInts()}{BinaryHeap\_FourInts()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Four\+Ints\+::\+Binary\+Heap\+\_\+\+Four\+Ints (\begin{DoxyParamCaption}\item[{int $\ast$}]{val1s,  }\item[{const int $\ast$}]{val2s,  }\item[{const int $\ast$}]{val3s,  }\item[{const int $\ast$}]{val4s,  }\item[{\mbox{\hyperlink{struct_float}{Float}}}]{keys }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_a95d631a245b56057593bff5bd35c7e2c}\label{class_binary_heap___four_ints_a95d631a245b56057593bff5bd35c7e2c}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{BinaryHeap\_FourInts()}{BinaryHeap\_FourInts()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Four\+Ints\+::\+Binary\+Heap\+\_\+\+Four\+Ints (\begin{DoxyParamCaption}\item[{int $\ast$}]{val1s,  }\item[{const int $\ast$}]{val2s,  }\item[{const int $\ast$}]{val3s,  }\item[{const int $\ast$}]{val4s,  }\item[{\mbox{\hyperlink{struct_float}{Float}}}]{keys,  }\item[{int}]{max\+Capacity }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_ad314090461a237a95b7e9060eb8547c6}\label{class_binary_heap___four_ints_ad314090461a237a95b7e9060eb8547c6}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!````~BinaryHeap\_FourInts@{$\sim$BinaryHeap\_FourInts}}
+\index{````~BinaryHeap\_FourInts@{$\sim$BinaryHeap\_FourInts}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{$\sim$BinaryHeap\_FourInts()}{~BinaryHeap\_FourInts()}}
+{\footnotesize\ttfamily Binary\+Heap\+\_\+\+Four\+Ints\+::$\sim$\+Binary\+Heap\+\_\+\+Four\+Ints (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_binary_heap___four_ints_ae75fa6b6aa704e4091ab93daf783f5b2}\label{class_binary_heap___four_ints_ae75fa6b6aa704e4091ab93daf783f5b2}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!binHeapFourTest@{binHeapFourTest}}
+\index{binHeapFourTest@{binHeapFourTest}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{binHeapFourTest()}{binHeapFourTest()}}
+{\footnotesize\ttfamily bool Binary\+Heap\+\_\+\+Four\+Ints\+::bin\+Heap\+Four\+Test (\begin{DoxyParamCaption}\item[{bool}]{verbose }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_a94a729c5f56d3b185e91a027617db1ef}\label{class_binary_heap___four_ints_a94a729c5f56d3b185e91a027617db1ef}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!binHeapTest@{binHeapTest}}
+\index{binHeapTest@{binHeapTest}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{binHeapTest()}{binHeapTest()}}
+{\footnotesize\ttfamily bool Binary\+Heap\+\_\+\+Four\+Ints\+::bin\+Heap\+Test (\begin{DoxyParamCaption}\item[{bool}]{verbose }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_a95f4f4b6740652fa39fc7ad699319444}\label{class_binary_heap___four_ints_a95f4f4b6740652fa39fc7ad699319444}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!buildAgain@{buildAgain}}
+\index{buildAgain@{buildAgain}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{buildAgain()}{buildAgain()}}
+{\footnotesize\ttfamily void Binary\+Heap\+\_\+\+Four\+Ints\+::build\+Again (\begin{DoxyParamCaption}\item[{int $\ast$}]{val1s,  }\item[{const int $\ast$}]{val2s,  }\item[{const int $\ast$}]{val3s,  }\item[{const int $\ast$}]{val4s,  }\item[{\mbox{\hyperlink{struct_float}{Float}}}]{keys }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_a0824a1f23be5f2d8f5aa0ba53617d1b6}\label{class_binary_heap___four_ints_a0824a1f23be5f2d8f5aa0ba53617d1b6}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!deleteMin@{deleteMin}}
+\index{deleteMin@{deleteMin}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{deleteMin()}{deleteMin()}}
+{\footnotesize\ttfamily void Binary\+Heap\+\_\+\+Four\+Ints\+::delete\+Min (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_a60d13c3396d61cfde62dac79045357ba}\label{class_binary_heap___four_ints_a60d13c3396d61cfde62dac79045357ba}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!getMin@{getMin}}
+\index{getMin@{getMin}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{getMin()}{getMin()}}
+{\footnotesize\ttfamily int Binary\+Heap\+\_\+\+Four\+Ints\+::get\+Min (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_ae7607e83c39875496ada5937e71405d3}\label{class_binary_heap___four_ints_ae7607e83c39875496ada5937e71405d3}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!insert@{insert}}
+\index{insert@{insert}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily void Binary\+Heap\+\_\+\+Four\+Ints\+::insert (\begin{DoxyParamCaption}\item[{int}]{val1,  }\item[{int}]{val2,  }\item[{int}]{val3,  }\item[{int}]{val4,  }\item[{float}]{key }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_ac4168cbc92a816e1c36147c71486116e}\label{class_binary_heap___four_ints_ac4168cbc92a816e1c36147c71486116e}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!isEmpty@{isEmpty}}
+\index{isEmpty@{isEmpty}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{isEmpty()}{isEmpty()}}
+{\footnotesize\ttfamily bool Binary\+Heap\+\_\+\+Four\+Ints\+::is\+Empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_a5205fb4581fad5ba22013cc77af56670}\label{class_binary_heap___four_ints_a5205fb4581fad5ba22013cc77af56670}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!makeEmpty@{makeEmpty}}
+\index{makeEmpty@{makeEmpty}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{makeEmpty()}{makeEmpty()}}
+{\footnotesize\ttfamily void Binary\+Heap\+\_\+\+Four\+Ints\+::make\+Empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_a474c477bc3ec8db878be88589af2c838}\label{class_binary_heap___four_ints_a474c477bc3ec8db878be88589af2c838}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!size@{size}}
+\index{size@{size}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily int Binary\+Heap\+\_\+\+Four\+Ints\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_binary_heap___four_ints_ab577dd35837b5bb7eadfd2e32231674a}\label{class_binary_heap___four_ints_ab577dd35837b5bb7eadfd2e32231674a}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!DEFAULT\_CAPACITY@{DEFAULT\_CAPACITY}}
+\index{DEFAULT\_CAPACITY@{DEFAULT\_CAPACITY}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{DEFAULT\_CAPACITY}{DEFAULT\_CAPACITY}}
+{\footnotesize\ttfamily const int Binary\+Heap\+\_\+\+Four\+Ints\+::\+D\+E\+F\+A\+U\+L\+T\+\_\+\+C\+A\+P\+A\+C\+I\+TY = 1000\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_binary_heap___four_ints_ae30ab6419f2369a87a880dfc4aa97358}\label{class_binary_heap___four_ints_ae30ab6419f2369a87a880dfc4aa97358}} 
+\index{BinaryHeap\_FourInts@{BinaryHeap\_FourInts}!heap@{heap}}
+\index{heap@{heap}!BinaryHeap\_FourInts@{BinaryHeap\_FourInts}}
+\doxysubsubsection{\texorpdfstring{heap}{heap}}
+{\footnotesize\ttfamily std\+::vector$<$ \mbox{\hyperlink{structints4float}{ints4float}} $>$$\ast$ Binary\+Heap\+\_\+\+Four\+Ints\+::heap}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_binary_heap___four_ints_8hpp}{Binary\+Heap\+\_\+\+Four\+Ints.\+hpp}}\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_binary_heap___four_ints_8cpp}{Binary\+Heap\+\_\+\+Four\+Ints.\+cpp}}\end{DoxyCompactItemize}

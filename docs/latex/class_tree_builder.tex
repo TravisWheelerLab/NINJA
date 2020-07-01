@@ -1,0 +1,202 @@
+\hypertarget{class_tree_builder}{}\doxysection{Tree\+Builder Class Reference}
+\label{class_tree_builder}\index{TreeBuilder@{TreeBuilder}}
+
+
+{\ttfamily \#include $<$Tree\+Builder.\+hpp$>$}
+
+Inheritance diagram for Tree\+Builder\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_tree_builder}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_tree_builder_a50223a97cf2e33142ced2c212e22cad6}{Tree\+Builder}} (std\+::string $\ast$$\ast$\mbox{\hyperlink{class_tree_builder_adf035970b6627d0249558400609b2cf9}{names}}, int $\ast$$\ast$distances, int names\+Size)
+\item 
+\mbox{\hyperlink{class_tree_builder_aaf3859d93a39df4713024db0efd6dc0a}{$\sim$\+Tree\+Builder}} ()
+\item 
+\mbox{\hyperlink{class_tree_node}{Tree\+Node}} $\ast$ \mbox{\hyperlink{class_tree_builder_a551ec8aefd51f313752c809ad2c4c7f1}{build}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_tree_builder_ab34a44da83ef16f3cada5eacd6e89d0a}{K}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{class_tree_builder_a93869c0b95d628222e1e1f641a696cc3}{dist\+In\+Mem}} = false
+\item 
+static bool \mbox{\hyperlink{class_tree_builder_a18f0e3b92f71dcba08d8146115d85e03}{rebuild\+Steps\+Constant}} = false
+\item 
+static float \mbox{\hyperlink{class_tree_builder_aa4858f795129eb29decc59def89f9863}{rebuild\+Step\+Ratio}} = (float)0.\+5
+\item 
+static int \mbox{\hyperlink{class_tree_builder_a5ad2e53bba32c295b58874f8085d1b79}{rebuild\+Steps}} = -\/1
+\item 
+static const int \mbox{\hyperlink{class_tree_builder_a5b3775c9a0d0aab28b4aae727ef6576c}{clust\+Cnt}} = 30
+\item 
+static int \mbox{\hyperlink{class_tree_builder_a7d2987bb2165ecc06261568ece739783}{candidate\+Iters}} = 50
+\item 
+static int \mbox{\hyperlink{class_tree_builder_a2d49b744496d897a2d752bb5cd5c3a98}{verbose}} = 1
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_tree_builder_a1febaf1b495ebfb94b0017111560f45c}{finish\+Merging}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::string $\ast$$\ast$ \mbox{\hyperlink{class_tree_builder_adf035970b6627d0249558400609b2cf9}{names}}
+\item 
+int $\ast$$\ast$ \mbox{\hyperlink{class_tree_builder_a3492015b7d90ae531e127d48edd57a3f}{D}}
+\item 
+long int $\ast$ \mbox{\hyperlink{class_tree_builder_aba8d1b348272c0f37664938d3f61bb65}{R}}
+\item 
+\mbox{\hyperlink{class_tree_node}{Tree\+Node}} $\ast$$\ast$ \mbox{\hyperlink{class_tree_builder_a4a5d969e496a1b78847521b3dff8ce9e}{nodes}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_a920fc80b7d5e19e0caabeb21827eae40}{redirect}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_a38fb7d80b54e7ef8fb45eb645a92db39}{next\+Active\+Node}}
+\item 
+int $\ast$ \mbox{\hyperlink{class_tree_builder_a0906754cc42b0da0fd1e74a9f788f8c1}{prev\+Active\+Node}}
+\item 
+int \mbox{\hyperlink{class_tree_builder_a79c366bd440a80d4d33d74b5b067c319}{first\+Active\+Node}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_tree_builder_a50223a97cf2e33142ced2c212e22cad6}\label{class_tree_builder_a50223a97cf2e33142ced2c212e22cad6}} 
+\index{TreeBuilder@{TreeBuilder}!TreeBuilder@{TreeBuilder}}
+\index{TreeBuilder@{TreeBuilder}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{TreeBuilder()}{TreeBuilder()}}
+{\footnotesize\ttfamily Tree\+Builder\+::\+Tree\+Builder (\begin{DoxyParamCaption}\item[{std\+::string $\ast$$\ast$}]{names,  }\item[{int $\ast$$\ast$}]{distances,  }\item[{int}]{names\+Size }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_tree_builder_aaf3859d93a39df4713024db0efd6dc0a}\label{class_tree_builder_aaf3859d93a39df4713024db0efd6dc0a}} 
+\index{TreeBuilder@{TreeBuilder}!````~TreeBuilder@{$\sim$TreeBuilder}}
+\index{````~TreeBuilder@{$\sim$TreeBuilder}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{$\sim$TreeBuilder()}{~TreeBuilder()}}
+{\footnotesize\ttfamily Tree\+Builder\+::$\sim$\+Tree\+Builder (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{class_tree_builder_a551ec8aefd51f313752c809ad2c4c7f1}\label{class_tree_builder_a551ec8aefd51f313752c809ad2c4c7f1}} 
+\index{TreeBuilder@{TreeBuilder}!build@{build}}
+\index{build@{build}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{build()}{build()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_tree_node}{Tree\+Node}}$\ast$ Tree\+Builder\+::build (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{class_tree_builder_a1febaf1b495ebfb94b0017111560f45c}\label{class_tree_builder_a1febaf1b495ebfb94b0017111560f45c}} 
+\index{TreeBuilder@{TreeBuilder}!finishMerging@{finishMerging}}
+\index{finishMerging@{finishMerging}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{finishMerging()}{finishMerging()}}
+{\footnotesize\ttfamily void Tree\+Builder\+::finish\+Merging (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_tree_builder_a7d2987bb2165ecc06261568ece739783}\label{class_tree_builder_a7d2987bb2165ecc06261568ece739783}} 
+\index{TreeBuilder@{TreeBuilder}!candidateIters@{candidateIters}}
+\index{candidateIters@{candidateIters}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{candidateIters}{candidateIters}}
+{\footnotesize\ttfamily int Tree\+Builder\+::candidate\+Iters = 50\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_a5b3775c9a0d0aab28b4aae727ef6576c}\label{class_tree_builder_a5b3775c9a0d0aab28b4aae727ef6576c}} 
+\index{TreeBuilder@{TreeBuilder}!clustCnt@{clustCnt}}
+\index{clustCnt@{clustCnt}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{clustCnt}{clustCnt}}
+{\footnotesize\ttfamily const int Tree\+Builder\+::clust\+Cnt = 30\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_a3492015b7d90ae531e127d48edd57a3f}\label{class_tree_builder_a3492015b7d90ae531e127d48edd57a3f}} 
+\index{TreeBuilder@{TreeBuilder}!D@{D}}
+\index{D@{D}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{D}{D}}
+{\footnotesize\ttfamily int$\ast$$\ast$ Tree\+Builder\+::D\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_tree_builder_a93869c0b95d628222e1e1f641a696cc3}\label{class_tree_builder_a93869c0b95d628222e1e1f641a696cc3}} 
+\index{TreeBuilder@{TreeBuilder}!distInMem@{distInMem}}
+\index{distInMem@{distInMem}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{distInMem}{distInMem}}
+{\footnotesize\ttfamily bool Tree\+Builder\+::dist\+In\+Mem = false\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_a79c366bd440a80d4d33d74b5b067c319}\label{class_tree_builder_a79c366bd440a80d4d33d74b5b067c319}} 
+\index{TreeBuilder@{TreeBuilder}!firstActiveNode@{firstActiveNode}}
+\index{firstActiveNode@{firstActiveNode}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{firstActiveNode}{firstActiveNode}}
+{\footnotesize\ttfamily int Tree\+Builder\+::first\+Active\+Node\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_tree_builder_ab34a44da83ef16f3cada5eacd6e89d0a}\label{class_tree_builder_ab34a44da83ef16f3cada5eacd6e89d0a}} 
+\index{TreeBuilder@{TreeBuilder}!K@{K}}
+\index{K@{K}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{K}{K}}
+{\footnotesize\ttfamily int Tree\+Builder\+::K}
+
+\mbox{\Hypertarget{class_tree_builder_adf035970b6627d0249558400609b2cf9}\label{class_tree_builder_adf035970b6627d0249558400609b2cf9}} 
+\index{TreeBuilder@{TreeBuilder}!names@{names}}
+\index{names@{names}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{names}{names}}
+{\footnotesize\ttfamily std\+::string$\ast$$\ast$ Tree\+Builder\+::names\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_tree_builder_a38fb7d80b54e7ef8fb45eb645a92db39}\label{class_tree_builder_a38fb7d80b54e7ef8fb45eb645a92db39}} 
+\index{TreeBuilder@{TreeBuilder}!nextActiveNode@{nextActiveNode}}
+\index{nextActiveNode@{nextActiveNode}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{nextActiveNode}{nextActiveNode}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+::next\+Active\+Node\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_tree_builder_a4a5d969e496a1b78847521b3dff8ce9e}\label{class_tree_builder_a4a5d969e496a1b78847521b3dff8ce9e}} 
+\index{TreeBuilder@{TreeBuilder}!nodes@{nodes}}
+\index{nodes@{nodes}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{nodes}{nodes}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_tree_node}{Tree\+Node}}$\ast$$\ast$ Tree\+Builder\+::nodes\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_tree_builder_a0906754cc42b0da0fd1e74a9f788f8c1}\label{class_tree_builder_a0906754cc42b0da0fd1e74a9f788f8c1}} 
+\index{TreeBuilder@{TreeBuilder}!prevActiveNode@{prevActiveNode}}
+\index{prevActiveNode@{prevActiveNode}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{prevActiveNode}{prevActiveNode}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+::prev\+Active\+Node\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_tree_builder_aba8d1b348272c0f37664938d3f61bb65}\label{class_tree_builder_aba8d1b348272c0f37664938d3f61bb65}} 
+\index{TreeBuilder@{TreeBuilder}!R@{R}}
+\index{R@{R}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{R}{R}}
+{\footnotesize\ttfamily long int$\ast$ Tree\+Builder\+::R\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_tree_builder_aa4858f795129eb29decc59def89f9863}\label{class_tree_builder_aa4858f795129eb29decc59def89f9863}} 
+\index{TreeBuilder@{TreeBuilder}!rebuildStepRatio@{rebuildStepRatio}}
+\index{rebuildStepRatio@{rebuildStepRatio}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{rebuildStepRatio}{rebuildStepRatio}}
+{\footnotesize\ttfamily float Tree\+Builder\+::rebuild\+Step\+Ratio = (float)0.\+5\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_a5ad2e53bba32c295b58874f8085d1b79}\label{class_tree_builder_a5ad2e53bba32c295b58874f8085d1b79}} 
+\index{TreeBuilder@{TreeBuilder}!rebuildSteps@{rebuildSteps}}
+\index{rebuildSteps@{rebuildSteps}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{rebuildSteps}{rebuildSteps}}
+{\footnotesize\ttfamily int Tree\+Builder\+::rebuild\+Steps = -\/1\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_a18f0e3b92f71dcba08d8146115d85e03}\label{class_tree_builder_a18f0e3b92f71dcba08d8146115d85e03}} 
+\index{TreeBuilder@{TreeBuilder}!rebuildStepsConstant@{rebuildStepsConstant}}
+\index{rebuildStepsConstant@{rebuildStepsConstant}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{rebuildStepsConstant}{rebuildStepsConstant}}
+{\footnotesize\ttfamily bool Tree\+Builder\+::rebuild\+Steps\+Constant = false\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_tree_builder_a920fc80b7d5e19e0caabeb21827eae40}\label{class_tree_builder_a920fc80b7d5e19e0caabeb21827eae40}} 
+\index{TreeBuilder@{TreeBuilder}!redirect@{redirect}}
+\index{redirect@{redirect}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{redirect}{redirect}}
+{\footnotesize\ttfamily int$\ast$ Tree\+Builder\+::redirect\hspace{0.3cm}{\ttfamily [protected]}}
+
+\mbox{\Hypertarget{class_tree_builder_a2d49b744496d897a2d752bb5cd5c3a98}\label{class_tree_builder_a2d49b744496d897a2d752bb5cd5c3a98}} 
+\index{TreeBuilder@{TreeBuilder}!verbose@{verbose}}
+\index{verbose@{verbose}!TreeBuilder@{TreeBuilder}}
+\doxysubsubsection{\texorpdfstring{verbose}{verbose}}
+{\footnotesize\ttfamily int Tree\+Builder\+::verbose = 1\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_tree_builder_8hpp}{Tree\+Builder.\+hpp}}\item 
+N\+I\+N\+J\+A/\mbox{\hyperlink{_tree_builder_8cpp}{Tree\+Builder.\+cpp}}\end{DoxyCompactItemize}

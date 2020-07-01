@@ -1,16 +1,9 @@
-/*
- * Ninja.cpp
- *
- *  Created on: Feb 21, 2016
- *      Author: michel
- */
 #include "TreeBuilderManager.hpp"
 #include "ArgumentHandler.hpp"
 #include "BinaryHeap.hpp"
 #include <iostream>
 
-
-#ifdef LINUX //TODO: include support for multiple plataforms
+#ifdef LINUX //TODO: include support for multiple platforms
 #include <unistd.h>
 #endif
 
@@ -54,23 +47,23 @@ int main(int argc, char *argv[]){
 	test_case(argc, argv);
 #else
 
-	ArgumentHandler *argHandler = new ArgumentHandler(argv,argc);
-	if (argHandler->abort)
+	auto *argHandler = new ArgumentHandler(argv,argc);
+	if (argHandler->getAbort())
 		return 0;
 
 	std::string method = argHandler->getMethod();
-	std::string inFile = argHandler->getInFile();
+	std::string inFile = argHandler->getInputFile();
 	std::string njTmpDir = argHandler->getNJTmpDir();
 	ArgumentHandler::InputType inType = argHandler->getInputType();
 	ArgumentHandler::OutputType outType = argHandler->getOutputType();
 	ArgumentHandler::AlphabetType alphType = argHandler->getAlphabetType();
 	ArgumentHandler::CorrectionType corrType = argHandler->getCorrectionType();
-	FILE* out = argHandler->getOutpuFile();
+	FILE* out = argHandler->getOutputFile();
 	int threads = argHandler->getNumThreads();
-	bool useSSE = argHandler->useSSE();
+	bool useSSE = argHandler->getUseSSE();
 
 	fprintf(stderr,"Reading...\n");
-	TreeBuilderManager* manager = new TreeBuilderManager(method, njTmpDir, inFile, out, (TreeBuilderManager::InputType) inType,(TreeBuilderManager::OutputType) outType, (TreeBuilderManager::AlphabetType) alphType,(TreeBuilderManager::CorrectionType) corrType, threads, useSSE);
+	auto* manager = new TreeBuilderManager(method, njTmpDir, inFile, out, (TreeBuilderManager::InputType) inType,(TreeBuilderManager::OutputType) outType, (TreeBuilderManager::AlphabetType) alphType,(TreeBuilderManager::CorrectionType) corrType, threads, useSSE);
 
 	std::string treeString = manager->doJob();
 

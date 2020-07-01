@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="No Outputs" pattern="!file:NINJA/*.o" />
+</component>

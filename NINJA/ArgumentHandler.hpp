@@ -1,53 +1,76 @@
 #ifndef ARGUMENTHANDLER_HPP
 #define ARGUMENTHANDLER_HPP
 
+#include <cstdio>
+#include <cstdlib>
+
 #include "ExceptionHandler.hpp"
-#include <stdlib.h>
-#include <stdio.h>
 #include "TreeBuilder.hpp"
 
-class ArgumentHandler{
-	public:
-		enum InputType {alignment, distance};
-		enum OutputType {dist, tree};
-		enum AlphabetType {dna, amino, null};
-		enum CorrectionType {not_assigned, none, JukesCantor/*DNA*/, Kimura2/*DNA*/, FastTree /*amino*/};
+class ArgumentHandler {
+public:
+    /// The input type can be either a set of alignments in FASTA format,
+    /// or a pre-computed distance matrix in Phylip format.
+    enum InputType {
+        alignment, distance
+    };
 
-		std::string method; // default should be "bin" for small, "cand" for large.
-		std::string njTmpDir;
-		std::string inFile; //works?
-		InputType inType;
-		OutputType outType;
-		AlphabetType alphType;
-		CorrectionType corrType;
-		FILE* outFile;
+    /// The output type can be either a distance matrix or a tree.
+    enum OutputType {
+        dist, tree
+    };
 
-		int threads;
+    /// The alphabet to use; either the DNA nucleotides or amino acids.
+    enum AlphabetType {
+        dna, amino, null
+    };
 
-		bool SSE;
+    /// The correction algorithm to employ. The JukesCantor and Kimura2 methods
+    /// are appropriate for DNA while FastTree is for amino acid alphabets.
+    enum CorrectionType {
+        not_assigned, none, JukesCantor, Kimura2, FastTree
+    };
 
-		bool abort;
+    ArgumentHandler(char *argv[], int argc);
 
-		ArgumentHandler (char* argv[],int argc);
-		std::string getMethod();
-		std::string getInFile();
-		std::string getNJTmpDir();
-		InputType getInputType();
-		OutputType getOutputType();
-		FILE* getOutpuFile();
-		int getNumThreads();
+    bool getAbort() const;
 
-		AlphabetType getAlphabetType();
+    std::string getMethod() const;
 
-		CorrectionType getCorrectionType ();
+    std::string getInputFile() const;
 
-		bool argumentTest();
+    /// Get the temporary directory used for the neighbor-joining algorithm.
+    std::string getNJTmpDir() const;
 
-		bool useSSE();
+    InputType getInputType() const;
+
+    OutputType getOutputType() const;
+
+    FILE *getOutputFile() const;
+
+    int getNumThreads() const;
+
+    AlphabetType getAlphabetType() const;
+
+    CorrectionType getCorrectionType() const;
+
+    static bool argumentTest();
+
+    bool getUseSSE() const;
+
+private:
+    // TODO: use an enum if there are only a few values
+    std::string method; // default should be "bin" for small, "cand" for large.
+    std::string njTmpDir;
+    std::string inputFile; //works?
+    InputType inputType;
+    OutputType outputType;
+    AlphabetType alphabetType;
+    CorrectionType correctionType;
+    FILE *outputFile;
+    int numThreads;
+    bool useSSE;
+    bool abort;
 };
 
 #endif
-
-
-
-
