@@ -7,7 +7,7 @@ OBJECTS := $(SOURCES:.cpp=.o)
 
 # TODO: get newer GCC versions to work
 # The C++ compiler must support C++11
-CXX := g++-6
+CXX := g++-7
 # TODO: eliminate the need for openmp so we can use Apple Clang
 CXXFLAGS := -std=gnu++11 -Wall -mssse3 -fopenmp
 
@@ -43,7 +43,7 @@ docs:
 setup-mac:
 	brew install pipenv
 	brew install pyenv
-	brew install gcc@6
+	brew install gcc@7
 	brew install doxygen
 	pyenv install -s 3.8.3
 	pipenv sync --dev
