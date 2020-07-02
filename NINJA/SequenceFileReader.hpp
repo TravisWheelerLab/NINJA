@@ -1,34 +1,32 @@
-/*
- * SequenceFIleReader.hpp
- *
- *  Created on: Jan 28, 2016
- *      Author: michel
- */
-
+#include <cstdio>
+#include <cstdlib>
 #include <string>
-#include <stdlib.h>
-#include <stdio.h>
 #include <vector>
+#include "ArgumentHandler.hpp"
 #include "ExceptionHandler.hpp"
 
+class SequenceFileReader {
+public:
+    explicit SequenceFileReader(ArgumentHandler::AlphabetType alphabetType);
 
-class SequenceFileReader{
-	public:
-		enum AlphabetType {dna, amino, null};
-		std::string** seqs;
-		std::string** names;
-		AlphabetType alphType;
-		int numSeqs;
-		enum fileType {fasta, stockholm};
+    ~SequenceFileReader();
 
-		SequenceFileReader (std::string *filename, AlphabetType alphTypeIn);
-		~SequenceFileReader();
+    ArgumentHandler::AlphabetType getAlphabetType() const;
 
-		fileType filetype;
+    std::vector<std::string> getNames() const;
 
-		std::string **getSeqs();
-		std::string **getNames();
-		AlphabetType getAlphType();
+    std::vector<std::string> getSequences() const;
+
+    void readFasta(std::istream *fastaFile);
+
+    void readStockholm(std::istream *stockholmFile);
+
+private:
+    ArgumentHandler::AlphabetType alphabetType;
+
+    std::vector<std::string> names;
+
+    std::vector<std::string> seqs;
+
+    size_t numSeqs;
 };
-
-

@@ -22,7 +22,7 @@ public:
 
     /// The alphabet to use; either the DNA nucleotides or amino acids.
     enum AlphabetType {
-        dna, amino, null
+        dna, amino, unknown
     };
 
     /// The correction algorithm to employ. The JukesCantor and Kimura2 methods

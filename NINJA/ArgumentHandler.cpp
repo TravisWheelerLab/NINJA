@@ -2,7 +2,7 @@
 
 ArgumentHandler::ArgumentHandler(char *argv[], int argc) {
     this->abort = false;
-    this->alphabetType = null;
+    this->alphabetType = unknown;
     this->correctionType = not_assigned;
     this->inputType = alignment;
     this->method.assign("default");
