@@ -7,7 +7,7 @@ bool compare4Ints(ints4float x, ints4float y) {
 
 BinaryHeap_FourInts::BinaryHeap_FourInts() {
     this->heap = new std::vector<ints4float>();
-    this->heap->reserve(BinaryHeap::DEFAULT_CAPACITY);
+    this->heap->reserve(BinaryHeap_FourInts::DEFAULT_CAPACITY);
     std::make_heap(this->heap->begin(), this->heap->end(), compare4Ints);
 }
 
@@ -20,7 +20,7 @@ BinaryHeap_FourInts::BinaryHeap_FourInts(int maxCapacity) {
 BinaryHeap_FourInts::BinaryHeap_FourInts(const int *val1s, const int *val2s, const int *val3s, const int *val4s,
                                          Float keys) {
     this->heap = new std::vector<ints4float>();
-    this->heap->reserve(BinaryHeap::DEFAULT_CAPACITY);
+    this->heap->reserve(BinaryHeap_FourInts::DEFAULT_CAPACITY);
     std::make_heap(this->heap->begin(), this->heap->end(), compare4Ints);
     for (int i = 0; i < keys.length; i++) {
         ints4float aux{};

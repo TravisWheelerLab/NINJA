@@ -1,56 +1,50 @@
-/*
- * BinaryHeap_TwoInts.hpp
- *
- *  Created on: Mar 19, 2016
- *      Author: michel
- */
 #ifndef BINARYHEAP_TWO_INTS_HPP
 #define BINARYHEAP_TWO_INTS_HPP
 
+#include <climits>
+
 #include "ExceptionHandler.hpp"
-#include <limits.h>
 #include "BinaryHeap.hpp"
 
-struct ints2float{
-	int first;
-	int second;
-	float key;
+struct ints2float {
+    int first;
+    int second;
+    float key;
 };
-
-
 
 class BinaryHeap_TwoInts {
 public:
-	//constructors
-	BinaryHeap_TwoInts();
-	BinaryHeap_TwoInts(int maxCapacity);
-	BinaryHeap_TwoInts(int* val1s, const int* val2s, Float keys);
-	BinaryHeap_TwoInts(int* val1s, const int* val2s, Float keys, int maxCapacity);
-	~BinaryHeap_TwoInts();
+    //constructors
+    BinaryHeap_TwoInts();
+
+    BinaryHeap_TwoInts(int maxCapacity);
+
+    BinaryHeap_TwoInts(const int *val1s, const int *val2s, Float keys);
+
+    BinaryHeap_TwoInts(const int *val1s, const int *val2s, Float keys, int maxCapacity);
+
+    ~BinaryHeap_TwoInts();
 
 
+    int size() const; //return BinaryHeap size
 
-	int size(); //return BinaryHeap size
+    //functions
+    void insert(int val1, int val2, float key) const;
 
-	//functions
-	void insert(int val1, int val2, float key);
-	void deleteMin(); //Remove the smallest item from the priority queue
+    void deleteMin() const; //Remove the smallest item from the priority queue
 
-	int getMin();
-	bool isEmpty(); //check if empty
-	void makeEmpty(); //empty heap
-	void buildAgain(int* val1s, const int* val2s, Float keys);
-	void chopBottomK(int* val1s, int* val2s, Float keys);
+    bool isEmpty() const; //check if empty
+    void makeEmpty() const; //empty heap
+    void buildAgain(const int *val1s, const int *val2s, Float keys);
 
+    void chopBottomK(int *val1s, int *val2s, Float keys) const;
 
-	bool binHeapTest(bool verbose);
+    std::vector<ints2float> *heap;
 
-	std::vector< ints2float > *heap;
+    static const int DEFAULT_CAPACITY = 1000;
 
-
-	static const int DEFAULT_CAPACITY = 1000;
-
-	bool binHeapTwoTest(bool verbose);
+    static bool binHeapTwoTest(bool verbose);
 
 };
+
 #endif
