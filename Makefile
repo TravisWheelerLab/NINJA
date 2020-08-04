@@ -25,7 +25,7 @@ check: debug
 	# TODO: Run the test suite
 	# Start with a simple functional test suite
 	# that just runs a small number of sanity checks
-	./NINJA/Ninja --in PF08271_seed.txt
+	./NINJA/Ninja --in fixtures/PF08271_seed.txt
 
 .PHONY: clean
 clean:
