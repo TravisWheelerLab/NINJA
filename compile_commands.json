@@ -1,6 +1,6 @@
 [
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -16,7 +16,7 @@
   "file": "NINJA/ArgumentHandler.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -32,7 +32,7 @@
   "file": "NINJA/ArrayHeapExtMem.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -48,7 +48,7 @@
   "file": "NINJA/BinaryHeap.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -64,7 +64,7 @@
   "file": "NINJA/BinaryHeap_FourInts.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -80,7 +80,7 @@
   "file": "NINJA/BinaryHeap_IntKey_TwoInts.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -96,7 +96,7 @@
   "file": "NINJA/BinaryHeap_TwoInts.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -112,7 +112,7 @@
   "file": "NINJA/CandidateHeap.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -128,7 +128,7 @@
   "file": "NINJA/DistanceCalculator.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -144,7 +144,7 @@
   "file": "NINJA/DistanceReader.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -160,7 +160,7 @@
   "file": "NINJA/DistanceReaderExtMem.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -176,7 +176,7 @@
   "file": "NINJA/ExceptionHandler.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -192,7 +192,7 @@
   "file": "NINJA/Ninja.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -208,7 +208,7 @@
   "file": "NINJA/SequenceFileReader.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -224,7 +224,7 @@
   "file": "NINJA/Stack.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -240,7 +240,7 @@
   "file": "NINJA/TreeBuilder.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -256,7 +256,7 @@
   "file": "NINJA/TreeBuilderBinHeap.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -272,7 +272,7 @@
   "file": "NINJA/TreeBuilderExtMem.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",
@@ -288,7 +288,7 @@
   "file": "NINJA/TreeBuilderManager.cpp"
  },
  {
-  "directory": "/Users/george/Code/NINJA",
+  "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
    "g++-7",
    "-std=gnu++11",

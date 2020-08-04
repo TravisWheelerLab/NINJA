@@ -24,14 +24,21 @@ all: $(OBJECTS)
 check: debug
 	# TODO: Run the test suite
 	# Start with a simple functional test suite
+	# that just runs a small number of sanity checks
+	./NINJA/Ninja --in fixtures/PF08271_seed.txt
 
 .PHONY: clean
 clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(EXEC)
 
+## Build the compilation database used by CLion for code intelligence.
+.PHONY: compiledb
+compiledb:
+	pipenv run compiledb -n make
+
 .PHONY: debug
-debug: CXXFLAGS += -O0 -g3 -pg
+debug: CXXFLAGS += -O0 -g3
 debug: $(OBJECTS)
 	$(CXX) $(DBGFLAGS) $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
