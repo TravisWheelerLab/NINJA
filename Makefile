@@ -30,6 +30,11 @@ clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(EXEC)
 
+## Build the compilation database used by CLion for code intelligence.
+.PHONY: compiledb
+compiledb:
+	pipenv run compiledb -n make
+
 .PHONY: debug
 debug: CXXFLAGS += -O0 -g3 -pg
 debug: $(OBJECTS)
