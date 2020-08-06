@@ -1,22 +1,22 @@
 #ifndef ExceptionHandler_HPP
 #define ExceptionHandler_HPP
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <string>
-#include <string.h>
-#include <assert.h>
-#include <limits.h>
+#include <cstring>
+#include <cassert>
+#include <climits>
 #include <algorithm>
 #include <vector>
 #include <utility>
-#include <time.h>
-#include <errno.h>
+#include <ctime>
+#include <cerrno>
 
+namespace Exception {
+    void critical();
 
-namespace Exception{
-	void critical();
-	void criticalErrno(const char* arg);
+    void criticalErrno(const char *arg);
 }
 
 #endif

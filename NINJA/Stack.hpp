@@ -1,34 +1,29 @@
-/*
- * Stack.hpp
- *
- *  Created on: Feb 13, 2016
- *      Author: michel
- */
-
 #ifndef STACK_HPP
 #define STACK_HPP
 
 #include "ExceptionHandler.hpp"
-#include <string.h>
+
+#include <cstring>
 #include <stack>
 
-class Stack{
-	public:
-		Stack();
-		~Stack();
-		Stack(int size);
-		void push(int x);
-		int pop();
-		int length();
-		int maxSize();
-		bool isEmpty();
-		void clear();
+class Stack {
+public:
+    Stack();
 
-		bool stackTest(bool verbose);
-	private:
-		std::stack<int> *mystack;
+    ~Stack();
 
-		void resize();
+    void push(int x);
+
+    int pop();
+
+    int length();
+
+    bool isEmpty();
+
+    void clear();
+
+private:
+    std::stack<int> *mystack;
 };
-#endif
 
+#endif
