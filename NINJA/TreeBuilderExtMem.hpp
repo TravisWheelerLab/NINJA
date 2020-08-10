@@ -1,105 +1,113 @@
-/*
- * ArrayHeapExtMem.hpp
- *
- *  Created on: Mar 15, 2016
- *      Author: michel
- */
-
 #ifndef TREEBUILDEREXTMEM_HPP
 #define TREEBUILDEREXTMEM_HPP
 
-#include "Stack.hpp"
-#include "TreeNode.hpp"
 #include "ArrayHeapExtMem.hpp"
-#include <float.h>
+#include "Stack.hpp"
 #include "TreeBuilder.hpp"
+#include "TreeNode.hpp"
+
+#include <cfloat>
 #include <tr1/unordered_set>
 
 class CandidateHeap;
 
 class TreeBuilderExtMem {
 
-	public:
-		TreeBuilderExtMem (std::string** names, int namesSize, float *R, std::string njTmpDir, FILE* diskD, float** memD, int memDFirstSize, int firstMemCol, int rowLength, long maxMemory);
-		~TreeBuilderExtMem ();
+public:
+    TreeBuilderExtMem(std::string **names,
+                      int namesSize,
+                      float *R,
+                      std::string njTmpDir,
+                      FILE *diskD, float **memD,
+                      int memDFirstSize,
+                      int firstMemCol,
+                      int rowLength,
+                      long maxMemory);
 
-		int K;
-		std::string** names;
-		TreeNode** nodes;
-		int* redirect;
+    ~TreeBuilderExtMem();
 
-		static const bool returnCandsToHeaps = false;
-		static const bool useCandHeaps = true;
-		static const bool useBinPairHeaps = true;
-		static const int complexCandidateCount = 2000;
-		static const int complexCandidateRatio = 40;
-		static constexpr float candHeapDecay = 0.6f;
-		static const int clustCnt = 30;
-		static const int candHeapThresh = 50000;
-		int* nextActiveNode;
-		int* prevActiveNode;
-		int firstActiveNode;
+    int K;
+    std::string **names;
+    TreeNode **nodes;
+    int *redirect;
 
-		ArrayHeapExtMem*** arrayHeaps;
+    static const bool returnCandsToHeaps = false;
+    static const bool useCandHeaps = true;
+    static const bool useBinPairHeaps = true;
+    static const int complexCandidateCount = 2000;
+    static const int complexCandidateRatio = 40;
+    static constexpr float candHeapDecay = 0.6f;
+    static const int clustCnt = 30;
+    static const int candHeapThresh = 50000;
+    int *nextActiveNode;
+    int *prevActiveNode;
+    int firstActiveNode;
 
-		int* clustAssignments;
-		float* clustMaxes;
-		float* clustMins;
-		int* clustersBySize;
-		int* clustSizes;
+    ArrayHeapExtMem ***arrayHeaps;
 
-		int newK;
+    int *clustAssignments;
+    float *clustMaxes;
+    float *clustMins;
+    int *clustersBySize;
+    int *clustSizes;
 
-		FILE* diskD=NULL;
-		FILE* candFile=NULL;
-		long candFilePos;
+    int newK;
 
-		int numCandTriplesToDisk; // 16 * 3 pages (or so)
+    FILE *diskD = nullptr;
+    FILE *candFile = nullptr;
+    long candFilePos;
+
+    int numCandTriplesToDisk; // 16 * 3 pages (or so)
 
 
-		float* R;
-		int RSize;
-		float** memD;
-		int firstColInMem;
-		int curColInMem;
-		int memDSize;
+    float *R;
+    int RSize;
+    float **memD;
+    int firstColInMem;
+    int curColInMem;
+    int memDSize;
 
-		float* fBuff;
-		int* candidateCountPerLoop;
-		int* candidateViewsPerLoop;
-		int* candidateRowsCountPerLoop;
+    float *fBuff;
+    int *candidateCountPerLoop;
+    int *candidateViewsPerLoop;
+    int *candidateRowsCountPerLoop;
 
-		std::string njTmpDir;
+    std::string njTmpDir;
 
-		int nextInternalNode;
+    int nextInternalNode;
 
-		float* candidatesD;
-		int* candidatesI;
-		int* candidatesJ;
-		bool* candidatesActive;
-		Stack* freeCandidates;
-		int lastCandidateIndex;
+    float *candidatesD;
+    int *candidatesI;
+    int *candidatesJ;
+    bool *candidatesActive;
+    Stack *freeCandidates;
+    int lastCandidateIndex;
 
-		CandidateHeap* starterCandHeap;
+    CandidateHeap *starterCandHeap;
 
-		std::vector<CandidateHeap*>* candHeapList;
+    std::vector<CandidateHeap *> *candHeapList;
 
-		bool usingSimpleCandidates;
+    bool usingSimpleCandidates;
 
-		float candidatesSize;
+    float candidatesSize;
 
-		static const int floatSize = 4;
-		int rowLength;
+    static const int floatSize = 4;
+    int rowLength;
 
-		long maxMemory;
+    long maxMemory;
 
-		TreeNode** build ();
-		void clear();
-	private:
-		void clusterAndHeap (int maxIndex );
-		void returnCandidates ();
-		void appendCandidate (float d, int i, int j);
-		int appendCandToSimpleList (float d, int i, int j);
-		void removeCandidate (int x);
+    TreeNode **build();
+
+private:
+    void clusterAndHeap(int maxIndex);
+
+    void returnCandidates();
+
+    void appendCandidate(float d, int i, int j);
+
+    int appendCandToSimpleList(float d, int i, int j);
+
+    void removeCandidate(int x);
 };
+
 #endif

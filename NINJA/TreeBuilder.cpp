@@ -18,7 +18,7 @@ TreeBuilder::TreeBuilder(std::string **names, int **distances, int namesSize) {
     this->D = distances;
     this->K = namesSize;
 
-    this->R = new long[this->K]();
+    this->R = new int[this->K]();
 
     this->redirect = new int[(this->K * 2) - 1];
 

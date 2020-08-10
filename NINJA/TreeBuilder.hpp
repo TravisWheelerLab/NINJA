@@ -17,6 +17,7 @@ public:
     static float rebuildStepRatio;
     static int rebuildSteps;
     static int candidateIters;
+    static const int clustCnt = 30;
     static int verbose;
     int K;
 
