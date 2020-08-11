@@ -1,5 +1,7 @@
 ![NINJA CI](https://github.com/TravisWheelerLab/NINJA/workflows/NINJA%20CI/badge.svg)
 
+[API Documentation](https://wheelerlab.org/NINJA/)
+
 # NINJA
 
 Nearly Infinite Neighbor Joining Application
