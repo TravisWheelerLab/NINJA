@@ -1,50 +1,50 @@
-/*
- * CandidateHeap.hpp
- *
- *  Created on: Mar 18, 2016
- *      Author: michel
- */
-
 #ifndef CANDIDATEHEAP_HPP
 #define CANDIDATEHEAP_HPP
 
 #include "ArrayHeapExtMem.hpp"
 #include "TreeBuilderExtMem.hpp"
 
-class CandidateHeap: public ArrayHeapExtMem{
+class CandidateHeap : public ArrayHeapExtMem {
 
-	public:
-		CandidateHeap(std::string dir, int* activeIJs, int kPrime, TreeBuilderExtMem* tb, long sizeExp);
-		CandidateHeap(std::string dir, int* activeIJs, int kPrime, TreeBuilderExtMem* tb);
-		~CandidateHeap();
+public:
+    CandidateHeap(std::string dir, int *activeIJs, int kPrime, TreeBuilderExtMem *tb, long sizeExp);
+
+    CandidateHeap(std::string dir, int *activeIJs, int kPrime, TreeBuilderExtMem *tb);
+
+    ~CandidateHeap();
 
 
-		int kPrime;
-		float* rPrimes;
-		float* rDeltas;
-		int* rowCounts;
+    int kPrime;
+    float *rPrimes;
+    float *rDeltas;
+    int *rowCounts;
 
-		int* nextActiveNode;
-		int* prevActiveNode;
-		int firstActiveNode;
+    int *nextActiveNode;
+    int *prevActiveNode;
+    int firstActiveNode;
 
-		float k_over_kprime;
+    float k_over_kprime;
 
-		float minDeltaSum;
+    float minDeltaSum;
 
-		int origSize;
-		bool expired;
-		int representedRowCount;
+    int origSize;
+    bool expired;
+    int representedRowCount;
 
-		TreeBuilderExtMem* tb;
+    TreeBuilderExtMem *tb;
 
-		void insert(int i, int j, float key);
-		void buildNodeList();
-		void removeMin();
-		void calcDeltaValues(int newK);
-		void clear();
+    void insert(int i, int j, float key);
 
-	private:
-		void initialize (int kPrime, TreeBuilderExtMem* tb);
+    void buildNodeList();
+
+    void removeMin();
+
+    void calcDeltaValues(int newK);
+
+    void clear();
+
+private:
+    void initialize(int kPrime, TreeBuilderExtMem *tb);
 };
+
 #endif

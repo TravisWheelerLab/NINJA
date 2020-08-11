@@ -1,40 +1,37 @@
-/*
- * TreeBuilderBinHeap.hpp
- *
- *  Created on: Feb 13, 2016
- *      Author: michel
- */
-#include "Stack.hpp"
 #include "BinaryHeap_IntKey_TwoInts.hpp"
+#include "Stack.hpp"
 #include "TreeBuilder.hpp"
-#include <limits.h>
 
-class TreeBuilderBinHeap: public TreeBuilder{
-	public:
-		TreeBuilderBinHeap(std::string** names, int** distances, int namesSIze);
-		~TreeBuilderBinHeap();
+#include <climits>
 
-		int* candidateCountPerLoop;
+class TreeBuilderBinHeap : public TreeBuilder {
+public:
+    TreeBuilderBinHeap(std::string **names, int **distances, int namesSIze);
 
-		TreeNode** build ();
+    ~TreeBuilderBinHeap();
 
-	private:
-		BinaryHeap_IntKey_TwoInts*** heaps;
+    int *candidateCountPerLoop;
 
-		int* clustAssignments;
-		long* clustPercentiles;
-		int* clustersBySize;
-		int* clustSizes;
+    TreeNode **build();
 
-		Int candidatesD;
-		Int candidatesI;
-		Int candidatesJ;
-		bool* candidatesActive;
-		Stack *freeCandidates;
-		int lastCandidateIndex;
+private:
+    BinaryHeap_IntKey_TwoInts ***heaps;
 
-		void clusterAndHeap (int maxIndex);
-		int appendCandidate (int d, int i, int j);
+    int *clustAssignments;
+    long *clustPercentiles;
+    int *clustersBySize;
+    int *clustSizes;
+
+    Int candidatesD;
+    Int candidatesI;
+    Int candidatesJ;
+    bool *candidatesActive;
+    Stack *freeCandidates;
+    int lastCandidateIndex;
+
+    void clusterAndHeap(int maxIndex);
+
+    int appendCandidate(int d, int i, int j);
 };
 
 
