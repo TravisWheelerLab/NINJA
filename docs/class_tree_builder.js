@@ -2,7 +2,6 @@ var class_tree_builder =
 [
     [ "TreeBuilder", "class_tree_builder.html#a50223a97cf2e33142ced2c212e22cad6", null ],
     [ "~TreeBuilder", "class_tree_builder.html#aaf3859d93a39df4713024db0efd6dc0a", null ],
-    [ "build", "class_tree_builder.html#a551ec8aefd51f313752c809ad2c4c7f1", null ],
     [ "finishMerging", "class_tree_builder.html#a1febaf1b495ebfb94b0017111560f45c", null ],
     [ "candidateIters", "class_tree_builder.html#a7d2987bb2165ecc06261568ece739783", null ],
     [ "clustCnt", "class_tree_builder.html#a5b3775c9a0d0aab28b4aae727ef6576c", null ],
@@ -14,7 +13,7 @@ var class_tree_builder =
     [ "nextActiveNode", "class_tree_builder.html#a38fb7d80b54e7ef8fb45eb645a92db39", null ],
     [ "nodes", "class_tree_builder.html#a4a5d969e496a1b78847521b3dff8ce9e", null ],
     [ "prevActiveNode", "class_tree_builder.html#a0906754cc42b0da0fd1e74a9f788f8c1", null ],
-    [ "R", "class_tree_builder.html#aba8d1b348272c0f37664938d3f61bb65", null ],
+    [ "R", "class_tree_builder.html#a2a7cf93c4f83694655b42b66841ec022", null ],
     [ "rebuildStepRatio", "class_tree_builder.html#aa4858f795129eb29decc59def89f9863", null ],
     [ "rebuildSteps", "class_tree_builder.html#a5ad2e53bba32c295b58874f8085d1b79", null ],
     [ "rebuildStepsConstant", "class_tree_builder.html#a18f0e3b92f71dcba08d8146115d85e03", null ],

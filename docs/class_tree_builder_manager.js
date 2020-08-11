@@ -21,9 +21,7 @@ var class_tree_builder_manager =
       [ "tree", "class_tree_builder_manager.html#a4cd821248549c591777002b96d1b1f17a432f48fbf28ef0573a1a3848b5cf1d40", null ]
     ] ],
     [ "TreeBuilderManager", "class_tree_builder_manager.html#a1c1e9bc07025dd5160ac37277c10647a", null ],
-    [ "deleteDir", "class_tree_builder_manager.html#a8901ec2e86f97fc6b951d465cffea38f", null ],
     [ "doJob", "class_tree_builder_manager.html#a82bd45375c241cc86bf5d26f4fef05ed", null ],
-    [ "getUniqueID", "class_tree_builder_manager.html#ac80897b0e7c8f66191245a294e336738", null ],
     [ "alphType", "class_tree_builder_manager.html#a3047ef12674cd2feab230d5445ec057e", null ],
     [ "chars", "class_tree_builder_manager.html#a150db90e2abf2fc03731688eb898bbb3", null ],
     [ "corrType", "class_tree_builder_manager.html#adf86247bbac061e015008cf779aa1922", null ],

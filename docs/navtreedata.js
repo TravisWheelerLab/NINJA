@@ -25,9 +25,11 @@
 var NAVTREE =
 [
   [ "NINJA", "index.html", [
-    [ "About", "index.html#autotoc_md1", null ],
-    [ "Development", "index.html#autotoc_md2", null ],
-    [ "Authors", "index.html#autotoc_md3", null ],
+    [ "NINJA", "index.html#autotoc_md0", [
+      [ "About", "index.html#autotoc_md1", null ],
+      [ "Development", "index.html#autotoc_md2", null ],
+      [ "Authors", "index.html#autotoc_md3", null ]
+    ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -52,8 +54,7 @@ var NAVTREE =
       [ "File Members", "globals.html", [
         [ "All", "globals.html", null ],
         [ "Functions", "globals_func.html", null ],
-        [ "Typedefs", "globals_type.html", null ],
-        [ "Macros", "globals_defs.html", null ]
+        [ "Typedefs", "globals_type.html", null ]
       ] ]
     ] ]
   ] ]
@@ -62,8 +63,8 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_argument_handler_8cpp.html",
-"class_distance_calculator.html#a432c5d8e0379f014219ce28eb81945d5",
-"functions_vars_d.html"
+"class_distance_calculator.html#a86d7a9392e657a3712692d81a616b413",
+"functions_vars_u.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
