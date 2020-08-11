@@ -38,21 +38,17 @@ int DistanceReaderExtMem::read(std::string **names, float *R, FILE *diskD, float
 
     float *fBuff = new float[numColsToDisk];
 
-    omp_set_num_threads(omp_get_max_threads());
-
-    //TODO: implement threads here, more complicated that in the in memory function, but still feasible
     if (this->distCalc != nullptr) {
         while (row != K && buffPtr < buffSize) {
 
+            // TODO: May want to parallelize this loop
             //interleave columns in the
-#pragma omp parallel for
             for (int col = 0; col < numColsToDisk; col++) {
 
                 float d = ((float) ceil((float) (10000000 * distCalc->calc(row, col)))) / 10000000;
 
-#pragma omp atomic
+                // TODO: The next two instructions must be atomic
                 R[row] += d;
-
                 fBuff[col] = d;
 
             }
@@ -63,18 +59,17 @@ int DistanceReaderExtMem::read(std::string **names, float *R, FILE *diskD, float
                 fwrite(fBuff, sizeof(float), numColsToDisk, diskD);
 
             }
-#pragma omp parallel for
+
+            // TODO: May want to parallelize this loop
             for (int col = numColsToDisk; col < this->K; col++) {
 #ifdef TEST_DIFF
                 float d = this->distCalc->testDifferenceCluster(row,col);
 #endif
                 float d = ((float) ceil((float) (10000000 * distCalc->calc(row, col)))) / 10000000;
 
-#pragma omp atomic
+                // TODO: The next two instructions must be atomic
                 R[row] += d;
-
                 memD[row][col - numColsToDisk] = d;
-
             }
 
             row++;

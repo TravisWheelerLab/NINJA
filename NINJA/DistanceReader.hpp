@@ -1,5 +1,5 @@
-#include "ExceptionHandler.hpp"
 #include "DistanceCalculator.hpp"
+#include "ExceptionHandler.hpp"
 
 class DistanceReader {
 public:
