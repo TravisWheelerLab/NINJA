@@ -7,7 +7,7 @@
 #include "TreeNode.hpp"
 
 #include <cfloat>
-#include <tr1/unordered_set>
+#include <unordered_map>
 
 class CandidateHeap;
 
