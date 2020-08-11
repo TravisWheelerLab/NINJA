@@ -3,10 +3,13 @@ name: NINJA CI
 on: [pull_request, push]
 
 jobs:
-  build:
+  check:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
 
-    runs-on: ubuntu-18.04
-    
+    runs-on: ${{ matrix.os }}
+
     steps:
     - uses: actions/checkout@v1
     - name: make check

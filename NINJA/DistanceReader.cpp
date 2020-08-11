@@ -59,13 +59,8 @@ void DistanceReader::read(std::string **names,
     unsigned int begin = 0, end = 0, numBegin = 0, numEnd = 0;
     int count = 0;
 
-    if (this->threads == 0) {
-        omp_set_num_threads(omp_get_max_threads());
-    } else {
-        omp_set_num_threads(this->threads);
-    }
+    // TODO: We may want to parallelize this in the future
     if (this->distCalc != nullptr) {//using distCalc on input alignment
-#pragma omp parallel for
         for (int i = 0; i < this->K; i++)
             for (int j = i + 1; j < this->K; j++) {
                 //distances[i][j-i-1] = this->distCalc->testDifferenceCluster(i,j);
@@ -119,12 +114,7 @@ void DistanceReader::readAndWrite(std::string **names,
     for (int i = 0; i < this->K; ++i)
         distances[i] = new double[this->K];
 
-    if (this->threads == 0) {
-        omp_set_num_threads(omp_get_max_threads());
-    } else {
-        omp_set_num_threads(this->threads);
-    }
-#pragma omp parallel for
+    // TODO: We may want to parallelize this in the future
     for (int i = 0; i < this->K; i++) {
         for (int j = i + 1; j < this->K; j++) {
             //distances[i][j-i-1] = this->distCalc->testDifferenceCluster(i,j);

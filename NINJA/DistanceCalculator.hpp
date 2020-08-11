@@ -9,7 +9,6 @@
 #include <emmintrin.h>        /* SSE2 */
 #include <tmmintrin.h>      /* SSE3 */
 #include <cstdint>
-#include <omp.h> /* openmp */
 
 
 class DistanceCalculator {

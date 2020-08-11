@@ -5,11 +5,9 @@
 SOURCES := $(wildcard NINJA/*.cpp)
 OBJECTS := $(SOURCES:.cpp=.o)
 
-# TODO: get newer GCC versions to work
 # The C++ compiler must support C++11
-CXX := g++-7
-# TODO: eliminate the need for openmp so we can use Apple Clang
-CXXFLAGS := -std=gnu++11 -Wall -mssse3 -fopenmp
+CXX := g++
+CXXFLAGS := -std=gnu++11 -Wall -mssse3
 
 # TODO: build to a dist directory or similar
 # TODO: use separate release and debug build directories
@@ -48,10 +46,8 @@ docs:
 
 .PHONY: setup-mac
 setup-mac:
-	brew install pipenv
-	brew install pyenv
-	brew install gcc@7
 	brew install doxygen
-	pyenv install -s 3.8.3
+	brew install pipenv
+	brew install python
 	pipenv sync --dev
 	@echo 'Use `pipenv shell` to start the virtual environment'

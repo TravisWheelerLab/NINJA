@@ -2,11 +2,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -18,11 +17,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -34,11 +32,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -50,11 +47,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -66,11 +62,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -82,11 +77,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -98,11 +92,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -114,11 +107,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -130,11 +122,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -146,11 +137,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -162,11 +152,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -178,11 +167,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -194,11 +182,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -210,11 +197,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -226,11 +212,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -242,11 +227,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -258,11 +242,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -274,11 +257,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
@@ -290,11 +272,10 @@
  {
   "directory": "/Users/george/Code/traviswheelerlab/NINJA",
   "arguments": [
-   "g++-7",
+   "g++",
    "-std=gnu++11",
    "-Wall",
    "-mssse3",
-   "-fopenmp",
    "-O3",
    "-c",
    "-o",
