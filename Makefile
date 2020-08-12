@@ -13,17 +13,28 @@ CXXFLAGS := -std=gnu++11 -Wall -mssse3
 # TODO: use separate release and debug build directories
 EXEC := NINJA/Ninja
 
-.PHONY: all
-all: CXXFLAGS += -O3
-all: $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
+.PHONY: help
+help:
+	@echo benchmark - run very simple benchmarks on generated data
+	@echo build     - create a production executable
+	@echo check     - run the test suite
+	@echo clean     - remove build and generated artifacts
+	@echo compiledb - build the compilation database for CLion
+	@echo debug     - create a debugging executable
+	@echo docs      - update the auto-generated documentation
+	@echo setup-mac - install development dependencies on a Mac
 
 .PHONY: benchmark
-benchmark: fixtures/20-4.txt fixtures/10-2.txt fixtures/5-1.txt fixtures/1-1.txt
+benchmark: build fixtures/20-4.txt fixtures/10-2.txt fixtures/5-1.txt fixtures/1-1.txt
 	time ./NINJA/Ninja --in fixtures/20-4.txt --out /dev/null
 	time ./NINJA/Ninja --in fixtures/10-2.txt --out /dev/null
 	time ./NINJA/Ninja --in fixtures/5-1.txt --out /dev/null
 	time ./NINJA/Ninja --in fixtures/1-1.txt --out /dev/null
+
+.PHONY: build
+build: CXXFLAGS += -O3
+build: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
 .PHONY: check
 check: debug
