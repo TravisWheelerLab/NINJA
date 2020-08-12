@@ -18,9 +18,15 @@ all: CXXFLAGS += -O3
 all: $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(EXEC) $(LNFLAGS)
 
+.PHONY: benchmark
+benchmark: fixtures/20-4.txt fixtures/10-2.txt fixtures/5-1.txt fixtures/1-1.txt
+	time ./NINJA/Ninja --in fixtures/20-4.txt --out /dev/null
+	time ./NINJA/Ninja --in fixtures/10-2.txt --out /dev/null
+	time ./NINJA/Ninja --in fixtures/5-1.txt --out /dev/null
+	time ./NINJA/Ninja --in fixtures/1-1.txt --out /dev/null
+
 .PHONY: check
 check: debug
-	# TODO: Run the test suite
 	# Start with a simple functional test suite
 	# that just runs a small number of sanity checks
 	./NINJA/Ninja --in fixtures/PF08271_seed.txt
@@ -29,6 +35,7 @@ check: debug
 clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(EXEC)
+	$(RM) fixtures/*-*.txt
 
 ## Build the compilation database used by CLion for code intelligence.
 .PHONY: compiledb
@@ -43,6 +50,15 @@ debug: $(OBJECTS)
 .PHONY: docs
 docs:
 	doxygen Doxyfile
+
+fixtures/20-4.txt:
+	python fixtures/generate_benchmark.py 20000 4000 > fixtures/20-4.txt
+fixtures/10-2.txt:
+	python fixtures/generate_benchmark.py 10000 2000 > fixtures/10-2.txt
+fixtures/5-1.txt:
+	python fixtures/generate_benchmark.py 5000 1000 > fixtures/5-1.txt
+fixtures/1-1.txt:
+	python fixtures/generate_benchmark.py 1000 1000 > fixtures/1-1.txt
 
 .PHONY: setup-mac
 setup-mac:
