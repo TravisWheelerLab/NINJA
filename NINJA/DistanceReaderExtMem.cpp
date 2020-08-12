@@ -12,10 +12,14 @@ DistanceReaderExtMem::DistanceReaderExtMem(DistanceCalculator *distCalc, int K) 
     this->K = K;
 }
 
-int DistanceReaderExtMem::read(std::string **names, float *R, FILE *diskD, float **memD, int memDRowsize, int rowLength,
+int DistanceReaderExtMem::read(std::string **names,
+                               float *R,
+                               FILE *diskD,
+                               float **memD,
+                               int memDRowsize,
+                               int rowLength,
                                int pageBlockSize) {
     int row = 0;
-
 
     //I want to write a hunk of the data to memD instead of disk.
     //Find a point where memD is partly full, then scale back a bit,
@@ -52,6 +56,7 @@ int DistanceReaderExtMem::read(std::string **names, float *R, FILE *diskD, float
                 fBuff[col] = d;
 
             }
+
             if (numColsToDisk > 0) {
 
                 diskPos = (long) floatSize * rowLength * row;

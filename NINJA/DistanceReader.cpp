@@ -54,8 +54,7 @@ DistanceReader::DistanceReader(DistanceCalculator *distCalc, int k, int threads)
 }
 
 void DistanceReader::read(std::string **names,
-                          int **distances) { //possibly wrong, the else part, perhaps the distance calculator class as well
-
+                          int **distances) {
     unsigned int begin = 0, end = 0, numBegin = 0, numEnd = 0;
     int count = 0;
 
