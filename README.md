@@ -8,7 +8,9 @@ Nearly Infinite Neighbor Joining Application
 
 ## About
 
-TODO: Information from Travis... history, Java version, publication(s)
+This repository is an "almost complete" reimplementation of the Java implementation at [this site](https://wheelerlab.org/software/ninja/). The software generally works, but there remain a couple of small bugs, and the project is on hold (and not under active development) while we await the time to wrap it up to completion. For now, your best bets are to either:
+* use the Java version listed in the previous sentence
+* reach out to me (Travis Wheeler) if you are interested in contributing to the code
 
 ## Development
 
@@ -26,6 +28,6 @@ the main repo.
 
 ## Authors
 
-  - Travis Wheeler <travis.wheeler@umontana.edu>
+  - Travis Wheeler <twheeler@umontana.edu>
   - Michel Wan Der Maas Soares
-  - George Lesica <george.lesica@umontana.edu>
+  - George Lesica 
