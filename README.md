@@ -28,6 +28,6 @@ the main repo.
 
 ## Authors
 
-  - Travis Wheeler <twheeler@umontana.edu>
+  - Travis Wheeler <twheeler@arizona.edu>
   - Michel Wan Der Maas Soares
   - George Lesica 
