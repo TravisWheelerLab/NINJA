@@ -5,10 +5,14 @@
 
 #include <cmath>
 #include <cfloat>
+#include <cstdint>
+#ifdef __x86_64__
 #include <xmmintrin.h>        /* SSE  */
 #include <emmintrin.h>        /* SSE2 */
 #include <tmmintrin.h>      /* SSE3 */
-#include <cstdint>
+#elif defined __ARM_NEON
+#include "sse2neon.h"
+#endif
 
 
 class DistanceCalculator {
