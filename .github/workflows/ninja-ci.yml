@@ -11,6 +11,30 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v4
     - name: make check
       run: make check
+
+  build-aarch64:
+    name: Build on Linux ARM64
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout bwa
+      uses: actions/checkout@v4
+
+    - name: Build
+      uses: uraimo/run-on-arch-action@v2
+      with:
+        arch: aarch64
+        distro: ubuntu22.04
+        githubToken: ${{ github.token }}
+        dockerRunArgs: |
+          --volume "${PWD}:/NINJA"
+        install: |
+          apt-get update -q -y
+          apt-get install -q -y make gcc g++
+        run: |
+          cd /NINJA
+          make check
+    
