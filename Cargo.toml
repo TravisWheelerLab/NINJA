@@ -1,0 +1,37 @@
+[package]
+name = "ninja-rs"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+license = "MIT"
+description = "NINJA: nearly infinite neighbor joining. Large-scale neighbor-joining phylogeny inference."
+repository = "https://github.com/TravisWheelerLab/ninja"
+readme = "README.md"
+keywords = ["phylogenetics", "neighbor-joining", "bioinformatics", "tree"]
+categories = ["science", "command-line-utilities"]
+default-run = "ninja"
+
+[lib]
+name = "ninja"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ninja"
+path = "src/bin/ninja.rs"
+
+[dependencies]
+clap = { version = "4", features = ["derive", "wrap_help"] }
+rayon = "1"
+tempfile = "3"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 4
+debug = 1
+
+[profile.bench]
+inherits = "release"
