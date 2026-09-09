@@ -1,15 +1,18 @@
 [package]
-name = "ninja-rs"
+name = "ninja-phylo"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.85"
 license = "BSD-3-Clause"
-description = "NINJA: nearly infinite neighbor joining. Large-scale neighbor-joining phylogeny inference."
+description = "NINJA: large-scale neighbor-joining phylogeny inference (installs the `ninja` binary)"
 repository = "https://github.com/TravisWheelerLab/ninja"
 readme = "README.md"
 keywords = ["phylogenetics", "neighbor-joining", "bioinformatics", "tree"]
 categories = ["science", "command-line-utilities"]
 default-run = "ninja"
+# Keep the published package small: tests need the fixtures and reference
+# outputs, which live in the repository.
+exclude = ["/tests", "/scripts", "/.github", "/rustfmt.toml", "/TODO.md"]
 
 [lib]
 name = "ninja"

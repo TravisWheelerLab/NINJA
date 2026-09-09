@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 (unreleased)
+## 0.1.0 (2026-09-09)
 
 First Rust release, ported from NINJA 1.2.2 (Java) with the C++ port as a
 second reference.

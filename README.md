@@ -16,12 +16,12 @@ improvements to sequence distance computation.
 
 ## Install
 
-With a Rust toolchain (1.85 or later):
+From crates.io, with a Rust toolchain (1.85 or later):
 
-    cargo install --path .
+    cargo install ninja-phylo
 
-or build in place with `cargo build --release`; the binary is
-`target/release/ninja`.
+which installs a binary named `ninja`. Or build from a checkout with
+`cargo build --release`; the binary is `target/release/ninja`.
 
 ## Use
 
