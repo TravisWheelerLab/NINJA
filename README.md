@@ -16,7 +16,7 @@ improvements to sequence distance computation.
 
 ## Install
 
-With a Rust toolchain (1.75 or later):
+With a Rust toolchain (1.85 or later):
 
     cargo install --path .
 

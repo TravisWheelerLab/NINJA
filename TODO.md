@@ -11,6 +11,9 @@ Planned work, roughly in order.
   mind.
 - Make `--collapse_identical` the default once the feature set is
   complete (it is off so that output matches the Java tool exactly).
-- Verify the declared minimum Rust version (1.75) with that toolchain in CI.
+- The minimum Rust version (1.85) is set by clap 4.6; CI builds with it.
+- Performance pass once CI is green and outputs match the Java tool: profile
+  the search (the sequential part), the rebuild that pushes every pair onto
+  the heaps, and the cache behaviour of the triangular matrix updates.
 - Reduce in-memory engine memory: heap entries for every pair are created
   at each rebuild (34 GB for 50,000 taxa).

@@ -1,8 +1,9 @@
 # Differences from the Java and C implementations
 
-This port was written from the Java source of NINJA 1.2.2, with the C++
-port (github.com/TravisWheelerLab/NINJA) used as a second reference. The
-search algorithm, its constants, the fixed-point and single-precision
+This port was written from the Java source of NINJA 1.2.2. The earlier
+C++ port (github.com/TravisWheelerLab/ninja-old) was a pilot and is not
+maintained; its `cluster` branch supplied the features in the last section.
+The search algorithm, its constants, the fixed-point and single-precision
 arithmetic, and the tie behaviour of the heaps are reproduced so that
 outputs match the Java tool. What follows is everything that is knowingly
 different.
@@ -66,43 +67,3 @@ sequences. All three are here, with these differences:
   default.
 * The branch's `--print-times` flag and `-v` for version are not carried
   over; `--verbose` reports timings.
-
-## Bugs in the C++ port that are not reproduced
-
-That repository's README says it has a couple of small bugs. These are the
-ones found by reading the C++ against the Java source.
-
-* Row sums were 32-bit integers (64-bit in Java). At the fixed-point scale
-  used, a few hundred taxa overflow them, fewer when sequences are divergent.
-* Without `--alph_type`, every input was treated as DNA: the alphabet
-  detection loop could never run because the default had already been
-  set to DNA.
-* The non-SIMD protein distance remapped residues in place and then indexed
-  the BLOSUM table with the remapped bytes, producing zero and negative
-  distances. The SIMD protein path returned the negated distance.
-* The Kimura correction on the non-SIMD DNA path used a square root where a
-  logarithm belongs.
-* In the external-memory heap: the scratch file was read while closed in
-  one merge routine; a `qsort` call had its element count and element size
-  swapped, and its comparator sorted in the wrong direction; row-sum extremes
-  used for clustering were stored in integers, collapsing every cluster
-  boundary to zero when sums were below one.
-* In the external-memory builder: distances paged from disk for the second
-  joined node were read into one buffer and consumed from another, never
-  written; candidates spilled to disk were converted to integers by value
-  rather than by bit pattern; the spill file was opened with an invalid mode
-  in a directory that was never created; a variable-length array of up to
-  `2n` floats was placed on the stack.
-* Heaps used `std::push_heap`/`pop_heap`, whose handling of equal keys
-  differs from the original heap, so trees can differ from Java's when `Q`
-  values tie.
-
-## What the C++ port contributed
-
-Its SSE kernels for DNA and protein distances motivated packing sequences
-once and computing each pair from machine words. The DNA kernel here is a
-different formulation of the same idea (two-bit codes chosen so that XOR
-separates transitions from transversions, then population counts) that
-needs no intrinsics and vectorises on any target. The clustered-alphabet
-protein kernel of the C++ port approximated BLOSUM62 over residue classes
-and was not equivalent to the Java distance; it was not carried over.
