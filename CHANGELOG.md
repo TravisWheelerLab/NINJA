@@ -11,5 +11,9 @@ second reference.
   Kimura two-parameter, scoredist, or no correction; distance computation
   is parallel.
 * Phylip distance matrices as input or output.
+* From the C++ `cluster` branch: single-linkage clustering
+  (`--out_type c`, `--cluster_cutoff`), Mothur's onegap distance
+  (`--corr_type m`), and `--collapse_identical`, which is planned to
+  become the default.
 * Library API alongside the `ninja` binary.
 * Integration tests against stored Java outputs; see `docs/testing.md`.

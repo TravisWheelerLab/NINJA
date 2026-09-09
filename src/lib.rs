@@ -49,6 +49,7 @@
 #![allow(clippy::needless_range_loop)]
 
 pub mod alphabet;
+pub mod cluster;
 pub mod distance;
 pub mod error;
 pub mod heap;

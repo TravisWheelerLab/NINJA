@@ -230,3 +230,119 @@ fn threads_flag_gives_same_result() {
     let b = ninja_stdout(&["-q", "-T", "8", "--in", p]);
     assert_same_newick(&a, &b);
 }
+
+// ---- features from the C++ `cluster` branch ----
+
+#[test]
+fn onegap_distances_match_cpp_branch() {
+    // dna_700 was checked the same way; its 4 MB matrix is not kept.
+    let path = fixture("dna_200.fa");
+    let got = ninja_stdout(&["-q", "--out_type", "d", "--corr_type", "m", "--in", path.to_str().unwrap()]);
+    let want = read(&reference("dna_200.onegap.cpp.phylip"));
+    assert_phylip_close(&got, &want, 0.0);
+}
+
+#[test]
+fn onegap_accepts_protein() {
+    let path = fixture("protein_120.fa");
+    let out = ninja_stdout(&["-q", "--out_type", "d", "--corr_type", "m", "--in", path.to_str().unwrap()]);
+    let (_, rows) = parse_phylip(&out);
+    assert!(rows.iter().flatten().all(|&v| (0.0..=1.0).contains(&v)));
+}
+
+fn read_clusters(text: &str) -> Vec<std::collections::BTreeSet<String>> {
+    let mut by_id: std::collections::BTreeMap<u32, std::collections::BTreeSet<String>> = Default::default();
+    for line in text.lines().filter(|l| !l.is_empty()) {
+        let (id, name) = line.split_once('\t').expect("id<TAB>name");
+        by_id.entry(id.parse().unwrap()).or_default().insert(name.to_string());
+    }
+    by_id.into_values().collect()
+}
+
+/// The C++ branch's merge loop skips some updates and over-splits, so its
+/// clusters must each lie inside one of ours; at the lowest cutoff, where
+/// the skipped updates do not matter on these data, the partitions agree.
+#[test]
+fn clusters_refine_cpp_branch_tables() {
+    for f in ["dna_200", "dna_700"] {
+        let path = fixture(&format!("{}.fa", f));
+        for cutoff in ["0.03", "0.1", "0.3"] {
+            let got = read_clusters(&ninja_stdout(&[
+                "-q",
+                "--out_type",
+                "c",
+                "--cluster_cutoff",
+                cutoff,
+                "--in",
+                path.to_str().unwrap(),
+            ]));
+            let want = read_clusters(&read(&reference(&format!("{}.clusters_{}.cpp.tsv", f, cutoff))));
+            let total: usize = got.iter().map(|c| c.len()).sum();
+            assert_eq!(total, want.iter().map(|c| c.len()).sum::<usize>());
+            for c in &want {
+                assert!(got.iter().any(|g| c.is_subset(g)), "{} {}: C++ cluster {:?} split", f, cutoff, c);
+            }
+            assert!(got.len() <= want.len());
+            if cutoff == "0.03" {
+                assert_eq!(got, want, "{} at cutoff {}", f, cutoff);
+            }
+        }
+    }
+}
+
+#[test]
+fn clusters_from_phylip_input_and_numbering() {
+    let dir = tempfile::tempdir().unwrap();
+    let phylip = dir.path().join("d.phylip");
+    let path = fixture("dna_200.fa");
+    ninja_stdout(&["-q", "--out_type", "d", "--in", path.to_str().unwrap(), "-o", phylip.to_str().unwrap()]);
+    let a =
+        ninja_stdout(&["-q", "--out_type", "c", "--cluster_cutoff", "0.1", "--in", path.to_str().unwrap()]);
+    let b = ninja_stdout(&[
+        "-q",
+        "--out_type",
+        "c",
+        "--cluster_cutoff",
+        "0.1",
+        "--in_type",
+        "d",
+        "--in",
+        phylip.to_str().unwrap(),
+    ]);
+    assert_eq!(a, b);
+    // Ids start at 0, appear in order of first member, and every input
+    // sequence appears exactly once.
+    let mut seen_ids = Vec::new();
+    for line in a.lines() {
+        let id: u32 = line.split('\t').next().unwrap().parse().unwrap();
+        if seen_ids.last() != Some(&id) {
+            seen_ids.push(id);
+        }
+    }
+    assert_eq!(seen_ids, (0..seen_ids.len() as u32).collect::<Vec<_>>());
+    assert_eq!(a.lines().count(), 200);
+}
+
+/// With duplicates collapsed, the tree must agree with the uncollapsed one
+/// on every branch of non-zero length; only the arrangement of the
+/// zero-length branches among identical sequences may differ. Branch
+/// lengths shift slightly, because the NJ length formula depends on the
+/// taxon count and row sums, which the duplicates change.
+#[test]
+fn collapse_identical_preserves_tree() {
+    let path = fixture("dna_200_dups.fa");
+    let p = path.to_str().unwrap();
+    for method in ["inmem", "extmem"] {
+        let plain = ninja_stdout(&["-q", "-m", method, "--in", p]);
+        let collapsed = ninja_stdout(&["-q", "-m", method, "--collapse_identical", "--in", p]);
+        assert_ne!(plain, collapsed);
+        assert_trees_close(&plain, &collapsed, 1e-9, 5e-3);
+        let t = parse_newick(&collapsed);
+        assert_eq!(t.leaves.len(), 207);
+        assert!(collapsed.contains("seq133_dup1:0.00000"));
+    }
+    // Without duplicates the flag changes nothing.
+    let path = fixture("dna_200.fa");
+    let p = path.to_str().unwrap();
+    assert_eq!(ninja_stdout(&["-q", "--in", p]), ninja_stdout(&["-q", "--collapse_identical", "--in", p]));
+}

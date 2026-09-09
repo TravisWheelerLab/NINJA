@@ -125,4 +125,36 @@ BLOSUM45-derived dissimilarity, then the scoredist-like correction
 `-1.3 ln(1 - d)` for `d < 0.91` and the cap of 3 otherwise. Sites where
 either residue is not one of the twenty standard amino acids are skipped.
 
+The onegap distance (`--corr_type m`), from the C++ `cluster` branch and
+Mothur, is `(mismatches + gap openings) / (compared columns + gap
+openings)`. Columns where both sequences are gapped are dropped first; in
+what remains, each maximal run of columns gapped in only one of the two
+sequences is one opening. The run count is computed on one-bit validity
+masks: a carry-propagating addition copies the state of the column before
+each both-gapped run across it, after which openings are the rising edges
+of the "only A gapped" and "only B gapped" masks (`distance::gaps`).
+
 Distance computation is row-parallel across all cores.
+
+## Clustering (`cluster`)
+
+`--out_type c` groups sequences by single linkage at a cutoff: merge the
+two closest clusters, with the distance between clusters being the
+smallest distance between their members, until the closest pair is farther
+apart than the cutoff. That partition is the set of connected components of
+the graph whose edges are pairs at distance at most the cutoff, so it is
+computed with a union-find over pairs as their distances are produced, a
+chunk of rows at a time in parallel, and no matrix is kept.
+
+## Identical sequences (`--collapse_identical`)
+
+Sequences with identical residues are grouped before any distance is
+computed. Neighbor joining runs on one representative per group; in the
+finished tree each group replaces its representative's leaf with a chain
+`(first, (second, (third, ...)))` of zero-length branches, the chain as a
+whole carrying the representative's branch length. Without the flag,
+identical sequences are joined by the ordinary search through zero
+distances, which gives the same splits with the zero-length branches
+arranged by tie order. Branch lengths differ slightly between the two,
+since the NJ length formula depends on the number of taxa and on row sums,
+and the collapsed run is the NJ tree of the unique sequences.

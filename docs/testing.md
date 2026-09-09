@@ -30,6 +30,7 @@ in `tests/reference`:
 | `protein_120.fa` | 120 simulated protein sequences, 300 columns | protein path |
 | `dna_200.fa` | 200 simulated DNA sequences, 600 columns | DNA path |
 | `dna_700.fa` | 700 simulated DNA sequences, 200 columns | large enough to page the external-memory matrix to disk |
+| `dna_200_dups.fa` | `dna_200.fa` plus seven exact copies of four of its sequences | identical-sequence collapse |
 
 For each fixture the tests require the tree from the in-memory engine, the
 tree from the external-memory engine, and the written distance matrix to be
@@ -46,6 +47,12 @@ change a tree without making it wrong. The helper `assert_trees_close` in
 `tests/common/mod.rs` compares trees by their splits with a tolerance on
 branch length for that situation, and is what the engine-versus-engine test
 uses.
+
+Files named `*.cpp.*` in `tests/reference` come from the C++ `cluster`
+branch (built from `origin/cluster` of the C++ repository): onegap
+distance matrices, which must match exactly, and cluster tables, whose
+clusters must each be contained in one of ours (see
+`docs/reference-differences.md` for why they are not identical).
 
 The Java outputs were produced with `scripts/make_reference.sh`, which needs
 `Ninja.jar` from <https://wheelerlab.org/software/ninja/>. The 6,000-taxon

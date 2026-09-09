@@ -42,6 +42,31 @@ different.
   `--variable_rebuild_steps`, `--dist_in_mem` and `--disk_pages` are not
   exposed. The library's `NjParams` covers the rebuild schedule.
 
+## The C++ `cluster` branch
+
+The branch adds single-linkage clustering (`--out_type c`), the onegap
+distance (`--corr_type m`), and an unfinished collapse of identical
+sequences. All three are here, with these differences:
+
+* **Clustering is computed as connected components** rather than by
+  repeated merging on a full matrix. The result is the same partition that
+  correct single linkage gives. The branch's merge loop, when it folds
+  cluster `c2` into `c1`, does not update rows strictly between `c1` and
+  `c2`, so it loses some distances and over-splits: on the 200-sequence DNA
+  fixture at cutoff 0.1 it reports 95 clusters where single linkage gives
+  87. Each of its clusters lies within one of ours on every fixture and
+  cutoff tested, and the tests check that.
+  Within a cluster, members are listed in input order (the branch listed
+  them in merge order).
+* **Onegap works for both alphabets.** On the branch it was wired into the
+  SSE DNA kernel only: protein input silently got the scoredist distance,
+  and DNA with `--NOSSE` silently got zero for every pair.
+* **Collapsing identical sequences** was dead code on the branch (tree
+  output was disabled there). Here it is `--collapse_identical`, off by
+  default.
+* The branch's `--print-times` flag and `-v` for version are not carried
+  over; `--verbose` reports timings.
+
 ## Bugs in the C++ port that are not reproduced
 
 That repository's README says it has a couple of small bugs. These are the

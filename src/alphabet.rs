@@ -70,6 +70,13 @@ pub enum Correction {
     /// FastTree's scoredist-like correction for proteins:
     /// `d = -1.3 ln(1 - s)` for `s < 0.91`, else the cap of 3.
     ScoreDist,
+    /// Mothur's "onegap" distance, for either alphabet:
+    /// `d = (mismatches + gap_openings) / (compared_sites + gap_openings)`.
+    /// A maximal run of columns where exactly one sequence has a gap (or a
+    /// residue outside the core alphabet) counts as one opening; columns
+    /// where both are gapped are skipped and do not break a run. Terminal
+    /// gaps count. No further correction is applied.
+    OneGap,
 }
 
 impl Correction {
@@ -86,7 +93,7 @@ impl Correction {
     pub fn applies_to(self, alphabet: Alphabet) -> bool {
         matches!(
             (self, alphabet),
-            (Correction::None, _)
+            (Correction::None | Correction::OneGap, _)
                 | (Correction::JukesCantor | Correction::Kimura2, Alphabet::Dna)
                 | (Correction::ScoreDist, Alphabet::Amino)
         )
@@ -110,7 +117,8 @@ impl FromStr for Correction {
             "j" | "jc" | "jukes-cantor" => Ok(Correction::JukesCantor),
             "k" | "k2p" | "kimura" => Ok(Correction::Kimura2),
             "s" | "scoredist" => Ok(Correction::ScoreDist),
-            _ => Err(format!("unknown correction '{}' (expected 'n', 'j', 'k', or 's')", s)),
+            "m" | "onegap" => Ok(Correction::OneGap),
+            _ => Err(format!("unknown correction '{}' (expected 'n', 'j', 'k', 's', or 'm')", s)),
         }
     }
 }
@@ -122,6 +130,7 @@ impl fmt::Display for Correction {
             Correction::JukesCantor => "jukes-cantor",
             Correction::Kimura2 => "kimura2",
             Correction::ScoreDist => "scoredist",
+            Correction::OneGap => "onegap",
         })
     }
 }

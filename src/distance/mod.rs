@@ -20,6 +20,7 @@
 
 mod bl45;
 mod dna;
+pub mod gaps;
 mod matrix;
 mod protein;
 
@@ -93,14 +94,24 @@ impl DistanceCalculator {
     /// formula is undefined (saturated divergence).
     #[inline]
     pub fn calc(&self, a: usize, b: usize) -> f64 {
-        match &self.packed {
-            Packed::Dna(p) => {
+        let maxscore = self.correction.max_distance();
+        match (&self.packed, self.correction) {
+            (Packed::Dna(p), Correction::OneGap) => {
                 let (transitions, transversions, sites) = p.count(a, b);
-                dna::correct(transitions, transversions, sites, self.correction) as f64
+                let openings = p.openings(a, b);
+                gaps::onegap_distance(transitions + transversions, sites, openings, maxscore) as f64
             }
-            Packed::Amino(p) => {
+            (Packed::Amino(p), Correction::OneGap) => {
+                let (mismatches, sites, openings) = p.count_onegap(a, b);
+                gaps::onegap_distance(mismatches, sites, openings, maxscore) as f64
+            }
+            (Packed::Dna(p), corr) => {
+                let (transitions, transversions, sites) = p.count(a, b);
+                dna::correct(transitions, transversions, sites, corr) as f64
+            }
+            (Packed::Amino(p), corr) => {
                 let (sum, sites) = p.score(a, b);
-                protein::correct(sum, sites, self.correction) as f64
+                protein::correct(sum, sites, corr) as f64
             }
         }
     }

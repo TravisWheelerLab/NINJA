@@ -1,6 +1,7 @@
 //! Byte-indexed protein sequences and the scoredist correction.
 
 use super::bl45::BL45;
+use super::gaps::{self, RunState};
 use crate::alphabet::{Alphabet, Correction};
 
 /// Index used for gaps and non-standard residues.
@@ -14,6 +15,9 @@ pub struct PackedProtein {
     idx: Vec<u8>,
     /// 21x21 table, row-major; row and column 20 are zero.
     table: Vec<f32>,
+    /// One bit per site, set for standard residues.
+    words1: usize,
+    valid1: Vec<u64>,
 }
 
 impl PackedProtein {
@@ -21,9 +25,17 @@ impl PackedProtein {
     pub fn new(seqs: &[Vec<u8>]) -> Self {
         let width = seqs.first().map_or(0, |s| s.len());
         let lookup = Alphabet::Amino.index_table();
+        let words1 = width.div_ceil(64).max(1);
         let mut idx = Vec::with_capacity(seqs.len() * width);
-        for s in seqs {
-            idx.extend(s.iter().map(|&c| lookup[c as usize].unwrap_or(OTHER)));
+        let mut valid1 = vec![0u64; seqs.len() * words1];
+        for (i, s) in seqs.iter().enumerate() {
+            for (pos, &c) in s.iter().enumerate() {
+                let code = lookup[c as usize].unwrap_or(OTHER);
+                idx.push(code);
+                if code != OTHER {
+                    valid1[i * words1 + pos / 64] |= 1u64 << (pos % 64);
+                }
+            }
         }
         let mut table = vec![0f32; 21 * 21];
         for a in 0..20 {
@@ -31,7 +43,33 @@ impl PackedProtein {
                 table[a * 21 + b] = BL45[a][b];
             }
         }
-        PackedProtein { width, idx, table }
+        PackedProtein { width, idx, table, words1, valid1 }
+    }
+
+    /// `(mismatches, comparable sites, gap openings)` for the onegap
+    /// distance.
+    #[inline]
+    pub fn count_onegap(&self, a: usize, b: usize) -> (u32, u32, u32) {
+        let w = self.width;
+        let sa = &self.idx[a * w..(a + 1) * w];
+        let sb = &self.idx[b * w..(b + 1) * w];
+        let mut mismatches = 0u32;
+        let mut sites = 0u32;
+        for (&x, &y) in sa.iter().zip(sb) {
+            let both = (x != OTHER) & (y != OTHER);
+            sites += both as u32;
+            mismatches += (both & (x != y)) as u32;
+        }
+        let w1 = self.words1;
+        let va = &self.valid1[a * w1..(a + 1) * w1];
+        let vb = &self.valid1[b * w1..(b + 1) * w1];
+        let mut state = RunState::default();
+        let mut openings = 0;
+        for k in 0..w1 {
+            let real = gaps::real_mask(k, self.width);
+            openings += gaps::openings_word(va[k], vb[k], !va[k] & !vb[k] & real, &mut state);
+        }
+        (mismatches, sites, openings)
     }
 
     /// `(summed dissimilarity, comparable sites)` for a pair.

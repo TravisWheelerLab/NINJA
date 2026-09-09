@@ -157,6 +157,35 @@ pub fn parse_fasta(bytes: &[u8], alphabet: Option<Alphabet>) -> Result<Alignment
     Ok(Alignment { names, seqs, alphabet })
 }
 
+impl Alignment {
+    /// Group sequences with identical residues (after all-gap columns were
+    /// removed), each group in input order and listed by its first member.
+    pub fn duplicate_groups(&self) -> Vec<Vec<usize>> {
+        use std::collections::HashMap;
+        let mut first: HashMap<&[u8], usize> = HashMap::new();
+        let mut groups: Vec<Vec<usize>> = Vec::new();
+        for (i, s) in self.seqs.iter().enumerate() {
+            match first.get(s.as_slice()) {
+                Some(&g) => groups[g].push(i),
+                None => {
+                    first.insert(s.as_slice(), groups.len());
+                    groups.push(vec![i]);
+                }
+            }
+        }
+        groups
+    }
+
+    /// The alignment restricted to the first member of each group.
+    pub fn representatives(&self, groups: &[Vec<usize>]) -> Alignment {
+        Alignment {
+            names: groups.iter().map(|g| self.names[g[0]].clone()).collect(),
+            seqs: groups.iter().map(|g| self.seqs[g[0]].clone()).collect(),
+            alphabet: self.alphabet,
+        }
+    }
+}
+
 /// DNA when every non-gap residue is in `ACGTU`, otherwise protein.
 pub fn detect_alphabet(seqs: &[Vec<u8>]) -> Alphabet {
     let dna = seqs.iter().all(|s| s.iter().all(|&c| matches!(c, b'-' | b'A' | b'C' | b'G' | b'T' | b'U')));
@@ -195,5 +224,13 @@ mod tests {
     fn rejects_empty() {
         assert!(parse_fasta(b"", None).is_err());
         assert!(parse_fasta(b"ACGT\n", None).is_err());
+    }
+
+    #[test]
+    fn duplicate_groups() {
+        let a = parse_fasta(b">a\nACGT\n>b\nACGA\n>c\nACGT\n>d\nACGT\n", None).unwrap();
+        assert_eq!(a.duplicate_groups(), vec![vec![0, 2, 3], vec![1]]);
+        let r = a.representatives(&a.duplicate_groups());
+        assert_eq!(r.names, vec!["a", "b"]);
     }
 }

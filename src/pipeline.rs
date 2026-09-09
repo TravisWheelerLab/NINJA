@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use std::time::Instant;
 
 use crate::alphabet::{Alphabet, Correction};
+use crate::cluster;
 use crate::distance::{DistanceCalculator, DistanceMatrix};
 use crate::error::{Error, Result};
 use crate::io::{fasta, phylip};
@@ -30,6 +31,8 @@ pub enum OutputKind {
     Tree,
     /// A Phylip distance matrix (alignment input only).
     Distances,
+    /// A single-linkage clustering table (`cluster_id<TAB>name`).
+    Clusters,
 }
 
 /// Everything needed for one run. Mirrors the command-line flags.
@@ -56,6 +59,12 @@ pub struct Options {
     /// Memory budget in bytes, used to choose an engine under
     /// [`Method::Default`] and to size external-memory buffers.
     pub memory_bytes: u64,
+    /// Largest distance joining two sequences into one cluster, for
+    /// [`OutputKind::Clusters`].
+    pub cluster_cutoff: f32,
+    /// Build the tree over one representative of each set of identical
+    /// sequences, then re-attach the others as zero-length chains.
+    pub collapse_identical: bool,
 }
 
 impl Default for Options {
@@ -71,6 +80,8 @@ impl Default for Options {
             threads: 0,
             tmp_dir: None,
             memory_bytes: 2 << 30,
+            cluster_cutoff: 0.03,
+            collapse_identical: false,
         }
     }
 }
@@ -86,6 +97,8 @@ pub struct RunOutput {
     pub stats: Option<NjStats>,
     /// Engine actually used, when a tree was built.
     pub method_used: Option<Method>,
+    /// Number of clusters, when clustering was requested.
+    pub clusters: Option<usize>,
 }
 
 /// Run the full pipeline, writing the tree or distance matrix to `out`.
@@ -114,6 +127,27 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
                     aln.alphabet
                 );
             }
+            // Tree building may run on one representative per identical group.
+            let (aln, groups, all_names) = if opts.collapse_identical && opts.output_kind == OutputKind::Tree
+            {
+                let groups = aln.duplicate_groups();
+                if groups.len() < aln.len() {
+                    if verbose >= 1 {
+                        eprintln!(
+                            "Collapsed {} identical sequences into {} representatives",
+                            aln.len(),
+                            groups.len()
+                        );
+                    }
+                    let reps = aln.representatives(&groups);
+                    let all_names = aln.names;
+                    (reps, Some(groups), Some(all_names))
+                } else {
+                    (aln, None, None)
+                }
+            } else {
+                (aln, None, None)
+            };
             let calc = DistanceCalculator::new(&aln, opts.correction)?;
             let k = aln.len();
 
@@ -123,7 +157,11 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
                 if verbose >= 1 {
                     eprintln!("Distances written ({:.1?})", t0.elapsed());
                 }
-                return Ok(RunOutput { taxa: k, tree: None, stats: None, method_used: None });
+                return Ok(RunOutput { taxa: k, tree: None, stats: None, method_used: None, clusters: None });
+            }
+            if opts.output_kind == OutputKind::Clusters {
+                let clusters = cluster::single_linkage(k, opts.cluster_cutoff, |i, j| calc.calc(i, j));
+                return write_clusters(opts, out, &aln.names, clusters, t0);
             }
 
             let method = choose_method(opts, k);
@@ -137,7 +175,9 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
                     let names = aln.names;
                     drop(aln.seqs);
                     drop(calc);
-                    build_extmem(opts, out, &names, m, k, t0, &tmp)
+                    let mut r = build_extmem(opts, &names, m, k, t0, &tmp)?;
+                    finish_tree(opts, out, &mut r, groups.as_deref(), all_names.as_deref(), t0)?;
+                    Ok(r)
                 }
                 _ => {
                     let d = DistanceMatrix::from_calculator(&calc);
@@ -147,7 +187,9 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
                     let names = aln.names;
                     drop(aln.seqs);
                     drop(calc);
-                    build_inmem(opts, out, &names, d, k, t0)
+                    let mut r = build_inmem(opts, &names, d, k, t0)?;
+                    finish_tree(opts, out, &mut r, groups.as_deref(), all_names.as_deref(), t0)?;
+                    Ok(r)
                 }
             }
         }
@@ -161,16 +203,26 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
             if verbose >= 1 {
                 eprintln!("Distance file read: {} taxa", k);
             }
+            if opts.output_kind == OutputKind::Clusters {
+                let clusters = cluster::single_linkage(k, opts.cluster_cutoff, |i, j| {
+                    p.get(i, j) as f64 / phylip::SCALE as f64
+                });
+                return write_clusters(opts, out, &p.names, clusters, t0);
+            }
             let method = choose_method(opts, k);
             match method {
                 Method::ExtMem => {
                     let tmp = scratch_dir(opts)?;
                     let m = DiskMatrix::from_phylip(&p, opts.memory_bytes, tmp.path())?;
-                    build_extmem(opts, out, &p.names, m, k, t0, &tmp)
+                    let mut r = build_extmem(opts, &p.names, m, k, t0, &tmp)?;
+                    finish_tree(opts, out, &mut r, None, None, t0)?;
+                    Ok(r)
                 }
                 _ => {
                     let d = DistanceMatrix::from_phylip(&p);
-                    build_inmem(opts, out, &p.names, d, k, t0)
+                    let mut r = build_inmem(opts, &p.names, d, k, t0)?;
+                    finish_tree(opts, out, &mut r, None, None, t0)?;
+                    Ok(r)
                 }
             }
         }
@@ -179,7 +231,6 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
 
 fn build_inmem(
     opts: &Options,
-    out: &mut dyn Write,
     names: &[String],
     d: DistanceMatrix,
     k: usize,
@@ -190,17 +241,43 @@ fn build_inmem(
         eprintln!("Building tree (in-memory engine)");
     }
     let (tree, stats) = nj::inmem::build(names, d, &opts.nj)?;
-    tree.write_newick(out)?;
-    out.flush()?;
     if verbose >= 1 {
+        eprintln!("Tree built ({:.1?})", t0.elapsed());
+    }
+    Ok(RunOutput {
+        taxa: k,
+        tree: Some(tree),
+        stats: Some(stats),
+        method_used: Some(Method::InMem),
+        clusters: None,
+    })
+}
+
+/// Expand collapsed duplicates if any, write the tree, and record the
+/// final taxon count.
+fn finish_tree(
+    opts: &Options,
+    out: &mut dyn Write,
+    r: &mut RunOutput,
+    groups: Option<&[Vec<usize>]>,
+    all_names: Option<&[String]>,
+    t0: Instant,
+) -> Result<()> {
+    if let (Some(groups), Some(all_names)) = (groups, all_names) {
+        let expanded = r.tree.as_ref().unwrap().expand_duplicates(groups, all_names);
+        r.tree = Some(expanded);
+        r.taxa = all_names.len();
+    }
+    r.tree.as_ref().unwrap().write_newick(out)?;
+    out.flush()?;
+    if opts.nj.verbose >= 1 {
         eprintln!("Tree written ({:.1?})", t0.elapsed());
     }
-    Ok(RunOutput { taxa: k, tree: Some(tree), stats: Some(stats), method_used: Some(Method::InMem) })
+    Ok(())
 }
 
 fn build_extmem(
     opts: &Options,
-    out: &mut dyn Write,
     names: &[String],
     m: DiskMatrix,
     k: usize,
@@ -216,12 +293,44 @@ fn build_extmem(
         );
     }
     let (tree, stats) = nj::extmem::build(names, m, &opts.nj, tmp.path(), opts.memory_bytes)?;
-    tree.write_newick(out)?;
-    out.flush()?;
     if verbose >= 1 {
-        eprintln!("Tree written ({:.1?})", t0.elapsed());
+        eprintln!("Tree built ({:.1?})", t0.elapsed());
     }
-    Ok(RunOutput { taxa: k, tree: Some(tree), stats: Some(stats), method_used: Some(Method::ExtMem) })
+    Ok(RunOutput {
+        taxa: k,
+        tree: Some(tree),
+        stats: Some(stats),
+        method_used: Some(Method::ExtMem),
+        clusters: None,
+    })
+}
+
+fn write_clusters(
+    opts: &Options,
+    out: &mut dyn Write,
+    names: &[String],
+    clusters: cluster::Clusters,
+    t0: Instant,
+) -> Result<RunOutput> {
+    let mut w = std::io::BufWriter::new(out);
+    cluster::write_table(&mut w, &clusters, names)?;
+    w.flush()?;
+    if opts.nj.verbose >= 1 {
+        eprintln!(
+            "{} sequences in {} clusters at cutoff {} ({:.1?})",
+            names.len(),
+            clusters.len(),
+            opts.cluster_cutoff,
+            t0.elapsed()
+        );
+    }
+    Ok(RunOutput {
+        taxa: names.len(),
+        tree: None,
+        stats: None,
+        method_used: None,
+        clusters: Some(clusters.len()),
+    })
 }
 
 /// A private scratch directory, removed when dropped.

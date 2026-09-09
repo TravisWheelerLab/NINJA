@@ -38,10 +38,30 @@ Write a distance matrix instead, or start from one:
     ninja --out_type d alignment.fa > distances.phylip
     ninja --in_type d distances.phylip > tree.nwk
 
+Cluster sequences instead of building a tree (single linkage: two
+sequences share a cluster when a chain of pairs within the cutoff connects
+them):
+
+    ninja --out_type c --cluster_cutoff 0.03 alignment.fa > clusters.tsv
+
+The output has one `cluster_id<TAB>name` line per sequence, clusters
+numbered from 0 in order of their first member. Clustering runs in
+parallel and stores no matrix, so its memory use is linear in the number
+of sequences.
+
 `ninja` detects the alphabet (DNA when every residue is `A C G T U`) and
 uses the Kimura two-parameter correction for DNA and FastTree's
 scoredist-like correction for protein. `--alph_type` and `--corr_type`
-override these; `ninja --help` lists every option.
+override these. `--corr_type m` selects Mothur's "onegap" distance,
+`(mismatches + gap openings) / (compared columns + gap openings)`, for
+either alphabet; a run of columns gapped in only one sequence counts as one
+opening, terminal gaps included. `ninja --help` lists every option.
+
+`--collapse_identical` builds the tree over one representative of each set
+of identical sequences and attaches the rest as zero-length branches. It
+saves work when an alignment has many duplicates. It is off for now so
+that output matches the Java tool exactly, and is planned to become the
+default.
 
 ### Engines and memory
 

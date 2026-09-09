@@ -1,5 +1,6 @@
 //! Two-bit packed DNA and the DNA corrections.
 
+use super::gaps::{self, RunState};
 use crate::alphabet::Correction;
 
 const SITES_PER_WORD: usize = 32;
@@ -10,10 +11,15 @@ const LOW_BITS: u64 = 0x5555_5555_5555_5555;
 #[derive(Debug, Clone)]
 pub struct PackedDna {
     words: usize,
+    len: usize,
     /// `seq[i * words ..][..words]`: site codes.
     seq: Vec<u64>,
     /// `valid[i * words ..][..words]`: `01` at each site that is A/C/G/T.
     valid: Vec<u64>,
+    /// One bit per site (64 per word), set where the site is A/C/G/T; used
+    /// for gap-run counting.
+    words1: usize,
+    valid1: Vec<u64>,
 }
 
 impl PackedDna {
@@ -22,11 +28,14 @@ impl PackedDna {
         let n = seqs.len();
         let width = seqs.first().map_or(0, |s| s.len());
         let words = width.div_ceil(SITES_PER_WORD).max(1);
+        let words1 = width.div_ceil(64).max(1);
         let mut seq = vec![0u64; n * words];
         let mut valid = vec![0u64; n * words];
+        let mut valid1 = vec![0u64; n * words1];
         for (i, s) in seqs.iter().enumerate() {
             let sw = &mut seq[i * words..(i + 1) * words];
             let vw = &mut valid[i * words..(i + 1) * words];
+            let v1 = &mut valid1[i * words1..(i + 1) * words1];
             for (pos, &c) in s.iter().enumerate() {
                 // A=00 G=01 C=10 T=11: transitions differ only in the low bit.
                 let (code, ok) = match c {
@@ -41,10 +50,26 @@ impl PackedDna {
                 sw[w] |= code << shift;
                 if ok {
                     vw[w] |= 1u64 << shift;
+                    v1[pos / 64] |= 1u64 << (pos % 64);
                 }
             }
         }
-        PackedDna { words, seq, valid }
+        PackedDna { words, len: width, seq, valid, words1, valid1 }
+    }
+
+    /// Number of gap openings between a pair, for the onegap distance.
+    #[inline]
+    pub fn openings(&self, a: usize, b: usize) -> u32 {
+        let w = self.words1;
+        let va = &self.valid1[a * w..(a + 1) * w];
+        let vb = &self.valid1[b * w..(b + 1) * w];
+        let mut state = RunState::default();
+        let mut total = 0;
+        for k in 0..w {
+            let real = gaps::real_mask(k, self.len);
+            total += gaps::openings_word(va[k], vb[k], !va[k] & !vb[k] & real, &mut state);
+        }
+        total
     }
 
     /// `(transitions, transversions, comparable_sites)` for a pair.
@@ -95,7 +120,9 @@ pub fn correct(transitions: u32, transversions: u32, sites: u32, corr: Correctio
                 (-0.5 * a.ln() - 0.25 * b.ln()) as f32
             }
             Correction::None => p + q,
-            Correction::ScoreDist => unreachable!("scoredist is not a DNA correction"),
+            Correction::ScoreDist | Correction::OneGap => {
+                unreachable!("{} is not handled by the DNA count correction", corr)
+            }
         }
     };
     // NaN and +inf (saturated pairs) fail the comparison and get the cap.

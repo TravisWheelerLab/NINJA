@@ -38,17 +38,28 @@ struct Cli {
     #[arg(long = "in_type", default_value = "a", value_parser = parse_in_type, value_name = "a|d")]
     in_type: InputKind,
 
-    /// Output type: 't' tree (Newick) or 'd' distance matrix (Phylip).
-    #[arg(long = "out_type", default_value = "t", value_parser = parse_out_type, value_name = "t|d")]
+    /// Output type: 't' tree (Newick), 'd' distance matrix (Phylip), or
+    /// 'c' single-linkage clusters (cluster id and name per line).
+    #[arg(long = "out_type", default_value = "t", value_parser = parse_out_type, value_name = "t|d|c")]
     out_type: OutputKind,
+
+    /// Build the tree over one representative of each set of identical
+    /// sequences, then attach the rest as zero-length branches.
+    #[arg(long = "collapse_identical")]
+    collapse_identical: bool,
+
+    /// Largest distance joining two sequences into one cluster (--out_type c).
+    #[arg(long = "cluster_cutoff", default_value_t = 0.03, value_name = "DIST")]
+    cluster_cutoff: f32,
 
     /// Alphabet: 'a' amino acid or 'd' DNA. Detected from the input by default.
     #[arg(long = "alph_type", value_parser = parse_alphabet, value_name = "a|d")]
     alph_type: Option<Alphabet>,
 
     /// Correction: 'n' none, 'j' Jukes-Cantor, 'k' Kimura 2-parameter (DNA),
-    /// 's' scoredist (protein). Default: 'k' for DNA, 's' for protein.
-    #[arg(long = "corr_type", value_parser = parse_correction, value_name = "n|j|k|s")]
+    /// 's' scoredist (protein), 'm' Mothur onegap (either). Default: 'k' for
+    /// DNA, 's' for protein.
+    #[arg(long = "corr_type", value_parser = parse_correction, value_name = "n|j|k|s|m")]
     corr_type: Option<Correction>,
 
     /// Worker threads for distance computation (0 = all cores).
@@ -105,7 +116,8 @@ fn parse_out_type(s: &str) -> Result<OutputKind, String> {
     match s {
         "t" => Ok(OutputKind::Tree),
         "d" => Ok(OutputKind::Distances),
-        _ => Err(format!("unknown out_type '{}' (expected 't' or 'd')", s)),
+        "c" => Ok(OutputKind::Clusters),
+        _ => Err(format!("unknown out_type '{}' (expected 't', 'd', or 'c')", s)),
     }
 }
 
@@ -146,6 +158,8 @@ fn main() -> ExitCode {
         threads: cli.threads,
         tmp_dir: cli.tmp_dir,
         memory_bytes,
+        cluster_cutoff: cli.cluster_cutoff,
+        collapse_identical: cli.collapse_identical,
     };
 
     let result = match &cli.output {

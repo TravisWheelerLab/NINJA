@@ -88,6 +88,56 @@ impl Tree {
         self.nodes[right].length = len_r;
     }
 
+    /// Re-insert sequences that were removed as exact duplicates before the
+    /// tree was built.
+    ///
+    /// `self` is a tree over `groups.len()` representatives, leaf `g` being
+    /// the representative of `groups[g]`, whose first element is the
+    /// representative's index among `all_names`. The result is a tree over
+    /// all of `all_names` in which each group of `n > 1` identical sequences
+    /// hangs from the representative's position as a pectinate chain of
+    /// `n - 1` zero-length internal nodes, the whole group carrying the
+    /// representative's original branch length. Leaves keep their input
+    /// order; internal nodes are in post-order, so the root stays last.
+    pub fn expand_duplicates(&self, groups: &[Vec<usize>], all_names: &[String]) -> Tree {
+        assert_eq!(self.num_leaves(), groups.len());
+        let k = all_names.len();
+        let mut nodes: Vec<Node> = all_names
+            .iter()
+            .map(|n| Node { left: None, right: None, name: n.clone(), length: NO_LENGTH })
+            .collect();
+        // Build bottom-up with an explicit stack over the old tree.
+        enum Step {
+            Enter(usize),
+            Exit(usize),
+        }
+        let mut out_index: Vec<u32> = vec![u32::MAX; self.nodes.len()];
+        let mut stack = vec![Step::Enter(self.root())];
+        while let Some(step) = stack.pop() {
+            match step {
+                Step::Enter(i) => {
+                    let n = &self.nodes[i];
+                    if let (Some(l), Some(r)) = (n.left, n.right) {
+                        stack.push(Step::Exit(i));
+                        stack.push(Step::Enter(r as usize));
+                        stack.push(Step::Enter(l as usize));
+                    } else {
+                        out_index[i] = expand_group(&mut nodes, &groups[i], n.length);
+                    }
+                }
+                Step::Exit(i) => {
+                    let n = &self.nodes[i];
+                    let l = out_index[n.left.unwrap() as usize];
+                    let r = out_index[n.right.unwrap() as usize];
+                    nodes.push(Node { left: Some(l), right: Some(r), name: String::new(), length: n.length });
+                    out_index[i] = (nodes.len() - 1) as u32;
+                }
+            }
+        }
+        debug_assert_eq!(nodes.len(), 2 * k - 1);
+        Tree { nodes }
+    }
+
     /// Serialise as Newick with five-decimal branch lengths, ending in `;\n`.
     pub fn to_newick(&self) -> String {
         let mut out = Vec::with_capacity(self.nodes.len() * 16);
@@ -137,6 +187,35 @@ impl Tree {
         buf.push_str(";\n");
         w.write_all(buf.as_bytes())
     }
+}
+
+/// Attach a group of identical sequences below one position; returns the
+/// index of the node that takes the group's place. A single sequence is its
+/// own leaf; larger groups become `(first, (second, (third, ...)))` with
+/// zero-length branches inside.
+fn expand_group(nodes: &mut Vec<Node>, group: &[usize], length: f32) -> u32 {
+    if group.len() == 1 {
+        nodes[group[0]].length = length;
+        return group[0] as u32;
+    }
+    // Innermost pair first: (second-to-last, last).
+    let n = group.len();
+    nodes[group[n - 1]].length = 0.0;
+    nodes[group[n - 2]].length = 0.0;
+    nodes.push(Node {
+        left: Some(group[n - 2] as u32),
+        right: Some(group[n - 1] as u32),
+        name: String::new(),
+        length: 0.0,
+    });
+    let mut top = (nodes.len() - 1) as u32;
+    for &leaf in group[..n - 2].iter().rev() {
+        nodes[leaf].length = 0.0;
+        nodes.push(Node { left: Some(leaf as u32), right: Some(top), name: String::new(), length: 0.0 });
+        top = (nodes.len() - 1) as u32;
+    }
+    nodes[top as usize].length = length;
+    top
 }
 
 fn push_length(buf: &mut String, len: f32) {
@@ -233,5 +312,26 @@ mod tests {
         let s = t.to_newick();
         assert!(s.starts_with("((((("));
         assert!(s.ends_with(";\n"));
+    }
+
+    #[test]
+    fn expands_duplicate_groups() {
+        // Representatives a(0), b(1), c(2) built into ((a,b),c); b stands
+        // for three identical sequences b, b2, b3.
+        let reps: Vec<String> = ["a", "b", "c"].iter().map(|s| s.to_string()).collect();
+        let mut t = Tree::leaves(&reps);
+        t.join(3, 0, 1, 0.1, 0.2);
+        t.join(4, 3, 2, 0.05, 0.3);
+        let all: Vec<String> = ["a", "b", "c", "b2", "b3"].iter().map(|s| s.to_string()).collect();
+        let groups = vec![vec![0], vec![1, 3, 4], vec![2]];
+        let e = t.expand_duplicates(&groups, &all);
+        assert_eq!(e.num_leaves(), 5);
+        assert_eq!(
+            e.to_newick(),
+            "((a:0.10000,(b:0.00000,(b2:0.00000,b3:0.00000):0.00000):0.20000):0.05000,c:0.30000);\n"
+        );
+        // No groups larger than one: unchanged.
+        let same = t.expand_duplicates(&[vec![0], vec![1], vec![2]], &reps);
+        assert_eq!(same.to_newick(), t.to_newick());
     }
 }
