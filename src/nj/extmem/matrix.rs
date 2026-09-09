@@ -1,6 +1,7 @@
 //! Column-blocked float distance matrix, partly on disk.
 //!
-//! The external-memory engine works on a `K x (2K - 2)` matrix of `f32`:
+//! The external-memory engine works on a `K x (2K - 2)` matrix of `f32`
+//! (row sums and the search criterion are kept in `f64`):
 //! the first `K` columns are the input distances and each later column
 //! holds the distances from one internal node to every other node alive when
 //! it was created. Only the last `mem_cols` columns are resident; whenever
@@ -38,8 +39,8 @@ pub struct DiskMatrix {
     disk: Option<File>,
     /// First column held in the resident window.
     pub first_mem_col: usize,
-    /// Initial row sums.
-    pub r: Vec<f32>,
+    /// Initial row sums, in double precision.
+    pub r: Vec<f64>,
 }
 
 impl std::fmt::Debug for DiskMatrix {
@@ -121,36 +122,43 @@ impl DiskMatrix {
         m.first_mem_col = to_disk;
         let mem_cols = m.mem_cols;
 
-        // Resident part and row sums, row-parallel. Each row sums its own
-        // distances in column order, as the reference did.
-        let rows: Vec<(f32, Vec<f32>)> = (0..k)
-            .into_par_iter()
-            .map(|row| {
-                let mut sum = 0f32;
-                let mut disk_part = Vec::with_capacity(to_disk);
-                for col in 0..k {
-                    let d = if col == row { 0.0 } else { round7(calc.calc(row, col)) };
-                    sum += d;
-                    if col < to_disk {
-                        disk_part.push(d);
+        // Each row's distances are computed once, in parallel over blocks
+        // of rows so that the on-disk parts held in memory stay bounded:
+        // resident columns go straight into the window, the rest are
+        // written to disk block by block. Each row sums its distances in
+        // column order, as the reference did.
+        const ROWS_PER_BLOCK: usize = 512;
+        let mut start = 0;
+        while start < k {
+            let end = (start + ROWS_PER_BLOCK).min(k);
+            let mem = &mut m.mem[start * mem_cols..end * mem_cols];
+            let sums_and_disk: Vec<(f64, Vec<f32>)> = mem
+                .par_chunks_mut(mem_cols)
+                .enumerate()
+                .map(|(off, chunk)| {
+                    let row = start + off;
+                    let mut sum = 0f64;
+                    let mut disk_part = Vec::with_capacity(to_disk);
+                    for col in 0..k {
+                        let d = if col == row { 0.0 } else { round7(calc.calc(row, col)) };
+                        sum += d as f64;
+                        if col < to_disk {
+                            disk_part.push(d);
+                        } else {
+                            chunk[col - to_disk] = d;
+                        }
                     }
+                    (sum, disk_part)
+                })
+                .collect();
+            for (off, (sum, disk_part)) in sums_and_disk.into_iter().enumerate() {
+                let row = start + off;
+                m.r[row] = sum;
+                if to_disk > 0 {
+                    m.write_disk(row, 0, &disk_part)?;
                 }
-                (sum, disk_part)
-            })
-            .collect();
-        // Second pass for the resident columns (kept separate so the disk
-        // part above is the only per-row allocation of size `to_disk`).
-        m.mem.par_chunks_mut(mem_cols).enumerate().for_each(|(row, chunk)| {
-            for col in to_disk..k {
-                let d = if col == row { 0.0 } else { round7(calc.calc(row, col)) };
-                chunk[col - to_disk] = d;
             }
-        });
-        for (row, (sum, disk_part)) in rows.into_iter().enumerate() {
-            m.r[row] = sum;
-            if to_disk > 0 {
-                m.write_disk(row, 0, &disk_part)?;
-            }
+            start = end;
         }
         Ok(m)
     }
@@ -168,13 +176,13 @@ impl DiskMatrix {
         m.first_mem_col = to_disk;
         let mut disk_part = vec![0f32; to_disk];
         for row in 0..k {
-            let mut sum = 0f32;
+            let mut sum = 0f64;
             for col in 0..k {
                 // The reference parsed the decimal text straight to single
                 // precision; the correctly rounded double of the exact value
                 // narrows to the same float in all but pathological cases.
                 let d = if col == row { 0.0 } else { (p.get(row, col) as f64 / 1e8) as f32 };
-                sum += d;
+                sum += d as f64;
                 if col < to_disk {
                     disk_part[col] = d;
                 } else {
@@ -192,6 +200,24 @@ impl DiskMatrix {
     /// True when part of the matrix lives on disk.
     pub fn uses_disk(&self) -> bool {
         self.disk.is_some()
+    }
+
+    /// Hint the cache that resident cell `(row, col)` will be read soon.
+    #[inline]
+    #[allow(unsafe_code)]
+    pub fn prefetch(&self, row: usize, col: usize) {
+        #[cfg(target_arch = "x86_64")]
+        {
+            let idx = row * self.mem_cols + (col - self.first_mem_col);
+            let p = self.mem.as_ptr().wrapping_add(idx) as *const i8;
+            // SAFETY: prefetch has no architectural effect and takes any
+            // address; the pointer is derived from a live slice.
+            unsafe { std::arch::x86_64::_mm_prefetch(p, std::arch::x86_64::_MM_HINT_T0) };
+        }
+        #[cfg(not(target_arch = "x86_64"))]
+        {
+            let _ = (row, col);
+        }
     }
 
     /// Resident entry at `(row, col)`; `col >= first_mem_col`.

@@ -79,21 +79,24 @@ point it at a local disk.
 
 Simulated alignments of 300 columns on a 192-core machine. Wall time and
 peak memory; Java ran with an 8 GB heap (16 GB for 20,000 taxa). Every
-tree below has the same splits and branch lengths as the Java tool's;
-with `--reference_order` (31.7 s for 20,000 taxa) the Newick text is
-identical too.
+in-memory tree below has the same splits and branch lengths as the Java
+tool's, and with `--reference_order` (31.7 s for 20,000 taxa) the Newick
+text is identical too; the external-memory engine keeps its sums in
+double precision and agrees with Java's to within rounding.
 
 | Taxa | ninja, in-memory, all cores | ninja, in-memory, one core | ninja, external-memory, 50 MB budget | Java NINJA 1.2.2 |
 |---:|---:|---:|---:|---:|
-| 6,000 DNA | 1.4 s, 0.25 GB | 3.6 s | 7.4 s, 0.14 GB | 75 s |
+| 6,000 DNA | 1.4 s, 0.25 GB | 3.6 s | 5.4 s, 0.17 GB | 75 s |
 | 6,000 protein | 1.3 s, 0.22 GB | 7.6 s | | 19 s, 2.4 GB |
-| 20,000 DNA | 14.6 s, 4.1 GB | 40 s | 114 s, 1.7 GB | 680 s, 15 GB |
+| 20,000 DNA | 14.6 s, 4.1 GB | 40 s | 68 s, 0.30 GB | 680 s, 15 GB |
 | 50,000 DNA | 92 s, 26 GB | | | |
+| 100,000 DNA | 417 s, 104 GB | | 1,737 s, 2.3 GB (4 GB budget) | |
 
-Distance computation and rebuilds are the parallel parts; the join loop
-is sequential and dominates for large inputs. Memory in the in-memory
-engine is mostly the queue entries, one per pair; the external-memory
-engine trades that for disk.
+With a 2 GB budget the external-memory engine takes 54 s and 0.64 GB for
+20,000 taxa. Distance computation and rebuilds are the parallel parts;
+the join loop is sequential and dominates for large inputs. Memory in the
+in-memory engine is mostly the queue entries, one per pair; the
+external-memory engine trades that for disk.
 
 ## Library
 

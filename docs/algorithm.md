@@ -105,7 +105,10 @@ always be read from the row of the newer one. Rows are indexed by matrix row
 queues after Brengel, Crauser, Ferragina and Meyer (1999). Inserts go to an
 in-memory heap; when it reaches twice its run size, the trailing half of its
 array (leaves of the heap, so none of the smallest keys) is sorted and
-written to disk as a run. Runs live in four levels of slots; when a level is
+written to disk as a run. At a rebuild, pairs are instead staged per heap,
+sorted a run at a time, and written as runs directly, bypassing the
+in-memory heap; `--reference_order` keeps the one-at-a-time inserts and the
+reference's heap-sort of spills, which fixes the tie order. Runs live in four levels of slots; when a level is
 full, every run below the first level with a free slot is merged into one
 run at that level, and half-empty runs at a level are merged with each other
 first. The head block of every run sits in a second in-memory heap tagged
@@ -126,9 +129,17 @@ so scanning the frozen heap in `Q'` order and stopping when
 A frozen heap that has shrunk to 60% of its original size is dissolved back
 into the candidate list; at most 100 exist at once.
 
-Because this engine uses single-precision floats, its branch lengths can
-differ from the in-memory engine's in the fourth decimal place and it may
-resolve near-ties differently.
+This engine stores distances as single-precision floats but keeps row
+sums and the criterion `Q` in double precision. The reference kept
+everything in single precision, and the drift over tens of thousands of
+joins changed which pairs it joined: 14 splits of a 20,000-taxon tree and
+322 of a 100,000-taxon one differed from the exact integer engine's,
+against none at 20,000 with double precision. For that reason this
+engine's output is not byte-identical to the Java tool's even with
+`--reference_order`, which here only affects the order in which equal
+keys leave the disk heaps. Branch lengths can still differ from the
+in-memory engine's in the fourth decimal place because the distances
+themselves are rounded differently.
 
 ## Distances (`distance`)
 

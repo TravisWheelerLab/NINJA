@@ -18,4 +18,11 @@ Planned work, roughly in order.
   batches in place of the post-rebuild heaps would cut the pushes; the
   update loop is bound by cache misses on the triangular matrix.
 - Reduce in-memory engine memory: the queues hold an entry for every pair
-  (about 12 bytes each).
+  (about 12 bytes each); 104 GB at 100,000 taxa.
+- External-memory engine, 20,000 taxa at a 50 MB budget (68 s): level
+  merges of the disk heaps 32 s, pulls 6 s, update loop 5 s, spill sorts
+  4 s, staging-heap pushes 5 s. More slots per level would reduce how many
+  merges each entry passes through.
+- Branch lengths can come out negative when both children of a join get a
+  negative length (the reference does the same; 93 of 40,000 at 20,000
+  simulated taxa). Decide whether to clamp both to zero.

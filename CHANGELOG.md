@@ -18,5 +18,11 @@ second reference.
 * In-memory engine about twice as fast as a direct port: sorted runs
   instead of heaps for rebuilt entries, parallel rebuilds, prefetching in
   the update loop. `--reference_order` reproduces the Java tie order.
+* External-memory engine: rebuilds write sorted runs to disk directly,
+  spills use the standard sort, level merges use a k-way heap, and the
+  disk matrix is filled in one pass. 20,000 taxa at a 50 MB budget: 114 s
+  and 1.7 GB before, 68 s and 0.3 GB after. Row sums and the criterion are
+  double precision, which brings this engine's trees into agreement with
+  the exact in-memory engine on every split at 20,000 taxa.
 * Library API alongside the `ninja` binary.
 * Integration tests against stored Java outputs; see `docs/testing.md`.

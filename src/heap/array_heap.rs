@@ -59,6 +59,9 @@ const UNFETCHED: f32 = f32::MIN_POSITIVE;
 
 /// A disk-backed min-priority queue of `(i, j, key)` triples.
 pub struct ArrayHeap {
+    /// Sort spilled runs by heap-sort as the reference did (keeps its tie
+    /// order) rather than with the standard sort.
+    reference_order: bool,
     block_size: usize,
     c_m: usize,
     num_slots: usize,
@@ -119,6 +122,7 @@ impl ArrayHeap {
         }
         let file = tempfile::tempfile_in(dir).map_err(|e| Error::io(dir, e))?;
         let mut h = ArrayHeap {
+            reference_order: false,
             block_size,
             c_m,
             num_slots,
@@ -140,6 +144,12 @@ impl ArrayHeap {
         };
         h.clear();
         Ok(h)
+    }
+
+    /// Keep the reference implementation's order among equal keys when
+    /// spilling (slower).
+    pub fn set_reference_order(&mut self, on: bool) {
+        self.reference_order = on;
     }
 
     /// Remove every entry. Disk space is reused, not released.
@@ -186,12 +196,36 @@ impl ArrayHeap {
         // Spill the trailing half of the heap array: it holds none of the
         // smallest keys, so those stay resident.
         let chopped = self.h1.chop_bottom(self.c_m);
-        let mut sorter = MinHeap::from_entries(chopped);
-        let mut run: Vec<(f32, Pair)> = Vec::with_capacity(self.c_m);
-        while let Some(e) = sorter.pop() {
-            run.push(e);
-        }
+        let run: Vec<(f32, Pair)> = if self.reference_order {
+            let mut sorter = MinHeap::from_entries(chopped);
+            let mut run = Vec::with_capacity(self.c_m);
+            while let Some(e) = sorter.pop() {
+                run.push(e);
+            }
+            run
+        } else {
+            let mut run = chopped;
+            run.sort_unstable_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+            run
+        };
+        self.place_run(&run, active)
+    }
 
+    /// Insert a batch of entries already sorted by key, bypassing the
+    /// in-memory heap: each piece of at most one run size becomes a disk
+    /// run directly.
+    pub fn insert_sorted(&mut self, entries: &[(f32, Pair)], active: Option<&[i32]>) -> Result<()> {
+        for piece in entries.chunks(self.c_m) {
+            self.n += piece.len();
+            self.place_run(piece, active)?;
+        }
+        Ok(())
+    }
+
+    /// Store a sorted run of at most `c_m` entries at the lowest level with
+    /// room, merging lower levels into it when needed.
+    fn place_run(&mut self, run: &[(f32, Pair)], active: Option<&[i32]>) -> Result<()> {
+        debug_assert!(run.len() <= self.c_m);
         let mut target = 0;
         while self.free_slots[target].is_empty() {
             if self.merge_slots(target, active)? {
@@ -204,9 +238,8 @@ impl ArrayHeap {
                 ));
             }
         }
-        let slot = if target == 0 { self.store(0, &run)? } else { self.merge_levels(target, &run, active)? };
-        self.load(target, slot)?;
-        Ok(())
+        let slot = if target == 0 { self.store(0, run)? } else { self.merge_levels(target, run, active)? };
+        self.load(target, slot)
     }
 
     /// The smallest entry as `(i, j, key)`, if any.
@@ -395,7 +428,6 @@ impl ArrayHeap {
 
         // Rewind each lower run to include the entries currently on h2, and
         // drop those from h2.
-        let mut heads: Vec<Vec<f32>> = vec![vec![UNFETCHED; self.num_slots]; target];
         for level in 0..target {
             for slot in 0..self.num_slots {
                 self.slot_pos[level][slot] -= self.on_heap[level][slot] as u64;
@@ -410,47 +442,38 @@ impl ArrayHeap {
         let out_cap = OUT_BLOCKS * self.fields_per_block;
         let mut input_pos = 0;
         let mut new_cnt = 0u64;
-        // Number of lower runs not yet exhausted, maintained lazily: we
-        // simply loop until no source yields an entry.
-        loop {
-            let mut min_key = f32::MAX;
-            let mut min_src: Option<(usize, usize)> = None; // None = input run
-            let mut have = false;
-            if input_pos < run.len() {
-                min_key = run[input_pos].0;
-                have = true;
-            }
-            for level in 0..target {
-                for slot in 0..self.num_slots {
-                    if heads[level][slot] == UNFETCHED {
-                        match self.head_key(level, slot, active)? {
-                            Some(k) => heads[level][slot] = k,
-                            None => continue,
-                        }
-                    }
-                    let k = heads[level][slot];
-                    if !have || k < min_key {
-                        min_key = k;
-                        min_src = Some((level, slot));
-                        have = true;
-                    }
+        // k-way merge over the sources: the input run (source 0) and every
+        // lower slot, keyed by (head key, source index) so that ties go to
+        // the input run first, then to the lowest level and slot.
+        let ns = self.num_slots;
+        let mut srcs: MinHeap<(f32, u32), ()> = MinHeap::with_capacity(1 + target * ns);
+        if !run.is_empty() {
+            srcs.push((run[0].0, 0), ());
+        }
+        for level in 0..target {
+            for slot in 0..ns {
+                if let Some(k) = self.head_key(level, slot, active)? {
+                    srcs.push((k, 1 + (level * ns + slot) as u32), ());
                 }
             }
-            if !have {
-                break;
-            }
-            match min_src {
-                None => {
-                    let (k, (i, j)) = run[input_pos];
-                    out.push(i);
-                    out.push(j);
-                    out.push(k.to_bits() as i32);
-                    input_pos += 1;
+        }
+        while let Some(((_, src), ())) = srcs.pop() {
+            if src == 0 {
+                let (k, (i, j)) = run[input_pos];
+                out.push(i);
+                out.push(j);
+                out.push(k.to_bits() as i32);
+                input_pos += 1;
+                if input_pos < run.len() {
+                    srcs.push((run[input_pos].0, 0), ());
                 }
-                Some((level, slot)) => {
-                    let t = self.take_head(level, slot);
-                    out.extend_from_slice(&t);
-                    heads[level][slot] = UNFETCHED;
+            } else {
+                let idx = (src - 1) as usize;
+                let (level, slot) = (idx / ns, idx % ns);
+                let t = self.take_head(level, slot);
+                out.extend_from_slice(&t);
+                if let Some(k) = self.head_key(level, slot, active)? {
+                    srcs.push((k, src), ());
                 }
             }
             new_cnt += 1;
@@ -605,6 +628,35 @@ mod tests {
             }
         }
         assert_eq!(h.len(), shadow.len());
+    }
+
+    #[test]
+    fn sorted_batches_and_single_inserts_interleave() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut h = ArrayHeap::new(dir.path(), ArrayHeapConfig { memory_bytes: 1 << 20 }).unwrap();
+        let mut state = 5u64;
+        let mut keys: Vec<f32> = Vec::new();
+        for round in 0..40 {
+            // A sorted batch larger than one run, then some single inserts.
+            let mut batch: Vec<(f32, Pair)> = (0..h.run_size() * 3 + 7)
+                .map(|i| ((lcg(&mut state) % 100_000) as f32, (round, i as i32)))
+                .collect();
+            batch.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+            keys.extend(batch.iter().map(|e| e.0));
+            h.insert_sorted(&batch, None).unwrap();
+            for i in 0..500 {
+                let k = (lcg(&mut state) % 100_000) as f32;
+                h.insert(-round, i, k, None).unwrap();
+                keys.push(k);
+            }
+        }
+        assert_eq!(h.len(), keys.len());
+        keys.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        for (idx, &k) in keys.iter().enumerate() {
+            let (_, _, got) = h.pop().unwrap().unwrap();
+            assert_eq!(got, k, "mismatch at pop {}", idx);
+        }
+        assert!(h.is_empty());
     }
 
     #[test]

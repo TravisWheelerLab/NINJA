@@ -59,10 +59,10 @@ pub fn build(
     if params.cluster_count == 0 {
         return Err(Error::options("cluster count must be at least 1"));
     }
-    // The disk-backed heaps keep the reference rebuild schedule unless a
+    // The disk-backed engine keeps the reference rebuild schedule unless a
     // ratio was given explicitly.
-    let params = if params.rebuild_step_ratio.is_none() && !params.reference_order {
-        NjParams { reference_order: true, ..params.clone() }
+    let params = if params.rebuild_step_ratio.is_none() {
+        NjParams { rebuild_step_ratio: Some(0.5), ..params.clone() }
     } else {
         params.clone()
     };
@@ -75,7 +75,10 @@ struct Builder<'a> {
     k: usize,
     params: &'a NjParams,
     m: DiskMatrix,
-    r: Vec<f32>,
+    /// Row sums, in double precision. The reference accumulated these in
+    /// single precision, and the drift over tens of thousands of joins
+    /// changed which pairs it joined.
+    r: Vec<f64>,
     tree: Tree,
     redirect: Vec<i32>,
     active: ActiveList,
@@ -85,9 +88,13 @@ struct Builder<'a> {
 
     clust_cnt: usize,
     clust_assign: Vec<u32>,
-    clust_maxes: Vec<f32>,
+    clust_maxes: Vec<f64>,
     clusters_by_size: Vec<u32>,
     heaps: Vec<Option<ArrayHeap>>,
+    /// Per-heap staging buffers for rebuilds (fast mode).
+    stage: Vec<Vec<(f32, (i32, i32))>>,
+    /// Scratch: active node indices for the update loop.
+    rows: Vec<u32>,
 
     cand_d: Vec<f32>,
     cand_i: Vec<i32>,
@@ -137,6 +144,8 @@ impl<'a> Builder<'a> {
             clust_maxes: vec![0.0; cc],
             clusters_by_size: vec![0; cc],
             heaps: (0..cc * cc).map(|_| None).collect(),
+            stage: (0..cc * cc).map(|_| Vec::new()).collect(),
+            rows: Vec::with_capacity(k),
             cand_d: Vec::with_capacity(10_000),
             cand_i: Vec::with_capacity(10_000),
             cand_j: Vec::with_capacity(10_000),
@@ -179,8 +188,8 @@ impl<'a> Builder<'a> {
         self.last_cand = -1;
         self.cand_heaps.clear();
 
-        let mut max_t = 0f32;
-        let mut min_t = f32::MAX;
+        let mut max_t = 0f64;
+        let mut min_t = f64::MAX;
         let mut i = self.active.first;
         while i < max_index_i {
             let ri = self.redirect[i as usize] as usize;
@@ -194,7 +203,7 @@ impl<'a> Builder<'a> {
         }
         let range = max_t - min_t;
         for c in 0..cc - 1 {
-            self.clust_maxes[c] = min_t + (c as i32 + 1) as f32 * range / cc as f32;
+            self.clust_maxes[c] = min_t + (c + 1) as f64 * range / cc as f64;
         }
         self.clust_maxes[cc - 1] = max_t;
         let mut sizes = vec![0i32; cc];
@@ -218,16 +227,27 @@ impl<'a> Builder<'a> {
             *slot = order.pop().unwrap().1;
         }
 
+        let reference = self.params.reference_order;
         for a in 0..cc {
             for b in a..cc {
                 let h = a * cc + b;
                 match &mut self.heaps[h] {
                     Some(heap) => heap.clear(),
-                    None => self.heaps[h] = Some(ArrayHeap::new(&self.tmp_dir, self.heap_config)?),
+                    None => {
+                        let mut heap = ArrayHeap::new(&self.tmp_dir, self.heap_config)?;
+                        heap.set_reference_order(reference);
+                        self.heaps[h] = Some(heap);
+                    }
                 }
             }
         }
 
+        // Every active pair goes to its cluster pair's heap. In fast mode
+        // pairs are staged per heap and, once a run's worth has
+        // accumulated, sorted and written as a disk run directly; the
+        // reference mode inserts them one at a time through the heap's
+        // in-memory stage, which fixes its tie order.
+        let run_size = self.heaps[0].as_ref().unwrap().run_size();
         let mut i = self.active.first;
         while i < max_index_i {
             let ri = self.redirect[i as usize] as usize;
@@ -242,10 +262,35 @@ impl<'a> Builder<'a> {
                     pager.get(&mut self.m, j as usize)?
                 };
                 let redirect = &self.redirect;
-                self.heaps[h].as_mut().unwrap().insert(i, j, d, Some(redirect))?;
+                if reference {
+                    self.heaps[h].as_mut().unwrap().insert(i, j, d, Some(redirect))?;
+                } else {
+                    self.stage[h].push((d, (i, j)));
+                    if self.stage[h].len() == run_size {
+                        let mut run = std::mem::take(&mut self.stage[h]);
+                        run.sort_unstable_by(|a, b| {
+                            a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal)
+                        });
+                        self.heaps[h].as_mut().unwrap().insert_sorted(&run, Some(redirect))?;
+                        run.clear();
+                        self.stage[h] = run;
+                    }
+                }
                 j = self.active.next[j as usize];
             }
             i = self.active.next[i as usize];
+        }
+        if !reference {
+            for h in 0..cc * cc {
+                if !self.stage[h].is_empty() {
+                    let mut run = std::mem::take(&mut self.stage[h]);
+                    run.sort_unstable_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+                    let redirect = &self.redirect;
+                    self.heaps[h].as_mut().unwrap().insert_sorted(&run, Some(redirect))?;
+                    run.clear();
+                    self.stage[h] = run;
+                }
+            }
         }
         self.stats.rebuilds += 1;
         Ok(())
@@ -295,7 +340,7 @@ impl<'a> Builder<'a> {
     fn q_prime(&self, d: f32, i: i32, j: i32) -> f32 {
         let ri = self.redirect[i as usize] as usize;
         let rj = self.redirect[j as usize] as usize;
-        d * (self.new_k as i32 - 2) as f32 - self.r[ri] - self.r[rj]
+        (d as f64 * (self.new_k as f64 - 2.0) - self.r[ri] - self.r[rj]) as f32
     }
 
     /// Add a candidate: to the simple list, or, when that has grown too
@@ -370,19 +415,19 @@ impl<'a> Builder<'a> {
         let total = 2 * k - 1;
         let mut steps_until_rebuild = self.params.initial_rebuild_steps(k);
 
-        let mut max_t1val = vec![f32::MIN_POSITIVE; cc];
-        let mut max_t2val = vec![f32::MIN_POSITIVE; cc];
+        let mut max_t1val = vec![f64::MIN_POSITIVE; cc];
+        let mut max_t2val = vec![f64::MIN_POSITIVE; cc];
         let mut horiz: Vec<f32> = Vec::new();
 
         while self.next_internal < total {
             let next_i32 = self.next_internal as i32;
             let new_k = self.new_k;
-            let nk2 = (new_k as i32 - 2) as f32;
+            let nk2 = new_k as f64 - 2.0;
             self.using_simple = true;
 
             for c in 0..cc {
-                max_t1val[c] = f32::MIN_POSITIVE;
-                max_t2val[c] = f32::MIN_POSITIVE;
+                max_t1val[c] = f64::MIN_POSITIVE;
+                max_t2val[c] = f64::MIN_POSITIVE;
             }
             let mut x = self.active.first;
             while x < next_i32 {
@@ -400,7 +445,7 @@ impl<'a> Builder<'a> {
                 x = self.active.next[x as usize];
             }
 
-            let mut min_q = f32::MAX;
+            let mut min_q = f64::MAX;
             let mut min_d = f32::MIN_POSITIVE;
             let mut min_i: i32 = -1;
             let mut min_j: i32 = -1;
@@ -421,7 +466,7 @@ impl<'a> Builder<'a> {
                     self.deactivate(x);
                     self.stats.defunct_removed += 1;
                 } else {
-                    let q = self.cand_d[xu] * nk2 - self.r[ri as usize] - self.r[rj as usize];
+                    let q = self.cand_d[xu] as f64 * nk2 - self.r[ri as usize] - self.r[rj as usize];
                     if q <= min_q {
                         min_i = self.cand_i[xu];
                         min_j = self.cand_j[xu];
@@ -444,7 +489,7 @@ impl<'a> Builder<'a> {
                         let (cl_i, cl_j) = (self.clust_assign[ri], self.clust_assign[rj]);
                         let max_t_sum = max_t1val[cl_i as usize]
                             + if cl_i == cl_j { max_t2val[cl_i as usize] } else { max_t1val[cl_j as usize] };
-                        let q_limit = self.cand_d[xu] * nk2 - max_t_sum;
+                        let q_limit = self.cand_d[xu] as f64 * nk2 - max_t_sum;
                         if q_limit > min_q {
                             self.remove_candidate(x);
                             let h = self.heap_index(cl_i, cl_j);
@@ -488,7 +533,8 @@ impl<'a> Builder<'a> {
             for c in (0..self.cand_heaps.len()).rev() {
                 self.cand_heaps[c].calc_deltas(new_k, &self.redirect, &self.r);
                 while let Some((i, j, qp)) = self.cand_heaps[c].peek() {
-                    let bound = self.cand_heaps[c].k_over_kprime * qp + self.cand_heaps[c].min_delta_sum;
+                    let bound =
+                        self.cand_heaps[c].k_over_kprime * qp as f64 + self.cand_heaps[c].min_delta_sum;
                     if bound >= min_q {
                         break;
                     }
@@ -500,7 +546,7 @@ impl<'a> Builder<'a> {
                         continue;
                     }
                     let d = self.cand_heaps[c].distance(qp, ri as usize, rj as usize);
-                    let q = d * nk2 - self.r[ri as usize] - self.r[rj as usize];
+                    let q = d as f64 * nk2 - self.r[ri as usize] - self.r[rj as usize];
                     self.append_candidate(d, i, j)?;
                     if q <= min_q {
                         min_i = i;
@@ -555,7 +601,7 @@ impl<'a> Builder<'a> {
                             self.stats.defunct_removed += 1;
                             continue;
                         }
-                        let mut q = h_d * nk2;
+                        let mut q = h_d as f64 * nk2;
                         let q_limit = q - max_t_sum;
                         if q_limit > min_q {
                             break;
@@ -588,6 +634,7 @@ impl<'a> Builder<'a> {
             let (mi, mj) = (min_i as usize, min_j as usize);
             let ri = self.redirect[mi] as usize;
             let rj = self.redirect[mj] as usize;
+            let min_d = min_d as f64;
             let (mut len_i, mut len_j) = if new_k == 2 {
                 (min_d / 2.0, min_d / 2.0)
             } else {
@@ -604,7 +651,7 @@ impl<'a> Builder<'a> {
                 len_j = 0.0;
             }
             let ni = self.next_internal;
-            self.tree.join(ni, mi, mj, len_i, len_j);
+            self.tree.join(ni, mi, mj, len_i as f32, len_j as f32);
             if verbose >= 3 {
                 eprintln!(
                     "join {}: {} ({}) + {} ({}) Q={} lengths {} {}",
@@ -628,20 +675,24 @@ impl<'a> Builder<'a> {
             };
             let mut pager_i = RowPager::new(ri, self.m.mem_cols);
             let mut pager_j = RowPager::new(rj, self.m.mem_cols);
+            self.rows.clear();
             let mut x = self.active.first;
             while x < next_i32 {
-                let xu = x as usize;
+                self.rows.push(x as u32);
+                x = self.active.next[x as usize];
+            }
+            for idx in 0..self.rows.len() {
+                let xu = self.rows[idx] as usize;
                 let rx = self.redirect[xu] as usize;
                 let d_xi = self.dist(xu, rx, mi, ri, &mut pager_i)?;
                 let d_xj = self.dist(xu, rx, mj, rj, &mut pager_j)?;
                 let tmp = (d_xi + d_xj - d_ij) / 2.0;
-                self.r[ri] += tmp;
-                self.r[rx] += tmp - (d_xi + d_xj);
+                self.r[ri] += tmp as f64;
+                self.r[rx] += tmp as f64 - (d_xi as f64 + d_xj as f64);
                 self.m.mem_set(rx, ni, tmp);
                 if xu >= first {
                     self.m.mem_set(ri, xu, tmp);
                 }
-                x = self.active.next[xu];
             }
             self.redirect[ni] = ri as i32;
 

@@ -39,6 +39,10 @@ different.
   every quarter of the remaining taxa. Both change only which of two pairs
   with exactly equal `Q` is joined first. `--reference_order` restores the
   heaps and the paper's schedule and reproduces the Java output exactly.
+* **External-memory arithmetic.** Row sums and the criterion are double
+  precision (Java: single), so that engine's trees agree with the exact
+  in-memory engine at large sizes where Java's drifted; its output is
+  therefore close to, not identical to, the Java tool's.
 * **Output.** The distance matrix header is the taxon count alone (Java
   wrote a leading tab); the Newick string is followed by one newline (Java
   wrote two).

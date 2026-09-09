@@ -21,16 +21,16 @@ pub struct CandidateHeap {
     /// Taxa remaining when the heap was created.
     pub k_prime: usize,
     /// Row sums when the heap was created, by matrix row.
-    pub r_primes: Vec<f32>,
+    pub r_primes: Vec<f64>,
     /// Number of heap entries touching each node index.
     row_counts: Vec<u32>,
     next: Vec<i32>,
     prev: Vec<i32>,
     first: i32,
     /// `(k - 2) / (k' - 2)` from the last [`calc_deltas`](Self::calc_deltas).
-    pub k_over_kprime: f32,
+    pub k_over_kprime: f64,
     /// Sum of the two smallest deltas from the last `calc_deltas`.
-    pub min_delta_sum: f32,
+    pub min_delta_sum: f64,
     /// Size when the node list was built.
     pub orig_size: usize,
     /// Set when the heap has shrunk enough to be worth dissolving.
@@ -44,7 +44,7 @@ impl CandidateHeap {
         dir: &Path,
         config: ArrayHeapConfig,
         k_prime: usize,
-        r: &[f32],
+        r: &[f64],
         node_count: usize,
     ) -> Result<Self> {
         Ok(CandidateHeap {
@@ -133,10 +133,10 @@ impl CandidateHeap {
     /// Recompute the scaling factor and the bound on the delta terms for
     /// the current taxon count and row sums, dropping merged nodes from
     /// the node list.
-    pub fn calc_deltas(&mut self, new_k: usize, redirect: &[i32], r: &[f32]) {
-        self.k_over_kprime = (new_k as f32 - 2.0) / (self.k_prime as f32 - 2.0);
-        let mut min1 = f32::MAX;
-        let mut min2 = f32::MAX;
+    pub fn calc_deltas(&mut self, new_k: usize, redirect: &[i32], r: &[f64]) {
+        self.k_over_kprime = (new_k as f64 - 2.0) / (self.k_prime as f64 - 2.0);
+        let mut min1 = f64::MAX;
+        let mut min2 = f64::MAX;
         let mut x = self.first;
         while x != -1 {
             let xu = x as usize;
@@ -171,6 +171,6 @@ impl CandidateHeap {
     /// `ri`, `rj`.
     #[inline]
     pub fn distance(&self, q_prime: f32, ri: usize, rj: usize) -> f32 {
-        (q_prime + self.r_primes[ri] + self.r_primes[rj]) / (self.k_prime as i32 - 2) as f32
+        ((q_prime as f64 + self.r_primes[ri] + self.r_primes[rj]) / (self.k_prime as f64 - 2.0)) as f32
     }
 }

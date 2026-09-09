@@ -12,6 +12,13 @@ use common::*;
 
 const FIXTURES: &[&str] = &["PF08271_seed", "dna_200", "protein_120", "dna_700"];
 
+/// The external-memory engine keeps row sums and the criterion in double
+/// precision where Java used single precision, so its trees are compared
+/// with Java's by splits and lengths: disagreement only on branches up to
+/// `EXTMEM_TIE_TOL` long, shared lengths within `EXTMEM_LEN_TOL`.
+const EXTMEM_TIE_TOL: f64 = 1e-3;
+const EXTMEM_LEN_TOL: f64 = 5e-4;
+
 #[test]
 fn help_and_version() {
     let out = ninja_stdout(&["--help"]);
@@ -49,20 +56,31 @@ fn inmem_trees_match_java_by_default() {
 fn extmem_trees_match_java() {
     for f in FIXTURES {
         let path = fixture(&format!("{}.fa", f));
-        let got = ninja_stdout(&["-q", "-m", "extmem", "--in", path.to_str().unwrap()]);
         let want = read(&reference(&format!("{}.extmem.java.nwk", f)));
-        assert_same_newick(&got, &want);
+        for mode in [&["--reference_order"][..], &[][..]] {
+            let mut args = vec!["-q", "-m", "extmem"];
+            args.extend_from_slice(mode);
+            args.extend_from_slice(&["--in", path.to_str().unwrap()]);
+            let got = ninja_stdout(&args);
+            assert_trees_close(&got, &want, EXTMEM_TIE_TOL, EXTMEM_LEN_TOL);
+        }
     }
 }
 
 /// A tiny memory budget makes the resident window one block wide, so with
-/// 700 taxa the matrix is flushed to disk during the build.
+/// 700 taxa the matrix is flushed to disk during the build, and the heaps'
+/// runs spill to disk as well.
 #[test]
 fn extmem_with_disk_matches_java() {
     let path = fixture("dna_700.fa");
-    let got = ninja_stdout(&["-q", "-m", "extmem", "--memory", "0.0001", "--in", path.to_str().unwrap()]);
     let want = read(&reference("dna_700.extmem.java.nwk"));
-    assert_same_newick(&got, &want);
+    for mode in [&["--reference_order"][..], &[][..]] {
+        let mut args = vec!["-q", "-m", "extmem", "--memory", "0.0001"];
+        args.extend_from_slice(mode);
+        args.extend_from_slice(&["--in", path.to_str().unwrap()]);
+        let got = ninja_stdout(&args);
+        assert_trees_close(&got, &want, EXTMEM_TIE_TOL, EXTMEM_LEN_TOL);
+    }
 }
 
 #[test]
@@ -141,6 +159,7 @@ fn phylip_round_trip_700() {
     ninja_stdout(&["-q", "--out_type", "d", "--in", path.to_str().unwrap(), "-o", phylip.to_str().unwrap()]);
     let got = ninja_stdout(&["-q", "--reference_order", "--in_type", "d", "--in", phylip.to_str().unwrap()]);
     assert_same_newick(&got, &read(&reference("dna_700.fromphylip.java.nwk")));
+    let want = read(&reference("dna_700.fromphylip.extmem.java.nwk"));
     let got = ninja_stdout(&[
         "-q",
         "-m",
@@ -152,7 +171,7 @@ fn phylip_round_trip_700() {
         "--in",
         phylip.to_str().unwrap(),
     ]);
-    assert_same_newick(&got, &read(&reference("dna_700.fromphylip.extmem.java.nwk")));
+    assert_trees_close(&got, &want, EXTMEM_TIE_TOL, EXTMEM_LEN_TOL);
 }
 
 /// The two engines round distances differently (fixed point at 1e-8 versus
