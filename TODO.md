@@ -12,8 +12,10 @@ Planned work, roughly in order.
 - Make `--collapse_identical` the default once the feature set is
   complete (it is off so that output matches the Java tool exactly).
 - The minimum Rust version (1.85) is set by clap 4.6; CI builds with it.
-- Performance pass once CI is green and outputs match the Java tool: profile
-  the search (the sequential part), the rebuild that pushes every pair onto
-  the heaps, and the cache behaviour of the triangular matrix updates.
-- Reduce in-memory engine memory: heap entries for every pair are created
-  at each rebuild (34 GB for 50,000 taxa).
+- More speed in the in-memory engine. Profile for 20,000 taxa (about
+  15 s): heap pushes of each new node's distances 6 s (4 s of it the
+  sift-up), the update loop 4 s, pulls 2 s, rebuilds 1 s. Radix-sorted
+  batches in place of the post-rebuild heaps would cut the pushes; the
+  update loop is bound by cache misses on the triangular matrix.
+- Reduce in-memory engine memory: the queues hold an entry for every pair
+  (about 12 bytes each).

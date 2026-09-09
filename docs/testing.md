@@ -32,9 +32,10 @@ in `tests/reference`:
 | `dna_700.fa` | 700 simulated DNA sequences, 200 columns | large enough to page the external-memory matrix to disk |
 | `dna_200_dups.fa` | `dna_200.fa` plus seven exact copies of four of its sequences | identical-sequence collapse |
 
-For each fixture the tests require the tree from the in-memory engine, the
-tree from the external-memory engine, and the written distance matrix to be
-identical to Java's (whitespace aside). Trees built from a Phylip matrix are
+For each fixture the tests require the tree from the in-memory engine in
+`--reference_order` mode, the tree from the external-memory engine, and the
+written distance matrix to be identical to Java's (whitespace aside), and
+the default in-memory tree to have the same splits and branch lengths. Trees built from a Phylip matrix are
 compared the same way. The fixture with 700 taxa is also run with a memory
 budget of 100 KB, which makes the resident window one block wide so the
 matrix is flushed to disk repeatedly.

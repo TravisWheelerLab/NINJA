@@ -31,9 +31,14 @@ different.
   back to the external-memory engine. This port uses `--memory`, defaulting
   to three quarters of physical memory, and chooses the engine up front
   from the taxon count.
-* **Threads.** Distance computation runs on all cores by default
-  (`--threads` limits it). Everything after that is single-threaded, as in
-  the original.
+* **Threads.** Distance computation and the rebuilds of the in-memory
+  engine run on all cores by default (`--threads` limits it). The join loop
+  is single-threaded, as in the original.
+* **Tie order and rebuild schedule.** By default the in-memory engine keeps
+  each cluster pair's entries in sorted runs rather than heaps and rebuilds
+  every quarter of the remaining taxa. Both change only which of two pairs
+  with exactly equal `Q` is joined first. `--reference_order` restores the
+  heaps and the paper's schedule and reproduces the Java output exactly.
 * **Output.** The distance matrix header is the taxon count alone (Java
   wrote a leading tab); the Newick string is followed by one newline (Java
   wrote two).

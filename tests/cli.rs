@@ -21,13 +21,27 @@ fn help_and_version() {
     assert!(out.contains(env!("CARGO_PKG_VERSION")));
 }
 
+/// In reference-order mode the in-memory engine reproduces the Java tool
+/// byte for byte.
 #[test]
-fn inmem_trees_match_java() {
+fn inmem_trees_match_java_in_reference_order() {
+    for f in FIXTURES {
+        let path = fixture(&format!("{}.fa", f));
+        let got = ninja_stdout(&["-q", "--reference_order", "--in", path.to_str().unwrap()]);
+        let want = read(&reference(&format!("{}.inmem.java.nwk", f)));
+        assert_same_newick(&got, &want);
+    }
+}
+
+/// The default engine may resolve exact ties differently, so it is held to
+/// the same splits and branch lengths rather than the same text.
+#[test]
+fn inmem_trees_match_java_by_default() {
     for f in FIXTURES {
         let path = fixture(&format!("{}.fa", f));
         let got = ninja_stdout(&["-q", "--in", path.to_str().unwrap()]);
         let want = read(&reference(&format!("{}.inmem.java.nwk", f)));
-        assert_same_newick(&got, &want);
+        assert_trees_close(&got, &want, 0.0, 0.0);
     }
 }
 
@@ -56,10 +70,24 @@ fn positional_input_and_output_file() {
     let dir = tempfile::tempdir().unwrap();
     let out = dir.path().join("tree.nwk");
     let path = fixture("PF08271_seed.fa");
-    let stdout = ninja_stdout(&["-q", path.to_str().unwrap(), "-o", out.to_str().unwrap()]);
+    let stdout =
+        ninja_stdout(&["-q", "--reference_order", path.to_str().unwrap(), "-o", out.to_str().unwrap()]);
     assert!(stdout.is_empty());
     let want = read(&reference("PF08271_seed.inmem.java.nwk"));
     assert_same_newick(&read(&out), &want);
+}
+
+/// Rebuild schedules only change which of two tied pairs is joined first;
+/// that can move a branch length by one unit in the last printed digit.
+#[test]
+fn rebuild_ratio_does_not_change_the_tree() {
+    let path = fixture("dna_700.fa");
+    let p = path.to_str().unwrap();
+    let base = ninja_stdout(&["-q", "--in", p]);
+    for r in ["0.1", "0.5", "0.9"] {
+        let got = ninja_stdout(&["-q", "-r", r, "--in", p]);
+        assert_trees_close(&got, &base, 0.0, 1.5e-5);
+    }
 }
 
 #[test]
@@ -78,7 +106,7 @@ fn reads_alignment_from_stdin() {
     let out = child.wait_with_output().unwrap();
     assert!(out.status.success(), "{}", String::from_utf8_lossy(&out.stderr));
     let want = read(&reference("PF08271_seed.inmem.java.nwk"));
-    assert_same_newick(&String::from_utf8(out.stdout).unwrap(), &want);
+    assert_trees_close(&String::from_utf8(out.stdout).unwrap(), &want, 0.0, 0.0);
 }
 
 #[test]
@@ -95,9 +123,11 @@ fn distance_matrices_match_java() {
 #[test]
 fn tree_from_phylip_matches_java() {
     let path = reference("PF08271_seed.java.phylip");
-    let got = ninja_stdout(&["-q", "--in_type", "d", "--in", path.to_str().unwrap()]);
+    let got = ninja_stdout(&["-q", "--reference_order", "--in_type", "d", "--in", path.to_str().unwrap()]);
     let want = read(&reference("PF08271_seed.fromphylip.java.nwk"));
     assert_same_newick(&got, &want);
+    let got = ninja_stdout(&["-q", "--in_type", "d", "--in", path.to_str().unwrap()]);
+    assert_trees_close(&got, &want, 0.0, 0.0);
 }
 
 /// Write the matrix, read it back, build with both engines, and compare to
@@ -109,7 +139,7 @@ fn phylip_round_trip_700() {
     let phylip = dir.path().join("d.phylip");
     let path = fixture("dna_700.fa");
     ninja_stdout(&["-q", "--out_type", "d", "--in", path.to_str().unwrap(), "-o", phylip.to_str().unwrap()]);
-    let got = ninja_stdout(&["-q", "--in_type", "d", "--in", phylip.to_str().unwrap()]);
+    let got = ninja_stdout(&["-q", "--reference_order", "--in_type", "d", "--in", phylip.to_str().unwrap()]);
     assert_same_newick(&got, &read(&reference("dna_700.fromphylip.java.nwk")));
     let got = ninja_stdout(&[
         "-q",

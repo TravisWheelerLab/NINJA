@@ -15,5 +15,8 @@ second reference.
   (`--out_type c`, `--cluster_cutoff`), Mothur's onegap distance
   (`--corr_type m`), and `--collapse_identical`, which is planned to
   become the default.
+* In-memory engine about twice as fast as a direct port: sorted runs
+  instead of heaps for rebuilt entries, parallel rebuilds, prefetching in
+  the update loop. `--reference_order` reproduces the Java tie order.
 * Library API alongside the `ninja` binary.
 * Integration tests against stored Java outputs; see `docs/testing.md`.

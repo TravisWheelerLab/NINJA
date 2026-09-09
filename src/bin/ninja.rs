@@ -80,8 +80,15 @@ struct Cli {
     clust_size: usize,
 
     /// Fraction of remaining taxa joined between rebuilds (see the paper).
-    #[arg(short = 'r', long = "rebuild_step_ratio", default_value_t = 0.5)]
-    rebuild_step_ratio: f32,
+    /// Default: 0.25 for the in-memory engine, 0.5 with --reference_order
+    /// and for the external-memory engine.
+    #[arg(short = 'r', long = "rebuild_step_ratio", value_name = "RATIO")]
+    rebuild_step_ratio: Option<f32>,
+
+    /// Resolve exact ties between distances as the Java implementation did
+    /// (slower; for comparison against its output).
+    #[arg(long = "reference_order")]
+    reference_order: bool,
 
     /// Verbosity 0-3.
     #[arg(short = 'v', long = "verbose", default_value_t = 1)]
@@ -153,6 +160,7 @@ fn main() -> ExitCode {
             cluster_count: cli.clust_size,
             rebuild_step_ratio: cli.rebuild_step_ratio,
             verbose,
+            reference_order: cli.reference_order,
             ..NjParams::default()
         },
         threads: cli.threads,

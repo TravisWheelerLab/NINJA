@@ -16,9 +16,11 @@
 //!   rebuilt after a fixed fraction of the remaining taxa have been joined.
 //!
 //! The in-memory engine ([`inmem`]) keeps the distance matrix as fixed-point
-//! integers; the external-memory engine ([`extmem`]) stores the matrix as
-//! columns of floats, most of them on disk, and replaces each in-memory heap
-//! with a disk-backed one.
+//! integers and, since it consumes each cluster pair's entries in distance
+//! order with lazy deletion, keeps the bulk inserted at a rebuild as a
+//! sorted run rather than a heap. The external-memory engine ([`extmem`])
+//! stores the matrix as columns of floats, most of them on disk, and
+//! replaces each in-memory heap with a disk-backed one.
 
 pub mod extmem;
 pub mod inmem;
@@ -67,8 +69,10 @@ pub struct NjParams {
     /// Number of row-sum clusters (heaps are kept per cluster pair).
     pub cluster_count: usize,
     /// Fraction of the remaining taxa to join before rebuilding clusters and
-    /// heaps. Ignored when `rebuild_steps` is set.
-    pub rebuild_step_ratio: f32,
+    /// heaps. Ignored when `rebuild_steps` is set. `None` selects 0.5, the
+    /// reference value, in reference-order mode and 0.25 otherwise, where
+    /// a rebuild is cheap enough that the smaller heaps pay for it.
+    pub rebuild_step_ratio: Option<f32>,
     /// Fixed number of joins between rebuilds, if given.
     pub rebuild_steps: Option<usize>,
     /// When true, the rebuild interval is based on the original taxon count
@@ -78,28 +82,41 @@ pub struct NjParams {
     pub candidate_iters: usize,
     /// Verbosity: 0 silent, 1 progress, 2 statistics, 3 per-join trace.
     pub verbose: u8,
+    /// Resolve ties between equal distances exactly as the original Java
+    /// implementation did, at some cost in speed (in-memory engine only).
+    pub reference_order: bool,
 }
 
 impl Default for NjParams {
     fn default() -> Self {
         NjParams {
             cluster_count: 30,
-            rebuild_step_ratio: 0.5,
+            rebuild_step_ratio: None,
             rebuild_steps: None,
             rebuild_steps_constant: false,
             candidate_iters: 50,
             verbose: 1,
+            reference_order: false,
         }
     }
 }
 
 impl NjParams {
+    /// The rebuild ratio in effect.
+    pub fn effective_rebuild_ratio(&self) -> f32 {
+        match self.rebuild_step_ratio {
+            Some(r) => r,
+            None if self.reference_order => 0.5,
+            None => 0.25,
+        }
+    }
+
     /// Initial number of joins before the first rebuild: the configured
     /// ratio of `k`, or `k` itself (never rebuild) when that is under 500.
     pub(crate) fn initial_rebuild_steps(&self, k: usize) -> usize {
         let steps = match self.rebuild_steps {
             Some(s) => s,
-            None => (k as f32 * self.rebuild_step_ratio) as usize,
+            None => (k as f32 * self.effective_rebuild_ratio()) as usize,
         };
         if steps < 500 {
             k
@@ -115,9 +132,9 @@ impl NjParams {
         } else if let Some(s) = self.rebuild_steps {
             s
         } else if self.rebuild_steps_constant {
-            (k as f32 * self.rebuild_step_ratio) as usize
+            (k as f32 * self.effective_rebuild_ratio()) as usize
         } else {
-            (new_k as f32 * self.rebuild_step_ratio) as usize
+            (new_k as f32 * self.effective_rebuild_ratio()) as usize
         }
     }
 }

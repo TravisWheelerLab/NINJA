@@ -78,20 +78,22 @@ point it at a local disk.
 ### Performance
 
 Simulated alignments of 300 columns on a 192-core machine. Wall time and
-peak memory; Java ran with an 8 GB heap (16 GB for 20,000 taxa). Where the Java tool
-was run, its tree was identical to ninja's.
+peak memory; Java ran with an 8 GB heap (16 GB for 20,000 taxa). Every
+tree below has the same splits and branch lengths as the Java tool's;
+with `--reference_order` (31.7 s for 20,000 taxa) the Newick text is
+identical too.
 
 | Taxa | ninja, in-memory, all cores | ninja, in-memory, one core | ninja, external-memory, 50 MB budget | Java NINJA 1.2.2 |
 |---:|---:|---:|---:|---:|
-| 6,000 DNA | 3.1 s, 0.5 GB | 4.4 s | 7.4 s, 0.14 GB | 75 s |
-| 6,000 protein | 3.1 s, 0.5 GB | 8.4 s | | 19 s, 2.4 GB |
-| 20,000 DNA | 37 s, 5.3 GB | 47 s | 114 s, 1.7 GB | 680 s, 15 GB |
-| 50,000 DNA | 256 s, 34 GB | 329 s | | |
+| 6,000 DNA | 1.4 s, 0.25 GB | 3.6 s | 7.4 s, 0.14 GB | 75 s |
+| 6,000 protein | 1.3 s, 0.22 GB | 7.6 s | | 19 s, 2.4 GB |
+| 20,000 DNA | 14.6 s, 4.1 GB | 40 s | 114 s, 1.7 GB | 680 s, 15 GB |
+| 50,000 DNA | 92 s, 26 GB | | | |
 
-Distance computation is the parallel part; the neighbor-joining search is
-sequential and dominates for large inputs. The in-memory engine's memory
-is mostly heap entries, one per pair, created at each rebuild; the
-external-memory engine trades that for disk.
+Distance computation and rebuilds are the parallel parts; the join loop
+is sequential and dominates for large inputs. Memory in the in-memory
+engine is mostly the queue entries, one per pair; the external-memory
+engine trades that for disk.
 
 ## Library
 

@@ -59,7 +59,14 @@ pub fn build(
     if params.cluster_count == 0 {
         return Err(Error::options("cluster count must be at least 1"));
     }
-    let mut b = Builder::new(names, m, params, tmp_dir, memory_bytes)?;
+    // The disk-backed heaps keep the reference rebuild schedule unless a
+    // ratio was given explicitly.
+    let params = if params.rebuild_step_ratio.is_none() && !params.reference_order {
+        NjParams { reference_order: true, ..params.clone() }
+    } else {
+        params.clone()
+    };
+    let mut b = Builder::new(names, m, &params, tmp_dir, memory_bytes)?;
     b.run()?;
     Ok((b.tree, b.stats))
 }

@@ -66,7 +66,27 @@ rounded to a multiple of 100 so that a matrix computed from an alignment and
 one read back from the six-decimal Phylip output are identical. Row sums and
 `Q` values are 64-bit integers, so the search involves no floating point at
 all and its result is bit-for-bit reproducible. Memory is `2n^2` bytes for
-the matrix plus heap entries.
+the matrix plus queue entries.
+
+Each cluster pair's entries are consumed in increasing distance order, and
+an entry whose node has been joined is discarded when it reaches the front.
+Most entries never move after a rebuild, so a rebuild stores them as a
+sorted run read through a cursor (`heap::PairQueue`), and only entries
+added since go into a binary heap; discarding a stale entry from the run
+costs a cursor increment rather than a sift-down. The rebuild itself
+counts entries per cluster pair in parallel, allocates each run exactly,
+writes entries into disjoint slices in parallel, and sorts the runs in
+parallel. That makes a rebuild cheap enough that rebuilding every quarter
+of the remaining taxa, rather than every half as in the paper, is faster
+overall on the inputs measured. The update loop after a join prefetches
+the matrix cells a few rows ahead, since its accesses to the triangular
+matrix are strided.
+
+`--reference_order` disables the sorted runs and uses the paper's rebuild
+schedule, so that every tie between equal distances is resolved exactly as
+the Java implementation resolved it. The two modes give the same splits
+and branch lengths; they can differ in which of two identical joins comes
+first, which shows up as a different rotation in the Newick text.
 
 ## The external-memory engine (`nj::extmem`)
 

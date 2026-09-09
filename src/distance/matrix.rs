@@ -96,6 +96,25 @@ impl DistanceMatrix {
         i * (2 * k - i - 1) / 2 + (j - i - 1)
     }
 
+    /// Hint the cache that `(i, j)` will be read soon.
+    #[inline]
+    #[allow(unsafe_code)]
+    pub fn prefetch(&self, i: usize, j: usize) {
+        let (a, b) = if i < j { (i, j) } else { (j, i) };
+        let idx = Self::index(self.k, a, b);
+        #[cfg(target_arch = "x86_64")]
+        {
+            let p = self.data.as_ptr().wrapping_add(idx) as *const i8;
+            // SAFETY: prefetch has no architectural effect and takes any
+            // address; the pointer is derived from a live slice.
+            unsafe { std::arch::x86_64::_mm_prefetch(p, std::arch::x86_64::_MM_HINT_T0) };
+        }
+        #[cfg(not(target_arch = "x86_64"))]
+        {
+            let _ = idx;
+        }
+    }
+
     /// Distance between `i` and `j` (`i != j`), in fixed-point units.
     #[inline]
     pub fn get(&self, i: usize, j: usize) -> i32 {

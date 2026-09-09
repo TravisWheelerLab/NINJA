@@ -42,7 +42,8 @@
 //! eprintln!("{} candidates examined", stats.candidates_added);
 //! ```
 
-#![forbid(unsafe_code)]
+// The one `unsafe` block is a cache prefetch hint in `distance::matrix`.
+#![deny(unsafe_code)]
 #![warn(missing_docs)]
 // Index-parallel loops over several arrays are the natural shape of this
 // algorithm; iterator rewrites would obscure the correspondence with the paper.

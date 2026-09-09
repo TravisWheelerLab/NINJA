@@ -2,7 +2,9 @@
 
 use crate::distance::DistanceMatrix;
 use crate::error::{Error, Result};
-use crate::heap::MinHeap;
+use rayon::prelude::*;
+
+use crate::heap::{Entry, MinHeap, PairQueue};
 use crate::tree::Tree;
 
 use super::{ActiveList, NjParams, NjStats};
@@ -10,9 +12,6 @@ use super::{ActiveList, NjParams, NjStats};
 /// Branch lengths are fixed-point distances divided by this: the `1e8`
 /// scale times two, since each of the two branches gets half the distance.
 const LENGTH_SCALE: f32 = 200_000_000.0;
-
-/// Heap key: fixed-point distance; payload: node indices `(i, j)`, `i < j`.
-type PairHeap = MinHeap<i32, (i32, i32)>;
 
 /// Build a tree from a distance matrix with the in-memory engine.
 ///
@@ -53,9 +52,14 @@ struct Builder<'a> {
     clust_percentiles: Vec<i64>,
     /// Cluster ids ordered by ascending size at the last rebuild.
     clusters_by_size: Vec<u32>,
-    /// One heap per unordered cluster pair `(a, b)` with `a <= b`, at
+    /// One queue per unordered cluster pair `(a, b)` with `a <= b`, at
     /// `a * clust_cnt + b`.
-    heaps: Vec<PairHeap>,
+    heaps: Vec<PairQueue>,
+    /// Scratch: active node indices for the update loop.
+    rows: Vec<u32>,
+    /// Scratch: `(node, row, new distance)` for every active node, filled
+    /// by the update loop and consumed by the insert loop.
+    fresh: Vec<(i32, u32, i32)>,
 
     cand_d: Vec<i32>,
     cand_i: Vec<i32>,
@@ -96,7 +100,9 @@ impl<'a> Builder<'a> {
             clust_assign: vec![0; k],
             clust_percentiles: vec![0; cc],
             clusters_by_size: vec![0; cc],
-            heaps: (0..cc * cc).map(|_| PairHeap::new()).collect(),
+            heaps: (0..cc * cc).map(|_| PairQueue::new(params.reference_order)).collect(),
+            fresh: Vec::with_capacity(k),
+            rows: Vec::with_capacity(k),
             cand_d: Vec::with_capacity(10_000),
             cand_i: Vec::with_capacity(10_000),
             cand_j: Vec::with_capacity(10_000),
@@ -168,19 +174,94 @@ impl<'a> Builder<'a> {
         for h in self.heaps.iter_mut() {
             h.clear();
         }
+        let mut active: Vec<i32> = Vec::new();
         let mut i = self.active.first;
         while i < max_index {
-            let ri = self.redirect[i as usize] as usize;
-            let mut j = self.active.next[i as usize];
-            while j < max_index {
-                let rj = self.redirect[j as usize] as usize;
-                let (ra, rb) = if ri < rj { (ri, rj) } else { (rj, ri) };
-                let h = self.heap_index(self.clust_assign[ra], self.clust_assign[rb]);
-                let dist = self.d.get(ra, rb);
-                self.heaps[h].push(dist, (i, j));
-                j = self.active.next[j as usize];
-            }
+            active.push(i);
             i = self.active.next[i as usize];
+        }
+        if self.params.reference_order {
+            // Serial pushes, so each queue receives its pairs in the
+            // reference order.
+            for (p, &i) in active.iter().enumerate() {
+                let ri = self.redirect[i as usize] as usize;
+                for &j in &active[p + 1..] {
+                    let rj = self.redirect[j as usize] as usize;
+                    let (ra, rb) = if ri < rj { (ri, rj) } else { (rj, ri) };
+                    let h = self.heap_index(self.clust_assign[ra], self.clust_assign[rb]);
+                    self.heaps[h].push(self.d.get(ra, rb), (i, j));
+                }
+            }
+        } else {
+            // Two passes over the pairs, rows in parallel: count the
+            // entries each chunk of rows contributes to each queue, size
+            // every queue's run exactly, then write entries straight into
+            // disjoint slices of the runs. Order within a queue does not
+            // matter since each run is sorted afterwards.
+            let n = active.len();
+            let chunk = (n / (rayon::current_num_threads() * 4)).clamp(16, n.max(16));
+            let d = &self.d;
+            let redirect = &self.redirect;
+            let assign = &self.clust_assign;
+            let nq = cc * cc;
+            let counts: Vec<Vec<usize>> = active
+                .par_chunks(chunk)
+                .enumerate()
+                .map(|(c, rows)| {
+                    let mut cnt = vec![0usize; nq];
+                    let start = c * chunk;
+                    for (off, &i) in rows.iter().enumerate() {
+                        let ri = redirect[i as usize] as usize;
+                        let ci = assign[ri];
+                        for &j in &active[start + off + 1..] {
+                            let cj = assign[redirect[j as usize] as usize];
+                            let (ca, cb) = if ci <= cj { (ci, cj) } else { (cj, ci) };
+                            cnt[ca as usize * cc + cb as usize] += 1;
+                        }
+                    }
+                    cnt
+                })
+                .collect();
+            let mut totals = vec![0usize; nq];
+            for cnt in &counts {
+                for (h, &c) in cnt.iter().enumerate() {
+                    totals[h] += c;
+                }
+            }
+            let mut runs: Vec<Vec<Entry>> = totals.iter().map(|&t| vec![(0, (0, 0)); t]).collect();
+            // Hand each chunk its slice of every run.
+            let mut slices: Vec<Vec<&mut [Entry]>> =
+                (0..counts.len()).map(|_| Vec::with_capacity(nq)).collect();
+            for (h, run) in runs.iter_mut().enumerate() {
+                let mut rest: &mut [Entry] = run.as_mut_slice();
+                for (c, cnt) in counts.iter().enumerate() {
+                    let (head, tail) = rest.split_at_mut(cnt[h]);
+                    slices[c].push(head);
+                    rest = tail;
+                }
+            }
+            active.par_chunks(chunk).zip(slices.par_iter_mut()).enumerate().for_each(|(c, (rows, out))| {
+                let mut pos = vec![0usize; nq];
+                let start = c * chunk;
+                for (off, &i) in rows.iter().enumerate() {
+                    let ri = redirect[i as usize] as usize;
+                    let ci = assign[ri];
+                    for &j in &active[start + off + 1..] {
+                        let rj = redirect[j as usize] as usize;
+                        let cj = assign[rj];
+                        let (ca, cb) = if ci <= cj { (ci, cj) } else { (cj, ci) };
+                        let h = ca as usize * cc + cb as usize;
+                        let (ra, rb) = if ri < rj { (ri, rj) } else { (rj, ri) };
+                        out[h][pos[h]] = (d.get(ra, rb), (i, j));
+                        pos[h] += 1;
+                    }
+                }
+            });
+            self.heaps.par_iter_mut().zip(runs.into_par_iter()).for_each(|(q, run)| {
+                if !run.is_empty() {
+                    q.fill(run);
+                }
+            });
         }
         self.stats.rebuilds += 1;
     }
@@ -368,7 +449,7 @@ impl<'a> Builder<'a> {
                         max_t1val[cl_b_u]
                     });
                     let h = self.heap_index(cl_a, cl_b);
-                    while let Some(&(h_d, (h_i, h_j))) = self.heaps[h].peek() {
+                    while let Some((h_d, (h_i, h_j))) = self.heaps[h].peek() {
                         let ri = self.redirect[h_i as usize];
                         let rj = self.redirect[h_j as usize];
                         if ri == -1 || rj == -1 {
@@ -441,9 +522,26 @@ impl<'a> Builder<'a> {
             self.active.remove(best_j as usize);
 
             // New distances and row sums. The new node takes over row `ri`.
+            // The new distances are also kept in `fresh` so that the heap
+            // inserts below need not re-read the matrix.
             let d_ij = self.d.get(ri, rj);
+            self.fresh.clear();
+            // Collect the active rows first so that rows a few steps ahead
+            // can be prefetched.
+            self.rows.clear();
             let mut x = self.active.first;
             while x < next_i32 {
+                self.rows.push(x as u32);
+                x = self.active.next[x as usize];
+            }
+            const AHEAD: usize = 12;
+            for idx in 0..self.rows.len() {
+                if idx + AHEAD < self.rows.len() {
+                    let ra = self.redirect[self.rows[idx + AHEAD] as usize] as usize;
+                    self.d.prefetch(ra, ri);
+                    self.d.prefetch(ra, rj);
+                }
+                let x = self.rows[idx] as i32;
                 let rx = self.redirect[x as usize] as usize;
                 let d_xi = self.d.get(rx, ri);
                 let d_xj = self.d.get(rx, rj);
@@ -451,7 +549,7 @@ impl<'a> Builder<'a> {
                 self.r[ri] += tmp as i64;
                 self.r[rx] += tmp as i64 - (d_xi as i64 + d_xj as i64);
                 self.d.set(rx, ri, tmp);
-                x = self.active.next[x as usize];
+                self.fresh.push((x, rx as u32, tmp));
             }
 
             new_k -= 1;
@@ -476,14 +574,12 @@ impl<'a> Builder<'a> {
                     }
                 }
                 let cl_new = self.clust_assign[ri];
-                let mut x = self.active.first;
-                while x < next_i32 {
-                    let rx = self.redirect[x as usize] as usize;
+                for idx in 0..self.fresh.len() {
+                    let (x, rx, dist) = self.fresh[idx];
+                    let rx = rx as usize;
                     let (a, b) = if rx < ri { (x, next_i32) } else { (next_i32, x) };
                     let h = self.heap_index(self.clust_assign[rx], cl_new);
-                    let dist = self.d.get(rx, ri);
                     self.heaps[h].push(dist, (a, b));
-                    x = self.active.next[x as usize];
                 }
                 self.redirect[next_internal] = ri as i32;
                 next_internal += 1;
