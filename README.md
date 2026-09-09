@@ -1,21 +1,18 @@
 # NINJA (Rust)
 
-Large-scale neighbor-joining phylogeny inference. NINJA computes the exact
-neighbor-joining tree for an alignment or a distance matrix while examining
+A Numerically Impressive Neighbor-Joining Algorithm, NINJA computes an exact
+neighbor-joining tree given an alignment or a distance matrix while examining
 only a small fraction of the taxon pairs at each step, so that inputs of
-hundreds of thousands of sequences are feasible. The method is described in
+hundreds of thousands of sequences are feasible. The core method is 
+described in
 
 > Wheeler, T.J. 2009. Large-scale neighbor-joining with NINJA. In S.L.
 > Salzberg and T. Warnow (Eds.), *Proceedings of the 9th Workshop on
 > Algorithms in Bioinformatics*, WABI 2009, pp. 375-389. Springer, Berlin.
 
-This is a port of the original Java implementation
-(<https://wheelerlab.org/software/ninja/>) to Rust, meant to replace both it
-and the earlier C++ port (<https://github.com/TravisWheelerLab/NINJA>). On
-all test inputs, up to 6,000 taxa, it produces the same trees as the Java
-tool. It computes distances on all cores and builds to a single binary with
-no runtime dependencies. `docs/reference-differences.md` lists what differs
-from the Java tool and what was wrong in the C++ port.
+This code base is a port of the original Java implementation
+(<https://wheelerlab.org/software/ninja/>) to Rust, with additional 
+improvements to sequence distance computation. 
 
 ## Install
 
@@ -94,8 +91,7 @@ was run, its tree was identical to ninja's.
 Distance computation is the parallel part; the neighbor-joining search is
 sequential and dominates for large inputs. The in-memory engine's memory
 is mostly heap entries, one per pair, created at each rebuild; the
-external-memory engine trades that for disk. On the 20,000-taxon input the
-C++ port took 38 s and 6.7 GB but produced a different tree from Java's.
+external-memory engine trades that for disk.
 
 ## Library
 
@@ -130,4 +126,4 @@ has the details.
 
 ## License
 
-MIT; see `LICENSE`.
+BSD 3-clause; see `LICENSE`.
