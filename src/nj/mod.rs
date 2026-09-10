@@ -33,7 +33,7 @@ use std::str::FromStr;
 pub enum Method {
     /// Use the in-memory engine when the matrix fits the memory budget,
     /// otherwise the external-memory engine.
-    Default,
+    Auto,
     /// Force the in-memory engine.
     InMem,
     /// Force the external-memory engine.
@@ -44,10 +44,11 @@ impl FromStr for Method {
     type Err = String;
     fn from_str(s: &str) -> Result<Self, String> {
         match s {
-            "default" => Ok(Method::Default),
+            // "default" is what the Java and C++ tools called this.
+            "auto" | "default" => Ok(Method::Auto),
             "inmem" => Ok(Method::InMem),
             "extmem" => Ok(Method::ExtMem),
-            _ => Err(format!("unknown method '{}' (expected 'default', 'inmem', or 'extmem')", s)),
+            _ => Err(format!("unknown method '{}' (expected 'auto', 'inmem', or 'extmem')", s)),
         }
     }
 }
@@ -55,7 +56,7 @@ impl FromStr for Method {
 impl fmt::Display for Method {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(match self {
-            Method::Default => "default",
+            Method::Auto => "auto",
             Method::InMem => "inmem",
             Method::ExtMem => "extmem",
         })

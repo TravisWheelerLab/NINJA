@@ -29,9 +29,10 @@ struct Cli {
     #[arg(short = 'o', long = "out", value_name = "FILE")]
     output: Option<PathBuf>,
 
-    /// Engine: 'default' picks in-memory when it fits the memory budget,
-    /// 'inmem' or 'extmem' force one.
-    #[arg(short = 'm', long = "method", default_value = "default", value_parser = parse_method)]
+    /// Engine: 'auto' uses the in-memory engine when the matrix fits the
+    /// memory budget and the external-memory engine otherwise; 'inmem' or
+    /// 'extmem' force one.
+    #[arg(short = 'm', long = "method", default_value = "auto", value_parser = parse_method, value_name = "auto|inmem|extmem")]
     method: Method,
 
     /// Input type: 'a' alignment (FASTA) or 'd' distance matrix (Phylip).

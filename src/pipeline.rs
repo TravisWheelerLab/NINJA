@@ -57,7 +57,7 @@ pub struct Options {
     /// Directory for the external-memory engine's scratch files.
     pub tmp_dir: Option<PathBuf>,
     /// Memory budget in bytes, used to choose an engine under
-    /// [`Method::Default`] and to size external-memory buffers.
+    /// [`Method::Auto`] and to size external-memory buffers.
     pub memory_bytes: u64,
     /// Largest distance joining two sequences into one cluster, for
     /// [`OutputKind::Clusters`].
@@ -75,7 +75,7 @@ impl Default for Options {
             output_kind: OutputKind::Tree,
             alphabet: None,
             correction: None,
-            method: Method::Default,
+            method: Method::Auto,
             nj: NjParams::default(),
             threads: 0,
             tmp_dir: None,
@@ -356,7 +356,7 @@ pub fn inmem_bytes(k: usize) -> u64 {
 
 fn choose_method(opts: &Options, k: usize) -> Method {
     match opts.method {
-        Method::Default => {
+        Method::Auto => {
             if inmem_bytes(k) <= opts.memory_bytes {
                 Method::InMem
             } else {

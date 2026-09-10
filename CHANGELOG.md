@@ -24,5 +24,7 @@ second reference.
   and 1.7 GB before, 68 s and 0.3 GB after. Row sums and the criterion are
   double precision, which brings this engine's trees into agreement with
   the exact in-memory engine on every split at 20,000 taxa.
+* `--method auto` names the engine choice that the Java and C++ tools
+  called `default`; `default` is still accepted.
 * Library API alongside the `ninja` binary.
 * Integration tests against stored Java outputs; see `docs/testing.md`.
