@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+* The Phylip writer formats rows in parallel and no longer caches the whole
+  matrix first (31 s and 2.3 GB down to 4 s and 0.8 GB at 20,000 taxa).
+  Rows no longer end with a space, which fastphylo's reader rejected.
+* `--method auto` estimates the in-memory engine's size at 22 bytes per
+  pair instead of 7, so a 2 GB budget now selects the external engine at
+  20,000 taxa.
+
 ## 0.1.0 (2026-09-09)
 
 First Rust release, ported from NINJA 1.2.2 (Java) with the C++ port as a

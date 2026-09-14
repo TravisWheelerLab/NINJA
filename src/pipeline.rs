@@ -347,11 +347,13 @@ fn write_distances(out: &mut dyn Write, names: &[String], calc: &DistanceCalcula
     Ok(())
 }
 
-/// Bytes the in-memory engine needs for `k` taxa: the packed triangle plus
-/// per-node arrays and heap entries (about 12 bytes per pair worst case).
+/// Bytes the in-memory engine needs for `k` taxa: 4 per pair for the
+/// packed triangle, 12 per pair for the queue entries of a rebuild, and
+/// room for the entries added between rebuilds; about 20 bytes per pair
+/// measured at 20,000 and 50,000 taxa, rounded up.
 pub fn inmem_bytes(k: usize) -> u64 {
     let pairs = (k as u64) * (k as u64).saturating_sub(1) / 2;
-    pairs * 4 + pairs * 12 / 4 + (k as u64) * 64
+    pairs * 22 + (k as u64) * 128
 }
 
 fn choose_method(opts: &Options, k: usize) -> Method {

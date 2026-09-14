@@ -176,37 +176,43 @@ fn parse_scaled(tok: &str) -> Option<i64> {
 /// Write a square Phylip distance matrix.
 ///
 /// `dist(i, j)` must return the distance between taxa `i` and `j` for
-/// `i != j`; it is called once per unordered pair. Values are printed with
-/// six decimals, formatted exactly as the reference implementation did.
+/// `i != j`; it is called for every ordered pair, from several threads, so
+/// it should be a cheap lookup. Rows are formatted in parallel, a block at a
+/// time, and written in order. Values are printed with six decimals,
+/// formatted exactly as the reference implementation did.
 pub fn write_phylip<W: Write>(
     mut w: W,
     names: &[String],
-    mut dist: impl FnMut(usize, usize) -> f64,
+    dist: impl Fn(usize, usize) -> f64 + Sync,
 ) -> std::io::Result<()> {
+    use rayon::prelude::*;
     let k = names.len();
     writeln!(w, "{}", k)?;
-    // Full square output needs each distance twice; cache the upper triangle
-    // so the (possibly expensive) callback runs once per pair.
-    let mut upper: Vec<Vec<f64>> = Vec::with_capacity(k);
-    for i in 0..k {
-        upper.push((i + 1..k).map(|j| dist(i, j)).collect());
-    }
-    let mut buf = String::with_capacity(k * 10 + 64);
-    for i in 0..k {
-        buf.clear();
-        buf.push_str(&names[i]);
-        buf.push(' ');
-        for j in 0..k {
-            if i == j {
-                buf.push_str("0.000000");
-            } else {
-                let v = if i < j { upper[i][j - i - 1] } else { upper[j][i - j - 1] };
-                push_fixed6(&mut buf, v);
-            }
-            buf.push(' ');
+    const ROWS_PER_BLOCK: usize = 256;
+    let mut start = 0;
+    while start < k {
+        let end = (start + ROWS_PER_BLOCK).min(k);
+        let rows: Vec<String> = (start..end)
+            .into_par_iter()
+            .map(|i| {
+                let mut buf = String::with_capacity(k * 9 + names[i].len() + 2);
+                buf.push_str(&names[i]);
+                for j in 0..k {
+                    buf.push(' ');
+                    if i == j {
+                        buf.push_str("0.000000");
+                    } else {
+                        push_fixed6(&mut buf, dist(i, j));
+                    }
+                }
+                buf.push('\n');
+                buf
+            })
+            .collect();
+        for row in &rows {
+            w.write_all(row.as_bytes())?;
         }
-        buf.push('\n');
-        w.write_all(buf.as_bytes())?;
+        start = end;
     }
     w.flush()
 }
