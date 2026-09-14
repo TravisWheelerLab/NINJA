@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased
+## 2.0.0-rc.1 (2026-09-14)
+
+NINJA's earlier releases were the 1.x line; the Rust tool starts the 2.x
+line, and this is the first candidate for 2.0.0. The command line and the
+library API may still change before the final release. Version 0.1.0 was
+the first upload of this code to crates.io and is yanked.
 
 * Records that share a name no longer produce a Newick file with repeated
   labels: ninja renames later occurrences `name_2`, `name_3`, ... and lists
