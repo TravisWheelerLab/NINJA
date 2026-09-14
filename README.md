@@ -30,6 +30,11 @@ Build a tree from a FASTA alignment:
     ninja alignment.fa > tree.nwk
     ninja --in alignment.fa --out tree.nwk
 
+A record's name is its header up to the first space or tab. If two records
+share a name, ninja renames the later ones `name_2`, `name_3`, ... and lists
+the changes on standard error, so no tree carries the same label twice.
+With `--duplicate_names error`, ninja refuses such input instead.
+
 Write a distance matrix instead, or start from one:
 
     ninja --out_type d alignment.fa > distances.phylip

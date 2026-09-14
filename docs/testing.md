@@ -31,6 +31,7 @@ in `tests/reference`:
 | `dna_200.fa` | 200 simulated DNA sequences, 600 columns | DNA path |
 | `dna_700.fa` | 700 simulated DNA sequences, 200 columns | large enough to page the external-memory matrix to disk |
 | `dna_200_dups.fa` | `dna_200.fa` plus seven exact copies of four of its sequences | identical-sequence collapse |
+| `dna_dup_names.fa` | eight sequences from `dna_200.fa`; two names repeat and one header carries a description | duplicate-name renaming |
 
 For each fixture the tests require the tree from the in-memory engine in
 `--reference_order` mode and the written distance matrix to be identical

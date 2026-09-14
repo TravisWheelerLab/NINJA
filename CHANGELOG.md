@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+* Records that share a name no longer produce a Newick file with repeated
+  labels: ninja renames later occurrences `name_2`, `name_3`, ... and lists
+  them on standard error. `--duplicate_names error` refuses the input instead.
 * The Phylip writer formats rows in parallel and no longer caches the whole
   matrix first (31 s and 2.3 GB down to 4 s and 0.8 GB at 20,000 taxa).
   Rows no longer end with a space, which fastphylo's reader rejected.

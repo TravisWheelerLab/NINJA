@@ -7,6 +7,7 @@ use std::process::ExitCode;
 
 use clap::Parser;
 
+use ninja::DuplicateNames;
 use ninja::{Alphabet, Correction, InputKind, Method, NjParams, Options, OutputKind};
 
 /// NINJA: large-scale neighbor-joining phylogeny inference.
@@ -48,6 +49,11 @@ struct Cli {
     /// sequences, then attach the rest as zero-length branches.
     #[arg(long = "collapse_identical")]
     collapse_identical: bool,
+
+    /// When two records share a name: 'rename' appends _2, _3, ... to the
+    /// later ones and lists them on standard error; 'error' refuses the input.
+    #[arg(long = "duplicate_names", default_value = "rename", value_parser = parse_duplicate_names, value_name = "rename|error")]
+    duplicate_names: DuplicateNames,
 
     /// Largest distance joining two sequences into one cluster (--out_type c).
     #[arg(long = "cluster_cutoff", default_value_t = 0.03, value_name = "DIST")]
@@ -129,6 +135,14 @@ fn parse_out_type(s: &str) -> Result<OutputKind, String> {
     }
 }
 
+fn parse_duplicate_names(s: &str) -> Result<DuplicateNames, String> {
+    match s {
+        "rename" => Ok(DuplicateNames::Rename),
+        "error" => Ok(DuplicateNames::Error),
+        _ => Err(format!("unknown duplicate_names '{}' (expected 'rename' or 'error')", s)),
+    }
+}
+
 /// Physical memory in bytes, from /proc/meminfo on Linux.
 fn physical_memory() -> Option<u64> {
     let text = std::fs::read_to_string("/proc/meminfo").ok()?;
@@ -169,6 +183,7 @@ fn main() -> ExitCode {
         memory_bytes,
         cluster_cutoff: cli.cluster_cutoff,
         collapse_identical: cli.collapse_identical,
+        duplicate_names: cli.duplicate_names,
     };
 
     let result = match &cli.output {

@@ -8,7 +8,7 @@ use crate::alphabet::{Alphabet, Correction};
 use crate::cluster;
 use crate::distance::{DistanceCalculator, DistanceMatrix};
 use crate::error::{Error, Result};
-use crate::io::{fasta, phylip};
+use crate::io::{fasta, phylip, resolve_duplicates, DuplicateNames, Renamed};
 use crate::nj::extmem::DiskMatrix;
 use crate::nj::{self, Method, NjParams, NjStats};
 use crate::tree::Tree;
@@ -65,6 +65,8 @@ pub struct Options {
     /// Build the tree over one representative of each set of identical
     /// sequences, then re-attach the others as zero-length chains.
     pub collapse_identical: bool,
+    /// What to do when two input records share a name.
+    pub duplicate_names: DuplicateNames,
 }
 
 impl Default for Options {
@@ -82,6 +84,7 @@ impl Default for Options {
             memory_bytes: 2 << 30,
             cluster_cutoff: 0.03,
             collapse_identical: false,
+            duplicate_names: DuplicateNames::Rename,
         }
     }
 }
@@ -115,10 +118,11 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
     let t0 = Instant::now();
     match opts.input_kind {
         InputKind::Alignment => {
-            let aln = match &opts.input {
+            let mut aln = match &opts.input {
                 Some(p) => fasta::read_fasta(p, opts.alphabet)?,
                 None => fasta::read_fasta_from(std::io::stdin().lock(), opts.alphabet)?,
             };
+            warn_renamed(&resolve_duplicates(&mut aln.names, opts.duplicate_names)?);
             if verbose >= 1 {
                 eprintln!(
                     "Read {} sequences of {} columns ({} alphabet)",
@@ -198,7 +202,8 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
                 .input
                 .as_ref()
                 .ok_or_else(|| Error::options("a distance matrix must be read from a file"))?;
-            let p = phylip::read_phylip(path)?;
+            let mut p = phylip::read_phylip(path)?;
+            warn_renamed(&resolve_duplicates(&mut p.names, opts.duplicate_names)?);
             let k = p.len();
             if verbose >= 1 {
                 eprintln!("Distance file read: {} taxa", k);
@@ -373,5 +378,28 @@ fn choose_method(opts: &Options, k: usize) -> Method {
             }
         }
         m => m,
+    }
+}
+
+/// Report renamed records on standard error at every verbosity, since the
+/// output no longer carries the names as read.
+fn warn_renamed(renamed: &[Renamed]) {
+    if renamed.is_empty() {
+        return;
+    }
+    const SHOWN: usize = 20;
+    let (noun, verb) = if renamed.len() == 1 { ("record", "was") } else { ("records", "were") };
+    eprintln!(
+        "warning: {} {} shared a name with an earlier record and {} renamed \
+         (--duplicate_names error refuses such input):",
+        renamed.len(),
+        noun,
+        verb
+    );
+    for r in renamed.iter().take(SHOWN) {
+        eprintln!("  record {}: {} -> {}", r.index + 1, r.from, r.to);
+    }
+    if renamed.len() > SHOWN {
+        eprintln!("  ... and {} more", renamed.len() - SHOWN);
     }
 }

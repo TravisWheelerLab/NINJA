@@ -63,6 +63,7 @@ mod pipeline;
 pub use alphabet::{Alphabet, Correction};
 pub use distance::DistanceMatrix;
 pub use error::{Error, Result};
+pub use io::DuplicateNames;
 pub use nj::{Method, NjParams};
 pub use pipeline::{run, InputKind, Options, OutputKind, RunOutput};
 pub use tree::Tree;

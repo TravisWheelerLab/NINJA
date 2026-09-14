@@ -8,6 +8,8 @@
 
 mod common;
 
+use std::collections::BTreeSet;
+
 use common::*;
 
 const FIXTURES: &[&str] = &["PF08271_seed", "dna_200", "protein_120", "dna_700"];
@@ -394,4 +396,43 @@ fn collapse_identical_preserves_tree() {
     let path = fixture("dna_200.fa");
     let p = path.to_str().unwrap();
     assert_eq!(ninja_stdout(&["-q", "--in", p]), ninja_stdout(&["-q", "--collapse_identical", "--in", p]));
+}
+
+#[test]
+fn duplicate_names_are_renamed_and_reported() {
+    let f = common::fixture("dna_dup_names.fa");
+    let out = common::run_ninja(&["--in", f.to_str().unwrap(), "-q"]);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(out.status.success(), "{stderr}");
+    assert!(stderr.contains("3 records shared a name"), "{stderr}");
+    for line in ["record 3: seqA -> seqA_2", "record 5: seqB -> seqB_2", "record 6: seqA -> seqA_3"] {
+        assert!(stderr.contains(line), "missing {line:?} in:\n{stderr}");
+    }
+    let tree = common::parse_newick(&String::from_utf8_lossy(&out.stdout));
+    let want: BTreeSet<String> = ["seqA", "seqB", "seqA_2", "seqC", "seqB_2", "seqA_3", "seqD", "seqE"]
+        .iter()
+        .map(|s| s.to_string())
+        .collect();
+    assert_eq!(tree.leaves, want);
+}
+
+#[test]
+fn duplicate_names_error_policy_refuses_input() {
+    let f = common::fixture("dna_dup_names.fa");
+    let out = common::run_ninja(&["--in", f.to_str().unwrap(), "--duplicate_names", "error"]);
+    assert!(!out.status.success());
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(stderr.contains("2 names appear more than once in the input: seqA, seqB"), "{stderr}");
+}
+
+#[test]
+fn duplicate_names_in_a_distance_matrix_are_renamed() {
+    let f = common::fixture("dup_names.phylip");
+    let out = common::run_ninja(&["--in_type", "d", "--in", f.to_str().unwrap(), "-q"]);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(out.status.success(), "{stderr}");
+    assert!(stderr.contains("record 3: a -> a_2"), "{stderr}");
+    let tree = common::parse_newick(&String::from_utf8_lossy(&out.stdout));
+    let want: BTreeSet<String> = ["a", "b", "a_2", "c"].iter().map(|s| s.to_string()).collect();
+    assert_eq!(tree.leaves, want);
 }
