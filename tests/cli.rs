@@ -436,3 +436,18 @@ fn duplicate_names_in_a_distance_matrix_are_renamed() {
     let want: BTreeSet<String> = ["a", "b", "a_2", "c"].iter().map(|s| s.to_string()).collect();
     assert_eq!(tree.leaves, want);
 }
+
+#[test]
+fn names_with_hash_draw_a_warning_for_tree_output() {
+    let f = common::fixture("dna_hash_names.fa");
+    let out = common::run_ninja(&["--in", f.to_str().unwrap(), "-q"]);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(out.status.success(), "{stderr}");
+    assert!(stderr.contains("8 of 8 sequence names contain '#'"), "{stderr}");
+    assert!(stderr.contains("extended Newick"), "{stderr}");
+    // Distance output is not a tree, so no warning.
+    let out = common::run_ninja(&["--in", f.to_str().unwrap(), "-q", "--out_type", "d"]);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(out.status.success(), "{stderr}");
+    assert!(!stderr.contains("contain '#'"), "{stderr}");
+}

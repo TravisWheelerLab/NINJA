@@ -123,6 +123,9 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
                 None => fasta::read_fasta_from(std::io::stdin().lock(), opts.alphabet)?,
             };
             warn_renamed(&resolve_duplicates(&mut aln.names, opts.duplicate_names)?);
+            if opts.output_kind == OutputKind::Tree {
+                warn_hash_names(&aln.names);
+            }
             if verbose >= 1 {
                 eprintln!(
                     "Read {} sequences of {} columns ({} alphabet)",
@@ -204,6 +207,9 @@ pub fn run(opts: &Options, out: &mut dyn Write) -> Result<RunOutput> {
                 .ok_or_else(|| Error::options("a distance matrix must be read from a file"))?;
             let mut p = phylip::read_phylip(path)?;
             warn_renamed(&resolve_duplicates(&mut p.names, opts.duplicate_names)?);
+            if opts.output_kind == OutputKind::Tree {
+                warn_hash_names(&p.names);
+            }
             let k = p.len();
             if verbose >= 1 {
                 eprintln!("Distance file read: {} taxa", k);
@@ -383,6 +389,25 @@ fn choose_method(opts: &Options, k: usize) -> Method {
 
 /// Report renamed records on standard error at every verbosity, since the
 /// output no longer carries the names as read.
+/// Warn when names contain `#`. Readers of extended Newick (IcyTree,
+/// Dendroscope, SplitsTree) take `name#tag` as a reticulation node and merge
+/// every leaf that shares the tag, so such a tree displays as a network.
+fn warn_hash_names(names: &[String]) {
+    let n = names.iter().filter(|s| s.contains('#')).count();
+    if n == 0 {
+        return;
+    }
+    eprintln!(
+        "warning: {} of {} sequence names contain '#'. Tree viewers that read extended Newick \
+         (IcyTree, Dendroscope, SplitsTree) treat \"name#tag\" as a reticulation node and merge \
+         every leaf sharing the tag, so this tree will display there as a network with cycles. \
+         Plain Newick readers (FigTree, ape, ETE) show it correctly. Rename the sequences before \
+         building the tree if the file must open in one of those viewers.",
+        n,
+        names.len()
+    );
+}
+
 fn warn_renamed(renamed: &[Renamed]) {
     if renamed.is_empty() {
         return;

@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+* ninja warns when sequence names contain `#`, because viewers that read
+  extended Newick take `name#tag` as a reticulation node and draw the tree
+  as a network with cycles.
+
 ## 2.0.0-rc.1 (2026-09-14)
 
 NINJA's earlier releases were the 1.x line; the Rust tool starts the 2.x
