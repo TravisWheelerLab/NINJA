@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.0.0-rc.2 (2026-09-14)
 
 * ninja warns when sequence names contain `#`, because viewers that read
   extended Newick take `name#tag` as a reticulation node and draw the tree

@@ -18,7 +18,7 @@ improvements to sequence distance computation.
 
 From crates.io, with a Rust toolchain (1.85 or later):
 
-    cargo install ninja-phylo --version 2.0.0-rc.1
+    cargo install ninja-phylo --version 2.0.0-rc.2
 
 which installs a binary named `ninja`. Cargo installs a pre-release only
 when the command names it, so the version is required until 2.0.0 is
